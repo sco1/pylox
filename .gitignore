@@ -44,3 +44,6 @@ htmlcov
 
 # mypy
 .mypy_cache/
+
+# Lox files
+*.lox

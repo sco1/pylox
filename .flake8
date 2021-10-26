@@ -22,3 +22,4 @@ exclude=
     venv,.venv,
 per-file-ignores =
     tests/test_*.py:D103 E501,
+    pylox/lox.py:B008
