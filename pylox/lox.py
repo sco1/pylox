@@ -6,6 +6,7 @@ from rich import print
 from rich.prompt import Prompt
 
 from pylox.error import LoxException
+from pylox.scanner import Scanner
 
 pylox_cli = typer.Typer()
 Prompt.prompt_suffix = ""  # Get rid of the default colon suffix
@@ -25,7 +26,10 @@ class Lox:
             self.run(line)
 
     def run(self, src: str) -> None:
-        print(f"[red](fake)[/red] Running source: '{src}'")
+        scanner = Scanner(src)
+        tokens = scanner.scan_tokens()
+
+        print(tokens)
 
     def report(self, err: LoxException) -> None:
         print(f"{err.line}:{err.col}: [bold red]{err}[/bold red]")

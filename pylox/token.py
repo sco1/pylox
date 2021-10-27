@@ -1,3 +1,4 @@
+import typing as t
 from enum import Enum, auto
 
 import attr
@@ -55,12 +56,12 @@ class TokenType(Enum):
 
 @attr.s(slots=True)
 class Token:
-    token_type: TokenType
-    lexeme: str
-    literal: str  # This type is probably going to change
-    line: int
-    start_col: int
-    end_col: int
+    token_type: TokenType = attr.ib()
+    lexeme: str = attr.ib()
+    literal: t.Any = attr.ib()  # Narrow this once we get some more code written
+    line: int = attr.ib()  # Zero-indexed
+    start_col: int = attr.ib()  # Zero-indexed
+    end_col: int = attr.ib()  # Zero-indexed
 
     def __str__(self) -> str:
         return f"{self.token_type} {self.lexeme} {self.literal}"
