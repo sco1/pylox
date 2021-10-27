@@ -3,6 +3,47 @@ import typing as t
 from pylox.token import Token, TokenType
 
 
+RESERVED = {
+    "and": TokenType.AND,
+    "class": TokenType.CLASS,
+    "else": TokenType.ELSE,
+    "false": TokenType.FALSE,
+    "for": TokenType.FOR,
+    "fun": TokenType.FUN,
+    "if": TokenType.IF,
+    "nil": TokenType.NIL,
+    "or": TokenType.OR,
+    "print": TokenType.PRINT,
+    "return": TokenType.RETURN,
+    "super": TokenType.SUPER,
+    "this": TokenType.THIS,
+    "true": TokenType.TRUE,
+    "var": TokenType.VAR,
+    "while": TokenType.WHILE,
+}
+
+
+def is_alpha(char: str) -> bool:
+    """Create a custom "is alphabetic" checker, as `str.isalpha` doesn't include underscores."""
+    return any(
+        (
+            "a" <= char <= "z",
+            "A" <= char <= "Z",
+            char == "_",
+        )
+    )
+
+
+def is_alnum(char: str) -> bool:
+    """Create a custom "is alphanumeric" checker, as `str.alnum` doesn't include underscores."""
+    return any(
+        (
+            is_alpha(char),
+            char.isdigit(),
+        )
+    )
+
+
 class Scanner:
     def __init__(self, src: str) -> None:
         self.src = src
@@ -75,6 +116,14 @@ class Scanner:
                 self._advance()
 
         self._add_token(TokenType.NUMBER, float(self.src[self._start : self._current]))
+
+    def _identifier(self) -> None:
+        while is_alnum(self._peek()):
+            self._advance()
+
+        lexeme = self.src[self._start : self._current]
+        token_type = RESERVED.get(lexeme, TokenType.IDENTIFIER)
+        self._add_token(token_type)
 
     def _add_token(self, token_type: TokenType, literal: t.Optional[t.Any] = None) -> None:
         self.tokens.append(
@@ -155,6 +204,8 @@ class Scanner:
                 # Catch numeric literals
                 if char.isdigit():
                     self._number()
+                elif is_alpha(char):
+                    self._identifier()
 
                 ...  # Add a lox-handled syntax error
 
