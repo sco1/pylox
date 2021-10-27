@@ -59,9 +59,8 @@ class Token:
     token_type: TokenType = attr.ib()
     lexeme: str = attr.ib()
     literal: t.Any = attr.ib()  # Narrow this once we get some more code written
-    line: int = attr.ib()  # Zero-indexed
-    start_col: int = attr.ib()  # Zero-indexed
-    end_col: int = attr.ib()  # Zero-indexed
+    lineno: int = attr.ib()  # Zero-indexed
+    col_offset: int = attr.ib()  # Zero-indexed
 
     def __str__(self) -> str:
         return f"{self.token_type} {self.lexeme} {self.literal}"

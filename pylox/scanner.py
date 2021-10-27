@@ -15,6 +15,10 @@ class Scanner:
         self._lineno = 0
         self._line_start = 0  # Index of the start of the current line in the full source string
 
+    def _bump_line(self) -> None:
+        self._lineno += 1
+        self._line_start = self._current
+
     def _is_eof(self) -> bool:
         return self._current >= len(self.src)
 
@@ -22,11 +26,11 @@ class Scanner:
         self._current += 1
         return self.src[self._current - 1]
 
-    def _peek(self) -> str:
+    def _peek(self, offset: int = 0) -> str:
         if self._is_eof():
             return "\0"
 
-        return self.src[self._current]
+        return self.src[self._current + offset]
 
     def _match_next(self, check_char: str) -> bool:
         if self._is_eof():
@@ -39,15 +43,47 @@ class Scanner:
         else:
             return False
 
+    def _string(self, close: str) -> None:
+        # Consume characters until we get to the corresponding closing quote
+        # If we get to the end of the file before the quote is closed, raise an error
+        while not any((self._peek() == close, self._is_eof())):
+            if self._peek() == "\n":
+                self._bump_line()
+
+            self._advance()
+
+        if self._is_eof():
+            # String quotes were never closed, this should be a lox error
+            raise NotImplementedError
+
+        self._advance()  # Consume the closing quote
+        literal = self.src[self._start + 1 : self._current - 1]  # Index away the quotation marks
+
+        self._add_token(TokenType.STRING, literal)
+
+    def _number(self) -> None:
+        # Consume digits until we get to a non-digit
+        while self._peek().isdigit():
+            self._advance()
+
+        # Check for fractional component
+        # Use peek offset to check the character after the period
+        if self._peek() == "." and self._peek(offset=1).isdigit():
+            self._advance()  # Consume the period
+
+            while self._peek().isdigit():
+                self._advance()
+
+        self._add_token(TokenType.NUMBER, float(self.src[self._start : self._current]))
+
     def _add_token(self, token_type: TokenType, literal: t.Optional[t.Any] = None) -> None:
         self.tokens.append(
             Token(
                 token_type=token_type,
                 lexeme=self.src[self._start : self._current],
                 literal=literal,
-                line=self._lineno,
-                start_col=self._start - self._line_start,
-                end_col=self._current - self._line_start,
+                lineno=self._lineno,
+                col_offset=self._start - self._line_start,
             )
         )
 
@@ -96,8 +132,9 @@ class Scanner:
                     self._add_token(TokenType.GREATER)
             case "/":
                 if self._match_next("/"):
-                    # // begins a comment line
-                    while not any((self._is_eof(), self._peek() == "\n")):
+                    # // begins a comment line; comments are discarded
+                    # Consume characters until we get to the end of either the line or the file
+                    while not any((self._peek() == "\n", self._is_eof())):
                         self._advance()
                 else:
                     self._add_token(TokenType.SLASH)
@@ -105,10 +142,21 @@ class Scanner:
                 # Ignore whitespace
                 pass
             case "\n":
-                self._lineno += 1
-                self._line_start = self._current
+                self._bump_line()
+            case '"' | "'":
+                # String literals; can be defined by either `''` or `""`; may be multiline
+                if char == '"':
+                    close = '"'
+                else:
+                    close = "'"
+
+                self._string(close)
             case _:
-                ...  # Add a syntax error
+                # Catch numeric literals
+                if char.isdigit():
+                    self._number()
+
+                ...  # Add a lox-handled syntax error
 
     def scan_tokens(self) -> list[Token]:
         while not self._is_eof():
@@ -120,9 +168,8 @@ class Scanner:
                 token_type=TokenType.EOF,
                 lexeme="",
                 literal=None,
-                line=self._lineno,
-                start_col=0,
-                end_col=0,
+                lineno=self._lineno,
+                col_offset=0,
             )
         )
 
