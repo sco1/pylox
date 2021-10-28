@@ -3,7 +3,7 @@ from textwrap import dedent
 import pytest_check as check
 
 from pylox.scanner import Scanner
-from pylox.token import Token, TokenType
+from pylox.tokens import Token, TokenType
 
 # Base test cases from https://github.com/munificent/craftinginterpreters/blob/master/test/scanning/numbers.lox
 TEST_SRC = dedent(

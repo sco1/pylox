@@ -1,4 +1,4 @@
-from pylox.token import LITERAL_T, Token, TokenType
+from pylox.tokens import LITERAL_T, Token, TokenType
 
 RESERVED = {
     "and": TokenType.AND,
