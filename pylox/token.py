@@ -3,8 +3,10 @@ from enum import Enum, auto
 
 import attr
 
+LITERAL_T = t.Optional[t.Union[str, float]]
 
-class TokenType(Enum):
+
+class TokenType(Enum):  # noqa: D101
     # One character token
     LEFT_PAREN = auto()
     RIGHT_PAREN = auto()
@@ -38,8 +40,8 @@ class TokenType(Enum):
     CLASS = auto()
     ELSE = auto()
     FALSE = auto()
-    FUN = auto()
     FOR = auto()
+    FUN = auto()
     IF = auto()
     NIL = auto()
     OR = auto()
@@ -55,10 +57,10 @@ class TokenType(Enum):
 
 
 @attr.s(slots=True)
-class Token:
+class Token:  # noqa: D101
     token_type: TokenType = attr.ib()
     lexeme: str = attr.ib()
-    literal: t.Any = attr.ib()  # Narrow this once we get some more code written
+    literal: LITERAL_T = attr.ib()
     lineno: int = attr.ib()  # Zero-indexed
     col_offset: int = attr.ib()  # Zero-indexed
 

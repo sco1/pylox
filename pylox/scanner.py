@@ -1,7 +1,4 @@
-import typing as t
-
-from pylox.token import Token, TokenType
-
+from pylox.token import LITERAL_T, Token, TokenType
 
 RESERVED = {
     "and": TokenType.AND,
@@ -45,6 +42,8 @@ def is_alnum(char: str) -> bool:
 
 
 class Scanner:
+    """The pylox tokenizer."""
+
     def __init__(self, src: str) -> None:
         self.src = src
         self.tokens: list[Token] = []
@@ -57,23 +56,33 @@ class Scanner:
         self._line_start = 0  # Index of the start of the current line in the full source string
 
     def _bump_line(self) -> None:
+        """Bump the current line index & update the offset for the start of the current line."""
         self._lineno += 1
         self._line_start = self._current
 
     def _is_eof(self) -> bool:
+        """Check if the scanner has reached the end of the source."""
         return self._current >= len(self.src)
 
     def _advance(self) -> str:
+        """Return the next character to be consumed by the scanner & advance the scan pointer."""
         self._current += 1
         return self.src[self._current - 1]
 
     def _peek(self, offset: int = 0) -> str:
+        """
+        Return the next character to be consumed, without advancing the scan pointer ("lookahead").
+
+        An integer `offset` may be specified to look further ahead in the source; this offset is
+        0-indexed, where the default value of `0` will return the next character.
+        """
         if self._is_eof():
             return "\0"
 
         return self.src[self._current + offset]
 
     def _match_next(self, check_char: str) -> bool:
+        """Consume the next source character & check if it matches the specified check character."""
         if self._is_eof():
             return False
 
@@ -85,6 +94,11 @@ class Scanner:
             return False
 
     def _string(self, close: str) -> None:
+        """
+        Handle string literal token generation.
+
+        The `close` kwarg specifies the type of closing quotation to expect (`"` or `'`).
+        """
         # Consume characters until we get to the corresponding closing quote
         # If we get to the end of the file before the quote is closed, raise an error
         while not any((self._peek() == close, self._is_eof())):
@@ -103,6 +117,14 @@ class Scanner:
         self._add_token(TokenType.STRING, literal)
 
     def _number(self) -> None:
+        """
+        Handle numeric literal token generation.
+
+        Both integers and floats are consumed into the single `NUMBER` token type & represented
+        internally as Python `float` objects.
+
+        NOTE: Leading & trailing decimals are not supported (e.g. `.123` and `123.`)
+        """
         # Consume digits until we get to a non-digit
         while self._peek().isdigit():
             self._advance()
@@ -118,6 +140,7 @@ class Scanner:
         self._add_token(TokenType.NUMBER, float(self.src[self._start : self._current]))
 
     def _identifier(self) -> None:
+        """Handle identifier & keyword token generation."""
         while is_alnum(self._peek()):
             self._advance()
 
@@ -125,7 +148,13 @@ class Scanner:
         token_type = RESERVED.get(lexeme, TokenType.IDENTIFIER)
         self._add_token(token_type)
 
-    def _add_token(self, token_type: TokenType, literal: t.Optional[t.Any] = None) -> None:
+    def _add_token(self, token_type: TokenType, literal: LITERAL_T = None) -> None:
+        """
+        Add a token of the specified type to the internal list of tokens.
+
+        A `literal` value may be optionally provided for tokens that use it (e.g. `STRING`,
+        `NUMERIC`)
+        """
         self.tokens.append(
             Token(
                 token_type=token_type,
@@ -137,6 +166,7 @@ class Scanner:
         )
 
     def scan_token(self) -> None:
+        """Consume the next source character(s) & dispatch the appropriate token generation."""
         char = self._advance()
         match char:
             case "(":
@@ -210,6 +240,13 @@ class Scanner:
                 ...  # Add a lox-handled syntax error
 
     def scan_tokens(self) -> list[Token]:
+        """
+        Scan through the loaded source code & generate a list of tokens.
+
+        The list of tokens is stored internal to the scanner & also returned for external use.
+
+        An `EOF` token is automatically added to the end of the file when it is reached.
+        """
         while not self._is_eof():
             self._start = self._current
             self.scan_token()

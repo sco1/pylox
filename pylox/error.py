@@ -3,6 +3,8 @@ import attr
 
 @attr.s(slots=True)
 class LoxException:
+    """Base Lox exception type."""
+
     line: int = attr.ib()
     col: int = attr.ib()
     message: str = attr.ib()

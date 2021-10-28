@@ -13,25 +13,36 @@ Prompt.prompt_suffix = ""  # Get rid of the default colon suffix
 
 
 class Lox:
+    """The pylox interpreter core."""
+
     def __init__(self) -> None:
         self.had_error = False
 
     def run_file(self, src_filepath: Path) -> None:
+        """Execute the specified source file in the pylox interpreter."""
         src = src_filepath.read_text()
         self.run(src)
 
     def run_prompt(self) -> None:
+        """Enter into a pylox REPL."""
         while True:
             line = Prompt.ask(">>> ")
             self.run(line)
 
     def run(self, src: str) -> None:
+        """
+        Run the specified source.
+
+        Source is scanned into tokens, and that's it because we're only in Chapter 5. The tokens are
+        printed for debugging purposes.
+        """
         scanner = Scanner(src)
         tokens = scanner.scan_tokens()
 
         print(tokens)
 
     def report(self, err: LoxException) -> None:
+        """Report an exception to the terminal."""
         print(f"{err.line}:{err.col}: [bold red]{err}[/bold red]")
         self.had_error = True
 
