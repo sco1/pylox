@@ -25,6 +25,8 @@ EXPR_STRUCT = {
     "Unary": {"token_operator": "t.Any", "expr_right": "t.Any"},
 }
 
+INDENT = "    "
+
 
 def _gen_classdef(
     class_name: str,
@@ -35,11 +37,14 @@ def _gen_classdef(
     """
     Generate a class definition from the provided components.
 
+    So we can support the visitor pattern, classes are given an `accept` method that calls a
+    class-specific visitor method.
+
     NOTE: Multiple inheritance is not supported.
     NOTE: Class attributes must have a type specified (as str); empty strings will result in invalid
     syntax in the generated code.
     """
-    print(f"    Generating {class_name} class ...")
+    print(f"{INDENT}Generating {class_name} class ...")
     components = [
         f"@attr.s(slots={slotted})",
     ]
@@ -52,12 +57,29 @@ def _gen_classdef(
     if class_attributes:
         components.extend(
             [
-                f"    {attribute}: {attribute_type} = attr.ib()"
+                f"{INDENT}{attribute}: {attribute_type} = attr.ib()"
                 for attribute, attribute_type in class_attributes.items()
             ]
         )
     else:
-        components.append("    pass")
+        components.append(f"{INDENT}pass")
+
+    components.append("")
+    if inherits_from:
+        components.append(
+            (
+                f"{INDENT}def accept(self, visitor: t.Any) -> t.Any:\n"
+                f"{INDENT*2}return visitor.visit_{class_name}(self)"
+            )
+        )
+    else:
+        # Have base classes raise
+        components.append(
+            (
+                f"{INDENT}def accept(self, visitor: t.Any) -> None:\n"
+                f"{INDENT*2}raise NotImplementedError"
+            )
+        )
 
     return "\n".join(components)
 

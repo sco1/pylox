@@ -8,6 +8,9 @@ import attr
 class Expr:
     pass
 
+    def accept(self, visitor: t.Any) -> None:
+        raise NotImplementedError
+
 
 @attr.s(slots=True)
 class Binary(Expr):
@@ -15,18 +18,30 @@ class Binary(Expr):
     token_operator: t.Any = attr.ib()
     expr_right: t.Any = attr.ib()
 
+    def accept(self, visitor: t.Any) -> t.Any:
+        return visitor.visit_Binary(self)
+
 
 @attr.s(slots=True)
 class Grouping(Expr):
     expr_expression: t.Any = attr.ib()
+
+    def accept(self, visitor: t.Any) -> t.Any:
+        return visitor.visit_Grouping(self)
 
 
 @attr.s(slots=True)
 class Literal(Expr):
     object_value: t.Any = attr.ib()
 
+    def accept(self, visitor: t.Any) -> t.Any:
+        return visitor.visit_Literal(self)
+
 
 @attr.s(slots=True)
 class Unary(Expr):
     token_operator: t.Any = attr.ib()
     expr_right: t.Any = attr.ib()
+
+    def accept(self, visitor: t.Any) -> t.Any:
+        return visitor.visit_Unary(self)
