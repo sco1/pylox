@@ -16,10 +16,11 @@ classifiers = [
     "Typing :: Typed",
 ]
 
-packages = [{include = "pylox"},]
+packages = [{include = "pylox"}, {include = "tool"},]
 
 [tool.poetry.scripts]
 pylox = "pylox.lox:pylox_cli"
+astgen = "tool.generate_ast:astgen_cli"
 
 [tool.poetry.dependencies]
 python = "^3.10"

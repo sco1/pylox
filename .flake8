@@ -21,5 +21,7 @@ exclude=
     __pycache__,.cache,
     venv,.venv,
 per-file-ignores =
+    pylox/lox.py:B008,
+    pylox/expr.py:D101,
     tests/*/test_*.py:D103 E501,
-    pylox/lox.py:B008
+    tool/generate_ast.py:B008,
