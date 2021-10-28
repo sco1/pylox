@@ -144,6 +144,7 @@ class Scanner:
         while is_alnum(self._peek()):
             self._advance()
 
+        # If the lexeme does not match a reserved keyword, then it is considered an identifier
         lexeme = self.src[self._start : self._current]
         token_type = RESERVED.get(lexeme, TokenType.IDENTIFIER)
         self._add_token(token_type)
@@ -165,7 +166,7 @@ class Scanner:
             )
         )
 
-    def scan_token(self) -> None:
+    def _scan_token(self) -> None:
         """Consume the next source character(s) & dispatch the appropriate token generation."""
         char = self._advance()
         match char:
@@ -249,7 +250,7 @@ class Scanner:
         """
         while not self._is_eof():
             self._start = self._current
-            self.scan_token()
+            self._scan_token()
 
         self.tokens.append(
             Token(
