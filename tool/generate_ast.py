@@ -30,22 +30,6 @@ EXPR_STRUCT = {
     "Unary": {"token_operator": "Token", "expr_right": "Expr"},
 }
 
-PROTOCOL_BLOCK = dedent(
-    """\
-    class VisitorProtocol(t.Protocol):
-        def visit_Binary(self, expr: Binary) -> t.Any:
-            ...
-
-        def visit_Grouping(self, expr: Grouping) -> t.Any:
-            ...
-
-        def visit_Literal(self, expr: Literal) -> t.Any:
-            ...
-
-        def visit_Unary(self, expr: Unary) -> t.Any:
-            ..."""
-)
-
 INDENT = "    "
 
 
@@ -71,14 +55,16 @@ def _gen_classdef(
     components = []
 
     if inherits_from:
+        # fmt: off
         components.append(
             (
                 f"@attr.s(slots={slotted})\n"
                 f"class {class_name}({inherits_from}):"
             )
         )
+        # fmt: on
     else:
-        components.append(f"class {class_name}(ABC):")
+        components.append(f"class {class_name}(ABC):  # pragma: no cover")
 
     if class_attributes:
         components.extend(
@@ -131,9 +117,6 @@ def define_ast(output_dir: Path, base_name: str, types: dict[str, dict[str, str]
     out_src = [IMPORT_BLOCK, base_classdef]
     for child, attributes in types.items():
         out_src.append(_gen_classdef(child, base_name, attributes))
-
-    print(f"{INDENT}Generating Visitor Patten Protocol ...")
-    out_src.append(PROTOCOL_BLOCK)
 
     # Build in 2 steps so we can add a newline to the end
     src = "\n\n\n".join(out_src)

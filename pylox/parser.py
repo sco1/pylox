@@ -1,7 +1,8 @@
 import typing as t
 
-from pylox import InterpreterProtocol, grammar
+from pylox import grammar
 from pylox.error import LoxParseError
+from pylox.protocols import InterpreterProtocol
 from pylox.tokens import Token, TokenType
 
 

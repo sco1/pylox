@@ -6,6 +6,7 @@ from abc import ABC, abstractmethod
 
 import attr
 
+from pylox.protocols import VisitorProtocol
 from pylox.tokens import LITERAL_T, Token
 
 
@@ -50,17 +51,3 @@ class Unary(Expr):
 
     def accept(self, visitor: VisitorProtocol) -> t.Any:
         return visitor.visit_Unary(self)
-
-
-class VisitorProtocol(t.Protocol):  # pragma: no cover
-    def visit_Binary(self, expr: Binary) -> t.Any:
-        ...
-
-    def visit_Grouping(self, expr: Grouping) -> t.Any:
-        ...
-
-    def visit_Literal(self, expr: Literal) -> t.Any:
-        ...
-
-    def visit_Unary(self, expr: Unary) -> t.Any:
-        ...
