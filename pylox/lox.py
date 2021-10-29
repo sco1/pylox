@@ -29,7 +29,7 @@ class Lox:
         """Enter into a pylox REPL."""
         while True:
             line = Prompt.ask(">>> ")
-            self.run(line, self)
+            self.run(line)
 
     def run(self, src: str) -> None:
         """

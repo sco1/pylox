@@ -9,7 +9,7 @@ import attr
 from pylox.tokens import LITERAL_T, Token
 
 
-class Expr(ABC):
+class Expr(ABC):  # pragma: no cover
     pass
 
     @abstractmethod
@@ -52,7 +52,7 @@ class Unary(Expr):
         return visitor.visit_Unary(self)
 
 
-class VisitorProtocol(t.Protocol):
+class VisitorProtocol(t.Protocol):  # pragma: no cover
     def visit_Binary(self, expr: Binary) -> t.Any:
         ...
 

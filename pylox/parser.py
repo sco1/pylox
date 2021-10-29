@@ -5,7 +5,7 @@ from pylox.error import LoxParseError
 from pylox.tokens import Token, TokenType
 
 
-class ParseException(BaseException):
+class ParseException(BaseException):  # noqa: D101
     ...
 
 
@@ -23,6 +23,11 @@ class Parser:
         self._current = 0
 
     def parse(self) -> t.Optional[grammar.Expr]:
+        """
+        Attempt to parse the loaded tokens into an expression.
+
+        All encountered errors will be reported to the interpreter & this method will return `None`.
+        """
         try:
             return self._expression()
         except ParseException:
@@ -82,13 +87,28 @@ class Parser:
         return ParseException
 
     def _synchronize(self) -> None:
+        """
+        Attempt to synchronize the parser back to a stable state.
+
+        If we encounter a parsing error, discard tokens until we've reached a likely statement
+        boundary (including EOF).
+        """
         self._advance()
         while not self._is_eof():
             if self._previous().token_type == TokenType.SEMICOLON:
                 return
 
             match self._peek().token_type:
-                case TokenType.CLASS | TokenType.FOR | TokenType.FUN | TokenType.IF | TokenType.PRINT | TokenType.RETURN | TokenType.VAR | TokenType.WHILE:
+                case (
+                    TokenType.CLASS
+                    | TokenType.FOR
+                    | TokenType.FUN
+                    | TokenType.IF
+                    | TokenType.PRINT
+                    | TokenType.RETURN
+                    | TokenType.VAR
+                    | TokenType.WHILE
+                ):
                     return
 
             self._advance()
