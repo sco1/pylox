@@ -1,5 +1,12 @@
-from pylox import grammar
+import typing as t
+
+from pylox import InterpreterProtocol, grammar
+from pylox.error import LoxParseError
 from pylox.tokens import Token, TokenType
+
+
+class ParseException(BaseException):
+    ...
 
 
 class Parser:
@@ -9,10 +16,17 @@ class Parser:
     See `grammar.md` in the project root for the formal grammar definition.
     """
 
-    def __init__(self, tokens: list[Token]) -> None:
+    def __init__(self, tokens: list[Token], interpreter: InterpreterProtocol) -> None:
         self.tokens = tokens
+        self._interpreter = interpreter
 
         self._current = 0
+
+    def parse(self) -> t.Optional[grammar.Expr]:
+        try:
+            return self._expression()
+        except ParseException:
+            return
 
     def _is_eof(self) -> bool:
         """Check if we're at the end of the file & run out of tokens to parse."""
@@ -48,17 +62,36 @@ class Parser:
         """Return the most recently consumed token."""
         return self.tokens[self._current - 1]
 
-    def _consume(self, query_token_type: TokenType, msg: str) -> Token:
+    def _consume(self, query_token_type: TokenType, msg: str) -> t.Union[Token, ParseException]:
         """
         Check if the current token matches the query token type.
 
         If the current token is a match, the token is consumed & retured. Otherwise, an error is
-        raised with the provided error message.
+        raised with the provided error message & a `ParseException` returned to assist with
+        synchronization.
         """
         if self._check(query_token_type):
             return self._advance()
 
-        raise NotImplementedError  # Need to set up error handling so we can raise a syntax error
+        self._report_error(LoxParseError(self._peek(), msg))
+
+    def _report_error(self, err: LoxParseError) -> ParseException:
+        """Report the provided error to the invoking interpreter & return an exception for sync."""
+        self._interpreter.report_error(err)
+
+        return ParseException
+
+    def _synchronize(self) -> None:
+        self._advance()
+        while not self._is_eof():
+            if self._previous().token_type == TokenType.SEMICOLON:
+                return
+
+            match self._peek().token_type:
+                case TokenType.CLASS | TokenType.FOR | TokenType.FUN | TokenType.IF | TokenType.PRINT | TokenType.RETURN | TokenType.VAR | TokenType.WHILE:
+                    return
+
+            self._advance()
 
     def _expression(self) -> grammar.Expr:
         """
@@ -166,3 +199,5 @@ class Parser:
             expr = self._expression()
             self._consume(TokenType.RIGHT_PAREN, "Expected ')' after expression.")
             return grammar.Grouping(expr)
+
+        self._report_error(LoxParseError(self._peek(), "Expected expression."))

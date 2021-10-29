@@ -1,3 +1,5 @@
+from pylox import InterpreterProtocol
+from pylox.error import LoxSyntaxError
 from pylox.tokens import LITERAL_T, Token, TokenType
 
 RESERVED = {
@@ -44,8 +46,9 @@ def is_alnum(char: str) -> bool:
 class Scanner:
     """The pylox tokenizer."""
 
-    def __init__(self, src: str) -> None:
+    def __init__(self, src: str, interpreter: InterpreterProtocol) -> None:
         self.src = src
+        self._interpreter = interpreter
         self.tokens: list[Token] = []
 
         # Keep track of where the scanner is in the source
@@ -54,6 +57,11 @@ class Scanner:
         self._current = 0  # Index of current character being considered
         self._lineno = 0
         self._line_start = 0  # Index of the start of the current line in the full source string
+
+    @property
+    def _col_offset(self) -> int:
+        """Return the column offset relative to the beginning of the current line."""
+        return self._start - self._line_start
 
     def _bump_line(self) -> None:
         """Bump the current line index & update the offset for the start of the current line."""
@@ -162,7 +170,7 @@ class Scanner:
                 lexeme=self.src[self._start : self._current],
                 literal=literal,
                 lineno=self._lineno,
-                col_offset=self._start - self._line_start,
+                col_offset=self._col_offset,
             )
         )
 
@@ -237,8 +245,14 @@ class Scanner:
                     self._number()
                 elif is_alpha(char):
                     self._identifier()
-
-                ...  # Add a lox-handled syntax error
+                else:
+                    self._interpreter.report_error(
+                        LoxSyntaxError(
+                            self._lineno,
+                            self._col_offset,
+                            f"Unsupported character encountered: '{char}'"
+                        )
+                    )
 
     def scan_tokens(self) -> list[Token]:
         """

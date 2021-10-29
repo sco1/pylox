@@ -5,7 +5,9 @@ import typer
 from rich import print
 from rich.prompt import Prompt
 
+from pylox.ast_printer import AstPrinter
 from pylox.error import LoxException
+from pylox.parser import Parser
 from pylox.scanner import Scanner
 
 pylox_cli = typer.Typer()
@@ -27,7 +29,7 @@ class Lox:
         """Enter into a pylox REPL."""
         while True:
             line = Prompt.ask(">>> ")
-            self.run(line)
+            self.run(line, self)
 
     def run(self, src: str) -> None:
         """
@@ -36,14 +38,21 @@ class Lox:
         Source is scanned into tokens, and that's it because we're only in Chapter 5. The tokens are
         printed for debugging purposes.
         """
-        scanner = Scanner(src)
+        scanner = Scanner(src, self)
         tokens = scanner.scan_tokens()
 
-        print(tokens)
+        parser = Parser(tokens, self)
+        expr = parser.parse()
 
-    def report(self, err: LoxException) -> None:
+        if self.had_error:
+            return
+
+        prettyprinter = AstPrinter()
+        print(prettyprinter.dump(expr))
+
+    def report_error(self, err: LoxException) -> None:
         """Report an exception to the terminal."""
-        print(f"{err.line}:{err.col}: [bold red]{err}[/bold red]")
+        print(f"{err.line+1}:{err.col+1}: [bold red]{err}[/bold red]")
         self.had_error = True
 
 

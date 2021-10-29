@@ -6,7 +6,7 @@ repos:
     rev: 21.9b0
     hooks:
       - id: black
-        exclude: ^pylox/scanner.py
+        exclude: ^pylox/(scanner|parser).py
   - repo: https://github.com/pycqa/isort
     rev: 5.9.3
     hooks:

@@ -48,7 +48,10 @@ tox = "^3.24"
 
 [tool.black]
 line-length = 100
-extend-exclude = 'scanner.py'
+extend-exclude = '''
+  ^/pylox/scanner.py
+| ^/pylox/parser.py
+'''
 
 [tool.isort]
 case_sensitive = true
@@ -58,7 +61,6 @@ order_by_type = false
 profile = "black"
 
 [tool.mypy]
-exclude = "^pylox/scanner.py"
 disallow_incomplete_defs = true
 disallow_untyped_calls = true
 disallow_untyped_decorators = true

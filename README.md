@@ -8,3 +8,8 @@ This is my Python implementation of an interpreter for the Lox programming langu
 
 ## Python?
 While the text is implemented in Java and C as its high & low-level implementations, I have no idea how to write either of them! Instead, I'll be using Python for the high-level implementation & eventually Rust for the low-level imeplementation.
+
+## Language Specification 
+### Defined by Challenges
+### User Choice
+  * Strings may be defined using either `"` or `'`
