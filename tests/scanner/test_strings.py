@@ -2,6 +2,7 @@ from textwrap import dedent
 
 import pytest_check as check
 
+from pylox.lox import Lox
 from pylox.scanner import Scanner
 from pylox.tokens import Token, TokenType
 
@@ -28,7 +29,7 @@ TRUTH_TOKENS = [
 
 
 def test_keyword_scanning() -> None:
-    scanner = Scanner(TEST_SRC)
+    scanner = Scanner(TEST_SRC, Lox())
     tokens = scanner.scan_tokens()
 
     for idx, token in enumerate(tokens):
