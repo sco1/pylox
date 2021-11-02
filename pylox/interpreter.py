@@ -22,6 +22,12 @@ def is_truthy(obj: t.Any) -> bool:
 
 
 def stringify(obj: t.Any) -> str:
+    """
+    Return the string representation of the provided object.
+
+    With the exception of `None`, which is special cased to `"nil"`, this just falls back to
+    Python's string representation.
+    """
     if obj is None:
         return "nil"
 
@@ -29,6 +35,8 @@ def stringify(obj: t.Any) -> str:
 
 
 class Interpreter:
+    """The Pylox interpreter!"""
+
     def __init__(self, interp: InterpreterProtocol) -> None:
         self._interp = interp  # Terrible name but we're in interpreter.py's Interpreter class v0v
 

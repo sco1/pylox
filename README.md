@@ -13,3 +13,5 @@ While the text is implemented in Java and C as its high & low-level implementati
 ### Defined by Challenges
 ### User Choice
   * Strings may be defined using either `"` or `'`
+  * Modulo operator (`%`)
+  * Power operator (`^`)
