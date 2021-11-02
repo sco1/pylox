@@ -34,13 +34,13 @@ class Interpreter:
     def __init__(self, interp: InterpreterProtocol) -> None:
         self._interp = interp  # Terrible name but we're in interpreter.py's Interpreter class v0v
 
-    def interpret(self, expr: grammar.Expr) -> str:
+    def interpret(self, expr: grammar.Expr) -> t.Union[str, t.Any]:
         try:
             val = self._evaluate(expr)
             for_print = stringify(val)
             print(for_print)
 
-            return for_print
+            return for_print, val
         except LoxRuntimeError:
             raise NotImplementedError
 
