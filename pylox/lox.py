@@ -7,6 +7,7 @@ from rich.prompt import Prompt
 
 from pylox.ast_printer import AstPrinter
 from pylox.error import LoxException
+from pylox.interpreter import Interpreter
 from pylox.parser import Parser
 from pylox.scanner import Scanner
 
@@ -19,6 +20,7 @@ class Lox:
 
     def __init__(self) -> None:
         self.had_error = False
+        self.interpreter = Interpreter(self)
 
     def run_file(self, src_filepath: Path) -> None:
         """Execute the specified source file in the pylox interpreter."""
@@ -49,6 +51,8 @@ class Lox:
 
         prettyprinter = AstPrinter()
         print(prettyprinter.dump(expr))
+
+        self.interpreter.interpret(expr)
 
     def report_error(self, err: LoxException) -> None:
         """Report an exception to the terminal."""

@@ -51,6 +51,7 @@ line-length = 100
 extend-exclude = '''
   ^/pylox/scanner.py
 | ^/pylox/parser.py
+| ^/pylox/interpreter.py
 '''
 
 [tool.isort]

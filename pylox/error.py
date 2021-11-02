@@ -4,7 +4,7 @@ from pylox.tokens import Token
 
 
 @attr.s(slots=True)
-class LoxException:
+class LoxException(BaseException):
     """Base Lox exception type."""
 
     line: int = attr.ib()
@@ -20,6 +20,13 @@ class LoxSyntaxError(LoxException):
 
 
 class LoxParseError(LoxException):
+    def __init__(self, token: Token, message: str) -> None:
+        self.line = token.lineno
+        self.col = token.col_offset
+        self.message = message
+
+
+class LoxRuntimeError(LoxException):
     def __init__(self, token: Token, message: str) -> None:
         self.line = token.lineno
         self.col = token.col_offset

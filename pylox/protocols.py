@@ -3,10 +3,11 @@ from __future__ import annotations
 import typing as t
 
 from pylox import grammar
+from pylox.error import LoxException
 
 
 class InterpreterProtocol(t.Protocol):  # pragma: no cover
-    def report_error(self) -> None:
+    def report_error(self, err: LoxException) -> None:
         ...
 
 

@@ -3,7 +3,7 @@ from enum import Enum, auto
 
 import attr
 
-LITERAL_T = t.Optional[t.Union[str, float]]
+LITERAL_T = t.Union[str, float, bool, None]
 
 
 class TokenType(Enum):  # noqa: D101
