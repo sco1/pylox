@@ -51,3 +51,27 @@ class Unary(Expr):
 
     def accept(self, visitor: VisitorProtocol) -> t.Any:
         return visitor.visit_Unary(self)
+
+
+class Stmt(ABC):  # pragma: no cover
+    pass
+
+    @abstractmethod
+    def accept(self, visitor: VisitorProtocol) -> t.Any:
+        return NotImplemented
+
+
+@attr.s(slots=True)
+class Expression(Stmt):
+    expr_expression: Expr = attr.ib()
+
+    def accept(self, visitor: VisitorProtocol) -> t.Any:
+        return visitor.visit_Expression(self)
+
+
+@attr.s(slots=True)
+class Print(Stmt):
+    expr_expression: Expr = attr.ib()
+
+    def accept(self, visitor: VisitorProtocol) -> t.Any:
+        return visitor.visit_Print(self)

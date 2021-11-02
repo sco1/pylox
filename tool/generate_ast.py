@@ -18,16 +18,23 @@ IMPORT_BLOCK = dedent(
 
     import attr
 
+    from pylox.protocols import VisitorProtocol
     from pylox.tokens import LITERAL_T, Token"""
 )
 
 # Top level keys are classes that will subclass Expr
 # Values are a dictionary of attribute, attribute type (as str) k,v pairs
+SUBCLASS_T = dict[str, dict[str, str]]
 EXPR_STRUCT = {
     "Binary": {"expr_left": "Expr", "token_operator": "Token", "expr_right": "Expr"},
     "Grouping": {"expr_expression": "Expr"},
     "Literal": {"object_value": "LITERAL_T"},
     "Unary": {"token_operator": "Token", "expr_right": "Expr"},
+}
+
+STMT_STRUCT = {
+    "Expression": {"expr_expression": "Expr"},
+    "Print": {"expr_expression": "Expr"},
 }
 
 INDENT = "    "
@@ -97,7 +104,7 @@ def _gen_classdef(
     return "\n".join(components)
 
 
-def define_ast(output_dir: Path, base_name: str, types: dict[str, dict[str, str]]) -> None:
+def define_ast(output_dir: Path, grammar_defs: dict[str, SUBCLASS_T]) -> None:
     """
     Generate a grammar module of syntax tree classes & output to the specified directory.
 
@@ -113,10 +120,11 @@ def define_ast(output_dir: Path, base_name: str, types: dict[str, dict[str, str]
     out_filename = output_dir / "grammar.py"
     print("Generating 'grammar.py' ...")
 
-    base_classdef = _gen_classdef(base_name)
-    out_src = [IMPORT_BLOCK, base_classdef]
-    for child, attributes in types.items():
-        out_src.append(_gen_classdef(child, base_name, attributes))
+    out_src = [IMPORT_BLOCK]
+    for base_name, types in grammar_defs.items():
+        out_src.append(_gen_classdef(base_name))
+        for child, attributes in types.items():
+            out_src.append(_gen_classdef(child, base_name, attributes))
 
     # Build in 2 steps so we can add a newline to the end
     src = "\n\n\n".join(out_src)
@@ -127,7 +135,13 @@ def define_ast(output_dir: Path, base_name: str, types: dict[str, dict[str, str]
 def main(output_dir: Path = typer.Argument(default=CURRENT_DIR)) -> None:
     """Automatically generate the syntax tree classes & output to the specified directory."""
     print(f"Autogenerating AST module(s) into '{output_dir}' ...")
-    define_ast(output_dir, "Expr", EXPR_STRUCT)
+    define_ast(
+        output_dir,
+        {
+            "Expr": EXPR_STRUCT,
+            "Stmt": STMT_STRUCT,
+        },
+    )
 
 
 if __name__ == "__main__":
