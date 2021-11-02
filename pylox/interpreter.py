@@ -3,6 +3,7 @@ import typing as t
 from rich import print
 
 from pylox import grammar
+from pylox.environment import Environment
 from pylox.error import LoxRuntimeError
 from pylox.protocols import InterpreterProtocol
 from pylox.tokens import LITERAL_T, Token, TokenType
@@ -41,6 +42,7 @@ class Interpreter:
 
     def __init__(self, interp: InterpreterProtocol) -> None:
         self._interp = interp  # Terrible name but we're in interpreter.py's Interpreter class v0v
+        self._environment = Environment()
 
     def interpret(self, statements: list[t.Union[grammar.Expr, grammar.Stmt]]) -> list[t.Any]:
         try:
@@ -63,12 +65,20 @@ class Interpreter:
     def _evaluate(self, expr: t.Union[grammar.Expr, grammar.Stmt]) -> t.Any:
         return expr.accept(self)
 
-    def visit_Expression(self, expr: grammar.Expression) -> None:
-        self._evaluate(expr.expr_expression)
+    def visit_Expression(self, stmt: grammar.Expression) -> None:
+        self._evaluate(stmt.expr_expression)
 
-    def visit_Print(self, expr: grammar.Print) -> None:
-        value = self._evaluate(expr.expr_expression)
+    def visit_Print(self, stmt: grammar.Print) -> None:
+        value = self._evaluate(stmt.expr_expression)
         print(stringify(value))
+
+    def visit_Var(self, stmt: grammar.Var) -> None:
+        if stmt.initializer:
+            value = self._evaluate(stmt.initializer)
+        else:
+            value = None
+
+        self._environment.define(stmt.name.lexeme, value)
 
     def visit_Literal(self, expr: grammar.Literal) -> LITERAL_T:
         return expr.object_value
@@ -84,6 +94,9 @@ class Interpreter:
                 return -float(right)
             case TokenType.BANG:
                 return not is_truthy(right)
+
+    def visit_Variable(self, expr: grammar.Variable) -> t.Any:
+        return self._environment.get(expr.name)
 
     def visit_Binary(self, expr: grammar.Binary) -> t.Union[float, str, None]:
         # Unless otherwise stated, left/right expressions are supposed to end up as numbers

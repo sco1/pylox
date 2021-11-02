@@ -45,6 +45,14 @@ class Literal(Expr):
 
 
 @attr.s(slots=True)
+class Variable(Expr):
+    name: Token = attr.ib()
+
+    def accept(self, visitor: VisitorProtocol) -> t.Any:
+        return visitor.visit_Variable(self)
+
+
+@attr.s(slots=True)
 class Unary(Expr):
     token_operator: Token = attr.ib()
     expr_right: Expr = attr.ib()
@@ -67,6 +75,15 @@ class Expression(Stmt):
 
     def accept(self, visitor: VisitorProtocol) -> t.Any:
         return visitor.visit_Expression(self)
+
+
+@attr.s(slots=True)
+class Var(Stmt):
+    name: Token = attr.ib()
+    initializer: t.Optional[Expr] = attr.ib()
+
+    def accept(self, visitor: VisitorProtocol) -> t.Any:
+        return visitor.visit_Var(self)
 
 
 @attr.s(slots=True)

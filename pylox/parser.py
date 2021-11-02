@@ -31,7 +31,7 @@ class Parser:
         """
         statements = []
         while not self._is_eof():
-            statements.append(self._statement())
+            statements.append(self._declaration())
 
         return statements
 
@@ -86,7 +86,7 @@ class Parser:
         """Report the provided error to the invoking interpreter & return an exception for sync."""
         self._interpreter.report_error(err)
 
-        return ParseException
+        raise ParseException
 
     def _synchronize(self) -> None:
         """
@@ -114,6 +114,27 @@ class Parser:
                     return
 
             self._advance()
+
+    def _declaration(self) -> t.Any:
+        try:
+            if self._match(TokenType.VAR):
+                return self._variable_declaration()
+
+            return self._statement()
+        except ParseException:
+            self._synchronize()
+            return
+
+    def _variable_declaration(self) -> t.Any:
+        name = self._consume(TokenType.IDENTIFIER, "Expected variable name.")
+
+        if self._match(TokenType.EQUAL):
+            initializer = self._expression()
+        else:
+            initializer = None
+
+        self._consume(TokenType.SEMICOLON, "Expected ';' after value.")
+        return grammar.Var(name, initializer)
 
     def _statement(self) -> grammar.Stmt:
         """
@@ -251,7 +272,7 @@ class Parser:
         """
         Parse the primary grammar.
 
-        `primary: NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")"`
+        `primary: NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" | IDENTIFIER`
         """
         if self._match(TokenType.NUMBER, TokenType.STRING):
             return grammar.Literal(self._previous().literal)
@@ -269,5 +290,8 @@ class Parser:
             expr = self._expression()
             self._consume(TokenType.RIGHT_PAREN, "Expected ')' after expression.")
             return grammar.Grouping(expr)
+
+        if self._match(TokenType.IDENTIFIER):
+            return grammar.Variable(self._previous())
 
         self._report_error(LoxParseError(self._peek(), "Expected expression."))

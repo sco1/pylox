@@ -1,6 +1,10 @@
 # Grammar Specification
 ```
-program: statement* EOF
+program: declaration* EOF
+declaration:
+    | varDecl
+    | statement
+varDecl: "var" IDENTIFIER ( "=" expression )? ";"
 statement:
     | exprStmt
     | printStmt
@@ -22,6 +26,7 @@ primary:
     | "false"
     | "nil"
     | "(" expression ")"
+    | IDENTIFIER
 ```
 
 ## Notes

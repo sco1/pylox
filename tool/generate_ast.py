@@ -29,11 +29,13 @@ EXPR_STRUCT = {
     "Binary": {"expr_left": "Expr", "token_operator": "Token", "expr_right": "Expr"},
     "Grouping": {"expr_expression": "Expr"},
     "Literal": {"object_value": "LITERAL_T"},
+    "Variable": {"name": "Token"},
     "Unary": {"token_operator": "Token", "expr_right": "Expr"},
 }
 
 STMT_STRUCT = {
     "Expression": {"expr_expression": "Expr"},
+    "Var": {"name": "Token", "initializer": "t.Optional[Expr]"},
     "Print": {"expr_expression": "Expr"},
 }
 
