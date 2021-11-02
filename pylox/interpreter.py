@@ -38,7 +38,6 @@ class Interpreter:
         try:
             val = self._evaluate(expr)
             for_print = stringify(val)
-            print(for_print)
 
             return for_print, val
         except LoxRuntimeError:
@@ -86,7 +85,7 @@ class Interpreter:
                 if isinstance(left, str) and isinstance(right, str):
                     return str(left) + str(right)
 
-                self._interp.report_error(
+                self._interp.report_runtime_error(
                     LoxRuntimeError(
                         expr.token_operator,
                         "Operands must either be both numbers or both strings.",

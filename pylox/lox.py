@@ -1,3 +1,4 @@
+import sys
 import typing as t
 from pathlib import Path
 
@@ -6,7 +7,7 @@ from rich import print
 from rich.prompt import Prompt
 
 from pylox.ast_printer import AstPrinter
-from pylox.error import LoxException
+from pylox.error import LoxException, LoxRuntimeError
 from pylox.interpreter import Interpreter
 from pylox.parser import Parser
 from pylox.scanner import Scanner
@@ -19,19 +20,31 @@ class Lox:
     """The pylox interpreter core."""
 
     def __init__(self) -> None:
-        self.had_error = False
         self.interpreter = Interpreter(self)
+
+        self.had_error = False
+        self.had_runtime_error = False
 
     def run_file(self, src_filepath: Path) -> None:
         """Execute the specified source file in the pylox interpreter."""
         src = src_filepath.read_text()
         self.run(src)
 
+        if self.had_error:
+            sys.exit(65)
+
+        if self.had_runtime_error:
+            sys.exit(70)
+
     def run_prompt(self) -> None:
         """Enter into a pylox REPL."""
         while True:
             line = Prompt.ask(">>> ")
             self.run(line)
+
+            # Reset these so we can stay in the REPL unhindered
+            self.had_error = False
+            self.had_runtime_error = False
 
     def run(self, src: str) -> None:
         """
@@ -46,18 +59,20 @@ class Lox:
         parser = Parser(tokens, self)
         expr = parser.parse()
 
-        if self.had_error:
-            return
-
         prettyprinter = AstPrinter()
         print(prettyprinter.dump(expr))
 
         self.interpreter.interpret(expr)
 
     def report_error(self, err: LoxException) -> None:
-        """Report an exception to the terminal."""
+        """Report a general exception to the terminal."""
         print(f"{err.line+1}:{err.col+1}: [bold red]{err}[/bold red]")
         self.had_error = True
+
+    def report_runtime_error(self, err: LoxRuntimeError) -> None:
+        """Report a runtime error to the terminal."""
+        print(f"{err.line+1}:{err.col+1}: [bold red]{err}[/bold red]")
+        self.had_runtime_error = True
 
 
 @pylox_cli.command()
