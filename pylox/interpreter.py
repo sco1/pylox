@@ -61,7 +61,7 @@ class Interpreter:
         return self._evaluate(expr.expr_expression)
 
     def visit_Unary(self, expr: grammar.Unary) -> t.Union[float, bool]:
-        right = self._evaluate(expr)
+        right = self._evaluate(expr.expr_right)
         match expr.token_operator.token_type:
             case TokenType.MINUS:
                 self._check_float_operands(expr.token_operator, right)
