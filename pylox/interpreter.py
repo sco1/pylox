@@ -1,7 +1,5 @@
 import typing as t
 
-from rich import print
-
 from pylox import grammar
 from pylox.error import LoxRuntimeError
 from pylox.protocols import InterpreterProtocol
@@ -109,6 +107,12 @@ class Interpreter:
             case TokenType.LESS_EQUAL:
                 self._check_float_operands(expr.token_operator, left, right)
                 return float(left) <= float(right)
+            case TokenType.CARAT:
+                self._check_float_operands(expr.token_operator, left, right)
+                return float(left) ** float(right)
+            case TokenType.PERCENT:
+                self._check_float_operands(expr.token_operator, left, right)
+                return float(left) % float(right)
 
             # These diverge from the text since we don't need to handle None like Java handles nil
             case TokenType.BANG_EQUAL:

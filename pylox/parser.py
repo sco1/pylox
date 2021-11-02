@@ -173,10 +173,25 @@ class Parser:
         """
         Parse the factor grammar.
 
-        `factor: unary ( ( "/" | "*" ) unary )*`
+        `factor: power ( ( "/" | "*" | "%" ) power )*`
+        """
+        expr = self._power()
+        while self._match(TokenType.SLASH, TokenType.STAR, TokenType.PERCENT):
+            operator = self._previous()
+            right = self._power()
+
+            expr = grammar.Binary(expr, operator, right)
+
+        return expr
+
+    def _power(self) -> grammar.Expr:
+        """
+        Parse the power grammar.
+
+        `power: unary ( ( "^" ) unary )*`
         """
         expr = self._unary()
-        while self._match(TokenType.SLASH, TokenType.STAR):
+        while self._match(TokenType.CARAT):
             operator = self._previous()
             right = self._unary()
 

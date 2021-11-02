@@ -198,6 +198,10 @@ class Scanner:
                 self._add_token(TokenType.SEMICOLON)
             case "*":
                 self._add_token(TokenType.STAR)
+            case "^":
+                self._add_token(TokenType.CARAT)
+            case "%":
+                self._add_token(TokenType.PERCENT)
             case "!":
                 if self._match_next("="):
                     self._add_token(TokenType.BANG_EQUAL)

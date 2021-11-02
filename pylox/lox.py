@@ -62,7 +62,8 @@ class Lox:
         prettyprinter = AstPrinter()
         print(prettyprinter.dump(expr))
 
-        self.interpreter.interpret(expr)
+        for_print, _ = self.interpreter.interpret(expr)
+        print(for_print)
 
     def report_error(self, err: LoxException) -> None:
         """Report a general exception to the terminal."""

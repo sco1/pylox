@@ -19,6 +19,8 @@ class TokenType(Enum):  # noqa: D101
     SEMICOLON = auto()
     SLASH = auto()
     STAR = auto()
+    CARAT = auto()
+    PERCENT = auto()
 
     # One or two character tokens
     BANG = auto()  # !
