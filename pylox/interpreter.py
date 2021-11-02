@@ -1,5 +1,7 @@
 import typing as t
 
+from rich import print
+
 from pylox import grammar
 from pylox.error import LoxRuntimeError
 from pylox.protocols import InterpreterProtocol
@@ -40,12 +42,14 @@ class Interpreter:
     def __init__(self, interp: InterpreterProtocol) -> None:
         self._interp = interp  # Terrible name but we're in interpreter.py's Interpreter class v0v
 
-    def interpret(self, expr: grammar.Expr) -> t.Union[str, t.Any]:
+    def interpret(self, statements: list[t.Union[grammar.Expr, grammar.Stmt]]) -> list[t.Any]:
         try:
-            val = self._evaluate(expr)
-            for_print = stringify(val)
+            retvals = []
+            for statement in statements:
+                retvals = self._evaluate(statement)
 
-            return for_print, val
+            # Optionally return to help with testing
+            return retvals
         except LoxRuntimeError:
             raise NotImplementedError
 
@@ -56,8 +60,15 @@ class Interpreter:
 
         self._interp.report_error(LoxRuntimeError(operator, "Operands must be numbers."))
 
-    def _evaluate(self, expr: grammar.Expr) -> t.Any:
+    def _evaluate(self, expr: t.Union[grammar.Expr, grammar.Stmt]) -> t.Any:
         return expr.accept(self)
+
+    def visit_Expression(self, expr: grammar.Expression) -> None:
+        self._evaluate(expr.expr_expression)
+
+    def visit_Print(self, expr: grammar.Print) -> None:
+        value = self._evaluate(expr.expr_expression)
+        print(stringify(value))
 
     def visit_Literal(self, expr: grammar.Literal) -> LITERAL_T:
         return expr.object_value

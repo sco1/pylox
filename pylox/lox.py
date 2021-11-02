@@ -6,7 +6,6 @@ import typer
 from rich import print
 from rich.prompt import Prompt
 
-from pylox.ast_printer import AstPrinter
 from pylox.error import LoxException, LoxRuntimeError
 from pylox.interpreter import Interpreter
 from pylox.parser import Parser
@@ -57,13 +56,9 @@ class Lox:
         tokens = scanner.scan_tokens()
 
         parser = Parser(tokens, self)
-        expr = parser.parse()
+        statements = parser.parse()
 
-        prettyprinter = AstPrinter()
-        print(prettyprinter.dump(expr))
-
-        for_print, _ = self.interpreter.interpret(expr)
-        print(for_print)
+        self.interpreter.interpret(statements)
 
     def report_error(self, err: LoxException) -> None:
         """Report a general exception to the terminal."""

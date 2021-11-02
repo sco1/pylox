@@ -23,16 +23,17 @@ class Parser:
 
         self._current = 0
 
-    def parse(self) -> t.Optional[grammar.Expr]:
+    def parse(self) -> t.Optional[list[t.Union[grammar.Expr, grammar.Stmt]]]:
         """
-        Attempt to parse the loaded tokens into an expression.
+        Attempt to parse the loaded tokens into a list of statements/expressions.
 
         All encountered errors will be reported to the interpreter & this method will return `None`.
         """
-        try:
-            return self._expression()
-        except ParseException:
-            return
+        statements = []
+        while not self._is_eof():
+            statements.append(self._statement())
+
+        return statements
 
     def _is_eof(self) -> bool:
         """Check if we're at the end of the file & run out of tokens to parse."""
@@ -113,6 +114,39 @@ class Parser:
                     return
 
             self._advance()
+
+    def _statement(self) -> grammar.Stmt:
+        """
+        Parse the statement grammar.
+
+        `statement: exprStmt | printStmt`
+        """
+        if self._match(TokenType.PRINT):
+            return self._print_statement()
+
+        return self._expression_statement()
+
+    def _print_statement(self) -> grammar.Print:
+        """
+        Parse the print grammar.
+
+        `printStmt: "print" expression ";"`
+        """
+        value = self._expression()
+        self._consume(TokenType.SEMICOLON, "Expected ';' after value.")
+
+        return grammar.Print(value)
+
+    def _expression_statement(self) -> grammar.Expression:
+        """
+        Parse the expression grammar.
+
+        `expression: equality`
+        """
+        expr = self._expression()
+        self._consume(TokenType.SEMICOLON, "Expected ';' after value.")
+
+        return grammar.Expression(expr)
 
     def _expression(self) -> grammar.Expr:
         """
