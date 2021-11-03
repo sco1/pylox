@@ -7,7 +7,7 @@ from pylox.tokens import Token
 
 @attr.s(slots=True)
 class Environment:
-    values: dict[str, t.Any] = attr.ib()
+    values: dict[str, t.Any] = attr.ib(factory=dict)
 
     def define(self, name: str, value: t.Any) -> t.Any:
         self.values[name] = value
