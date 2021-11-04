@@ -29,3 +29,4 @@ per-file-ignores =
     pylox/protocols.py:D101 D102,
     tests/*/test_*.py:D103 E501,
     tool/generate_ast.py:B008,
+    tool/generate_tests.py:B008 E501,

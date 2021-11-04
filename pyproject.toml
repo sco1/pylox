@@ -21,6 +21,7 @@ packages = [{include = "pylox"}, {include = "tool"},]
 [tool.poetry.scripts]
 pylox = "pylox.lox:pylox_cli"
 astgen = "tool.generate_ast:astgen_cli"
+testgen = "tool.generate_tests:testgen_cli"
 
 [tool.poetry.dependencies]
 python = "^3.10"
