@@ -54,6 +54,16 @@ class Literal(Expr):
 
 
 @attr.s(slots=True)
+class Logical(Expr):
+    expr_left: Expr = attr.ib()
+    token_operator: Token = attr.ib()
+    expr_right: Expr = attr.ib()
+
+    def accept(self, visitor: VisitorProtocol) -> t.Any:
+        return visitor.visit_Logical(self)
+
+
+@attr.s(slots=True)
 class Variable(Expr):
     name: Token = attr.ib()
 

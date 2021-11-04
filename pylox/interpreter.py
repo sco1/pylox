@@ -103,6 +103,18 @@ class Interpreter:
     def visit_Literal(self, expr: grammar.Literal) -> LITERAL_T:
         return expr.object_value
 
+    def visit_Logical(self, expr: grammar.Logical) -> grammar.Expr:
+        left = self._evaluate(expr.expr_left)
+        if expr.token_operator == TokenType.OR:
+            # Attempt to short circuit
+            if is_truthy(left):
+                return left
+        else:
+            if not is_truthy(left):
+                return left
+
+        return self._evaluate(expr.expr_right)
+
     def visit_Grouping(self, expr: grammar.Grouping) -> t.Any:
         return self._evaluate(expr.expr_expression)
 

@@ -30,6 +30,7 @@ EXPR_STRUCT = {
     "Binary": {"expr_left": "Expr", "token_operator": "Token", "expr_right": "Expr"},
     "Grouping": {"expr_expression": "Expr"},
     "Literal": {"object_value": "LITERAL_T"},
+    "Logical": {"expr_left": "Expr", "token_operator": "Token", "expr_right": "Expr"},
     "Variable": {"name": "Token"},
     "Unary": {"token_operator": "Token", "expr_right": "Expr"},
 }

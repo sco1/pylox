@@ -233,7 +233,7 @@ class Parser:
 
         `assignment: IDENTIFIER = assignment | equality`
         """
-        expr = self._equality()
+        expr = self._or()
         if self._match(TokenType.EQUAL):
             equals = self._previous()
             value = self._assignment()
@@ -242,6 +242,34 @@ class Parser:
                 return grammar.Assign(name, value)
 
             self._report_error(LoxParseError(equals, "Invalid assignment target."))
+
+        return expr
+
+    def _or(self) -> grammar.Expr:
+        """
+        Parse the logic_or grammar.
+
+        `logic_or: logic_and ( "or" logic_and )*`
+        """
+        expr = self._and()
+        while self._match(TokenType.OR):
+            operator = self._previous()
+            right = self._and()
+            expr = grammar.Logical(expr, operator, right)
+
+        return expr
+
+    def _and(self) -> grammar.Expr:
+        """
+        Parse the logic_and grammar.
+
+        `logic_and: equality ( "and" equality )*`
+        """
+        expr = self._equality()
+        while self._match(TokenType.AND):
+            operator = self._previous()
+            right = self._equality()
+            expr = grammar.Logical(expr, operator, right)
 
         return expr
 
