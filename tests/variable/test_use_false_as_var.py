@@ -14,6 +14,7 @@ TEST_SRC = dedent(
 
 EXPECTED_STDOUTS = ["Error at 'false': Expect variable name"]
 
+
 @pytest.mark.xfail(reason="Not implemented")
 def test_use_false_as_var(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
