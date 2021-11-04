@@ -18,7 +18,6 @@ TEST_SRC = dedent(
 EXPECTED_STDOUTS = ["ok"]
 
 
-@pytest.mark.xfail(reason="Not implemented")
 def test_unreached_undefined(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

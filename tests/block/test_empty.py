@@ -20,7 +20,6 @@ TEST_SRC = dedent(
 EXPECTED_STDOUTS = ["ok"]
 
 
-@pytest.mark.xfail(reason="Conditionals/Bool not implemented.")
 def test_empty_scope(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

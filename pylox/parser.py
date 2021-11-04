@@ -150,8 +150,11 @@ class Parser:
         """
         Parse the statement grammar.
 
-        `statement: exprStmt | printStmt | block`
+        `statement: exprStmt | ifStmt | printStmt | block`
         """
+        if self._match(TokenType.IF):
+            return self._if_statement()
+
         if self._match(TokenType.PRINT):
             return self._print_statement()
 
@@ -159,6 +162,27 @@ class Parser:
             return grammar.Block(self._block())
 
         return self._expression_statement()
+
+    def _if_statement(self) -> grammar.If:
+        """
+        Parse the if grammar.
+
+        `"if" "(" expression ")" statement ( "else" statement )?`
+
+        The dangling else problem is avoided by binding the `else` statement to the nearest `if`
+        statement that precedes it.
+        """
+        self._consume(TokenType.LEFT_PAREN, "Expected '(' after 'if'.")
+        condition = self._expression()
+        self._consume(TokenType.RIGHT_PAREN, "Expected ')' after if condition.")
+
+        then_branch = self._statement()
+        if self._match(TokenType.ELSE):
+            else_branch = self._statement()
+        else:
+            else_branch = None
+
+        return grammar.If(condition, then_branch, else_branch)
 
     def _print_statement(self) -> grammar.Print:
         """

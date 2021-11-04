@@ -95,6 +95,16 @@ class Expression(Stmt):
 
 
 @attr.s(slots=True)
+class If(Stmt):
+    condition: Expr = attr.ib()
+    then_branch: Stmt = attr.ib()
+    else_branch: t.Optional[Stmt] = attr.ib()
+
+    def accept(self, visitor: VisitorProtocol) -> t.Any:
+        return visitor.visit_If(self)
+
+
+@attr.s(slots=True)
 class Var(Stmt):
     name: Token = attr.ib()
     initializer: t.Optional[Expr] = attr.ib()

@@ -81,6 +81,13 @@ class Interpreter:
     def visit_Expression(self, stmt: grammar.Expression) -> None:
         self._evaluate(stmt.expr_expression)
 
+    def visit_If(self, stmt: grammar.If) -> None:
+        if is_truthy(self._evaluate(stmt.condition)):
+            self._evaluate(stmt.then_branch)
+        else:
+            if stmt.else_branch is not None:
+                self._evaluate(stmt.else_branch)
+
     def visit_Var(self, stmt: grammar.Var) -> None:
         if stmt.initializer:
             value = self._evaluate(stmt.initializer)
