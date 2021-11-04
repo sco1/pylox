@@ -1,0 +1,28 @@
+from textwrap import dedent
+
+import pytest
+
+from pylox.lox import Lox
+
+# Base cases from https://github.com/munificent/craftinginterpreters/blob/master/test/variable/collide_with_parameter.lox
+TEST_SRC = dedent(
+    """\
+    fun foo(a) {
+      var a; // Error at 'a': Already a variable with this name in this scope.
+    }
+    """
+)
+
+EXPECTED_STDOUTS = ["Error at 'a': Already a variable with this name in this scope."]
+
+
+@pytest.mark.xfail(reason="Not implemented")
+def test_collide_with_parameter(capsys: pytest.CaptureFixture) -> None:
+    interpreter = Lox()
+    interpreter.run(TEST_SRC)
+
+    assert not interpreter.had_error
+    assert interpreter.had_runtime_error
+
+    all_out = capsys.readouterr().out.splitlines()
+    assert all_out == EXPECTED_STDOUTS
