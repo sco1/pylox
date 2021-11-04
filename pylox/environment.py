@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing as t
 
 import attr
@@ -9,6 +11,7 @@ from pylox.tokens import Token
 class Environment:
     """The pylox variable environment!"""
 
+    enclosing: t.Optional[Environment] = attr.ib(default=None)
     values: dict[str, t.Any] = attr.ib(factory=dict)
 
     def define(self, name: str, value: t.Any) -> None:
@@ -19,20 +22,28 @@ class Environment:
         """
         Update the value for the provided variable token.
 
-        Raises if the variable is not in scope.
+        Raises if the variable is not in the current scope or higher.
         """
         if name.lexeme in self.values:
             self.values[name.lexeme] = value
         else:
+            if self.enclosing is not None:
+                self.enclosing.assign(name, value)
+                return
+
             raise RuntimeError(f"Undefined variable '{name.lexeme}''.")
 
     def get(self, name: Token) -> t.Any:
         """
         Retrieve the value for the provided variable token.
 
-        Raises if the variable is not in scope.
+        Raises if the variable is not in the current scope or higher.
         """
         try:
             return self.values[name.lexeme]
         except KeyError:
-            raise RuntimeError(f"Undefined variable '{name.lexeme}''.")
+            # If we're in an enclosed scope, walk upwards to see if the variable is defined there
+            if self.enclosing is not None:
+                return self.enclosing.get(name)
+            else:
+                raise RuntimeError(f"Undefined variable '{name.lexeme}''.")

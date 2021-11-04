@@ -79,6 +79,14 @@ class Stmt(ABC):  # pragma: no cover
 
 
 @attr.s(slots=True)
+class Block(Stmt):
+    statements: list[Stmt] = attr.ib()
+
+    def accept(self, visitor: VisitorProtocol) -> t.Any:
+        return visitor.visit_Block(self)
+
+
+@attr.s(slots=True)
 class Expression(Stmt):
     expr_expression: Expr = attr.ib()
 

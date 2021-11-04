@@ -65,12 +65,21 @@ class Interpreter:
     def _evaluate(self, expr: t.Union[grammar.Expr, grammar.Stmt]) -> t.Any:
         return expr.accept(self)
 
+    def _execute_block(self, statements: list[grammar.Stmt], environment: Environment) -> None:
+        env_cache = self._environment  # Cache this so we can restore when we're done
+        try:
+            self._environment = environment
+            for statement in statements:
+                self._evaluate(statement)
+        finally:
+            self._environment = env_cache
+
+    def visit_Block(self, stmt: grammar.Block) -> None:
+        # Environment scoping will be properly walked by the called method
+        self._execute_block(stmt.statements, Environment(self._environment))
+
     def visit_Expression(self, stmt: grammar.Expression) -> None:
         self._evaluate(stmt.expr_expression)
-
-    def visit_Print(self, stmt: grammar.Print) -> None:
-        value = self._evaluate(stmt.expr_expression)
-        print(stringify(value))
 
     def visit_Var(self, stmt: grammar.Var) -> None:
         if stmt.initializer:
@@ -79,6 +88,10 @@ class Interpreter:
             value = None
 
         self._environment.define(stmt.name.lexeme, value)
+
+    def visit_Print(self, stmt: grammar.Print) -> None:
+        value = self._evaluate(stmt.expr_expression)
+        print(stringify(value))
 
     def visit_Literal(self, expr: grammar.Literal) -> LITERAL_T:
         return expr.object_value

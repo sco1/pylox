@@ -35,6 +35,7 @@ EXPR_STRUCT = {
 }
 
 STMT_STRUCT = {
+    "Block": {"statements": "list[Stmt]"},
     "Expression": {"expr_expression": "Expr"},
     "Var": {"name": "Token", "initializer": "t.Optional[Expr]"},
     "Print": {"expr_expression": "Expr"},

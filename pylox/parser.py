@@ -116,6 +116,11 @@ class Parser:
             self._advance()
 
     def _declaration(self) -> t.Any:
+        """
+        Parse the declaration grammar.
+
+        `declaration: varDecl | statement`
+        """
         try:
             if self._match(TokenType.VAR):
                 return self._variable_declaration()
@@ -126,6 +131,11 @@ class Parser:
             return
 
     def _variable_declaration(self) -> t.Any:
+        """
+        Parse the variable declaration grammar.
+
+        `varDecl: "var" IDENTIFIER ( "=" expression )? ";"`
+        """
         name = self._consume(TokenType.IDENTIFIER, "Expected variable name.")
 
         if self._match(TokenType.EQUAL):
@@ -140,10 +150,13 @@ class Parser:
         """
         Parse the statement grammar.
 
-        `statement: exprStmt | printStmt`
+        `statement: exprStmt | printStmt | block`
         """
         if self._match(TokenType.PRINT):
             return self._print_statement()
+
+        if self._match(TokenType.LEFT_BRACE):
+            return grammar.Block(self._block())
 
         return self._expression_statement()
 
@@ -168,6 +181,19 @@ class Parser:
         self._consume(TokenType.SEMICOLON, "Expected ';' after value.")
 
         return grammar.Expression(expr)
+
+    def _block(self) -> list[grammar.Stmt]:
+        """
+        Parse the block grammar.
+
+        `block: "{" declaration* "}"`
+        """
+        statements = []
+        while not self._check(TokenType.RIGHT_BRACE) and not self._is_eof():
+            statements.append(self._declaration())
+
+        self._consume(TokenType.RIGHT_BRACE, "Expected '}' after block.")
+        return statements
 
     def _expression(self) -> grammar.Expr:
         """
