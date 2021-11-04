@@ -105,7 +105,7 @@ class Interpreter:
 
     def visit_Logical(self, expr: grammar.Logical) -> grammar.Expr:
         left = self._evaluate(expr.expr_left)
-        if expr.token_operator == TokenType.OR:
+        if expr.token_operator.token_type == TokenType.OR:
             # Attempt to short circuit
             if is_truthy(left):
                 return left
