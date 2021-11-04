@@ -19,6 +19,15 @@ class Expr(ABC):  # pragma: no cover
 
 
 @attr.s(slots=True)
+class Assign(Expr):
+    name: Token = attr.ib()
+    value: Expr = attr.ib()
+
+    def accept(self, visitor: VisitorProtocol) -> t.Any:
+        return visitor.visit_Assign(self)
+
+
+@attr.s(slots=True)
 class Binary(Expr):
     expr_left: Expr = attr.ib()
     token_operator: Token = attr.ib()

@@ -173,9 +173,27 @@ class Parser:
         """
         Parse the expression grammar.
 
-        `expression: equality`
+        `expression: assignment`
         """
-        return self._equality()
+        return self._assignment()
+
+    def _assignment(self) -> grammar.Expr:
+        """
+        Parse the assignment grammar.
+
+        `assignment: IDENTIFIER = assignment | equality`
+        """
+        expr = self._equality()
+        if self._match(TokenType.EQUAL):
+            equals = self._previous()
+            value = self._assignment()
+            if isinstance(expr, grammar.Variable):
+                name = expr.name
+                return grammar.Assign(name, value)
+
+            self._report_error(LoxParseError(equals, "Invalid assignment target."))
+
+        return expr
 
     def _equality(self) -> grammar.Expr:
         """

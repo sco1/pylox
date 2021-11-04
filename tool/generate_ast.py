@@ -26,6 +26,7 @@ IMPORT_BLOCK = dedent(
 # Values are a dictionary of attribute, attribute type (as str) k,v pairs
 SUBCLASS_T = dict[str, dict[str, str]]
 EXPR_STRUCT = {
+    "Assign": {"name": "Token", "value": "Expr"},
     "Binary": {"expr_left": "Expr", "token_operator": "Token", "expr_right": "Expr"},
     "Grouping": {"expr_expression": "Expr"},
     "Literal": {"object_value": "LITERAL_T"},

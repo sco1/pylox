@@ -98,6 +98,12 @@ class Interpreter:
     def visit_Variable(self, expr: grammar.Variable) -> t.Any:
         return self._environment.get(expr.name)
 
+    def visit_Assign(self, expr: grammar.Assign) -> t.Any:
+        value = self._evaluate(expr.value)
+        self._environment.assign(expr.name, value)
+
+        return value
+
     def visit_Binary(self, expr: grammar.Binary) -> t.Union[float, str, None]:
         # Unless otherwise stated, left/right expressions are supposed to end up as numbers
         left = self._evaluate(expr.expr_left)
