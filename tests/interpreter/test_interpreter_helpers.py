@@ -4,7 +4,6 @@ import pytest
 
 from pylox.interpreter import is_truthy, stringify
 
-
 TRUTHINESS_TEST_CASES = [
     (None, False),
     (False, False),
