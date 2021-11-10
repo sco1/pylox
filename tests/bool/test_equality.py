@@ -10,7 +10,8 @@ TEST_CASES = [
     ("print true == false;", False),
     ("print false == true;", False),
     ("print false == false;", True),
-    ("print true == 1;", True),
+    # Not equal to other types
+    ("print true == 1;", False),
     ("print false == 0;", False),
     ("print true == 'true';", False),
     ("print false == 'false';", False),
@@ -20,7 +21,8 @@ TEST_CASES = [
     ("print true != false;", True),
     ("print false != true;", True),
     ("print false != false;", False),
-    ("print true != 1;", False),
+    # Not equal to other types
+    ("print true != 1;", True),
     ("print false != 0;", True),
     ("print true != 'true';", True),
     ("print false != 'false';", True),

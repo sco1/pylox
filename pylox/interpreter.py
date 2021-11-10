@@ -37,6 +37,22 @@ def stringify(obj: t.Any) -> str:
     return str(obj)
 
 
+def _lox_eq(left: t.Any, right: t.Any) -> bool:
+    """
+    Special case equality since Lox diverges from Python's behavior.
+
+    Two basic assumptions are enforced:
+        * `None` and `False` are falsy, everything else is truthy
+        * Comparison between unlike types is always `False`
+    """
+    # Short circuit on unlike types
+    # Since we only have a few data types, a straight type comparison should be fine
+    if type(left) is not type(right):
+        return False
+
+    return (left == right)
+
+
 class Interpreter:
     """The Pylox interpreter!"""
 
@@ -183,9 +199,7 @@ class Interpreter:
             case TokenType.PERCENT:
                 self._check_float_operands(expr.token_operator, left, right)
                 return float(left) % float(right)
-
-            # These diverge from the text since we don't need to handle None like Java handles nil
             case TokenType.BANG_EQUAL:
-                return left != right
+                return not _lox_eq(left, right)
             case TokenType.EQUAL_EQUAL:
-                return left == right
+                return _lox_eq(left, right)
