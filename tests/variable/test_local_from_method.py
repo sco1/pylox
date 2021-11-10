@@ -22,7 +22,7 @@ TEST_SRC = dedent(
 EXPECTED_STDOUTS = ["variable"]
 
 
-@pytest.mark.xfail(reason="Not implemented")
+@pytest.mark.xfail(reason="Classes not implemented")
 def test_local_from_method(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

@@ -15,7 +15,7 @@ TEST_SRC = dedent(
 EXPECTED_STDOUTS = [...]
 
 
-@pytest.mark.xfail(reason="Not implemented")
+@pytest.mark.xfail(reason="Functions not implemented")
 def test_fun_in_body(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

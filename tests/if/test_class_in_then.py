@@ -15,7 +15,7 @@ TEST_SRC = dedent(
 EXPECTED_STDOUTS = ["Error at 'class': Expect expression."]
 
 
-@pytest.mark.xfail(reason="Not implemented")
+@pytest.mark.xfail(reason="Classes not implemented")
 def test_class_in_then(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

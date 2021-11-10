@@ -12,15 +12,14 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["Error at 'var': Expect expression."]
+EXPECTED_STDOUTS = ["2:22: LoxParseError: Expected expression."]
 
 
-@pytest.mark.xfail(reason="Not implemented")
 def test_var_in_else(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)
 
-    assert not interpreter.had_error
+    assert interpreter.had_error
     assert not interpreter.had_runtime_error
 
     all_out = capsys.readouterr().out.splitlines()

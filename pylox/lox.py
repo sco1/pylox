@@ -46,17 +46,16 @@ class Lox:
             self.had_runtime_error = False
 
     def run(self, src: str) -> None:
-        """
-        Run the specified source.
-
-        Source is scanned into tokens, and that's it because we're only in Chapter 5. The tokens are
-        printed for debugging purposes.
-        """
+        """Run the specified source."""
         scanner = Scanner(src, self)
         tokens = scanner.scan_tokens()
 
         parser = Parser(tokens, self)
         statements = parser.parse()
+
+        # Don't run the interpreter if we've had a scanning or parsing error
+        if self.had_error:
+            return
 
         self.interpreter.interpret(statements)
 

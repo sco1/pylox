@@ -12,15 +12,14 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["Error at ';': Expect property name after '.'"]
+EXPECTED_STDOUTS = ["2:4: LoxParseError: Expected ';' after value."]
 
 
-@pytest.mark.xfail(reason="Not implemented")
 def test_trailing_dot(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)
 
-    assert not interpreter.had_error
+    assert interpreter.had_error
     assert not interpreter.had_runtime_error
 
     all_out = capsys.readouterr().out.splitlines()

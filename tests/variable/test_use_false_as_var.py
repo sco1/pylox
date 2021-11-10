@@ -12,16 +12,15 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["Error at 'false': Expect variable name"]
+EXPECTED_STDOUTS = ["2:5: LoxParseError: Expected variable name."]
 
 
-@pytest.mark.xfail(reason="Not implemented")
 def test_use_false_as_var(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)
 
-    assert not interpreter.had_error
-    assert interpreter.had_runtime_error
+    assert interpreter.had_error
+    assert not interpreter.had_runtime_error
 
     all_out = capsys.readouterr().out.splitlines()
     assert all_out == EXPECTED_STDOUTS

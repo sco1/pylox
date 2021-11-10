@@ -12,15 +12,14 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["Error at '.': Expect expression."]
+EXPECTED_STDOUTS = ["2:1: LoxParseError: Expected expression."]
 
 
-@pytest.mark.xfail(reason="Not implemented")
 def test_leading_dot(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)
 
-    assert not interpreter.had_error
+    assert interpreter.had_error
     assert not interpreter.had_runtime_error
 
     all_out = capsys.readouterr().out.splitlines()

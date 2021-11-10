@@ -12,10 +12,9 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["Error at end: Expect property name after '.'"]
+EXPECTED_STDOUTS = ["2:4: LoxParseError: Expected ';' after value."]
 
 
-@pytest.mark.xfail(reason="Not implemented")
 def test_decimal_point_at_eof(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)
