@@ -42,12 +42,17 @@ def _lox_eq(left: t.Any, right: t.Any) -> bool:
     Special case equality since Lox diverges from Python's behavior.
 
     Two basic assumptions are enforced:
-        * `None` and `False` are falsy, everything else is truthy
+        * `None` (`"nil"`) and `False` are falsy, everything else is truthy
         * Comparison between unlike types is always `False`
+        * `None` (`"nil"`) is not equal to anything
     """
     # Short circuit on unlike types
     # Since we only have a few data types, a straight type comparison should be fine
     if type(left) is not type(right):
+        return False
+
+    # None short-circuit; if we're here they're the same type, so we only need to check one
+    if left is None:
         return False
 
     return (left == right)
@@ -177,7 +182,10 @@ class Interpreter:
                 )
             case TokenType.SLASH:
                 self._check_float_operands(expr.token_operator, left, right)
-                return float(left) / float(right)
+                try:
+                    return float(left) / float(right)
+                except ZeroDivisionError:
+                    return None
             case TokenType.STAR:
                 self._check_float_operands(expr.token_operator, left, right)
                 return float(left) * float(right)
