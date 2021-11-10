@@ -38,6 +38,16 @@ class Binary(Expr):
 
 
 @attr.s(slots=True)
+class Call(Expr):
+    callee: Expr = attr.ib()
+    closing_paren: Token = attr.ib()
+    arguments: list[Expr] = attr.ib()
+
+    def accept(self, visitor: VisitorProtocol) -> t.Any:
+        return visitor.visit_Call(self)
+
+
+@attr.s(slots=True)
 class Grouping(Expr):
     expr_expression: Expr = attr.ib()
 
@@ -102,6 +112,16 @@ class Expression(Stmt):
 
     def accept(self, visitor: VisitorProtocol) -> t.Any:
         return visitor.visit_Expression(self)
+
+
+@attr.s(slots=True)
+class Function(Stmt):
+    name: Token = attr.ib()
+    params: list[Token] = attr.ib()
+    body: list[Stmt] = attr.ib()
+
+    def accept(self, visitor: VisitorProtocol) -> t.Any:
+        return visitor.visit_Function(self)
 
 
 @attr.s(slots=True)

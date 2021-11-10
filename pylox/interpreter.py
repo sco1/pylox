@@ -3,6 +3,8 @@ import typing as t
 from rich import print
 
 from pylox import grammar
+from pylox.builtins import load_builtins
+from pylox.callable import LoxCallable, LoxFunction
 from pylox.environment import Environment
 from pylox.error import LoxRuntimeError
 from pylox.protocols import InterpreterProtocol
@@ -63,7 +65,10 @@ class Interpreter:
 
     def __init__(self, interp: InterpreterProtocol) -> None:
         self._interp = interp  # Terrible name but we're in interpreter.py's Interpreter class v0v
-        self._environment = Environment()
+
+        # Environment changes as we change scopes, so we want to keep globals separate
+        self.globals = load_builtins(Environment())
+        self._environment = self.globals
 
     def interpret(self, statements: list[t.Union[grammar.Expr, grammar.Stmt]]) -> list[t.Any]:
         try:
@@ -102,6 +107,10 @@ class Interpreter:
     def visit_Expression(self, stmt: grammar.Expression) -> None:
         self._evaluate(stmt.expr_expression)
 
+    def visit_Function(self, stmt: grammar.Function) -> None:
+        function = LoxFunction(stmt)
+        self._environment.define(stmt.name, function)
+
     def visit_If(self, stmt: grammar.If) -> None:
         if is_truthy(self._evaluate(stmt.condition)):
             self._evaluate(stmt.then_branch)
@@ -115,7 +124,7 @@ class Interpreter:
         else:
             value = None
 
-        self._environment.define(stmt.name.lexeme, value)
+        self._environment.define(stmt.name, value)
 
     def visit_Print(self, stmt: grammar.Print) -> None:
         value = self._evaluate(stmt.expr_expression)
@@ -215,3 +224,18 @@ class Interpreter:
                 return not _lox_eq(left, right)
             case TokenType.EQUAL_EQUAL:
                 return _lox_eq(left, right)
+
+    def visit_Call(self, expr: grammar.Call) -> None:
+        function = self._evaluate(expr.callee)
+        arguments = [self._evaluate(argument) for argument in expr.arguments]
+
+        if not isinstance(function, LoxCallable):
+            raise LoxRuntimeError(expr.closing_paren, "Can only call functions and classes.")
+
+        if len(arguments) != function.arity:
+            raise LoxRuntimeError(
+                expr.closing_paren,
+                f"Expected {function.arity} arguments but got {len(arguments)}."
+            )
+
+        return function.call(self, arguments)

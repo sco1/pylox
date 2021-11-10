@@ -5,6 +5,8 @@ from pylox.error import LoxParseError
 from pylox.protocols import InterpreterProtocol
 from pylox.tokens import Token, TokenType
 
+MAX_ARGS = 255
+
 
 class ParseException(BaseException):  # noqa: D101
     ...
@@ -119,9 +121,11 @@ class Parser:
         """
         Parse the declaration grammar.
 
-        `declaration: varDecl | statement`
+        `declaration: funDecl | varDecl | statement`
         """
         try:
+            if self._match(TokenType.FUN):
+                return self._function("function")
             if self._match(TokenType.VAR):
                 return self._variable_declaration()
 
@@ -129,6 +133,34 @@ class Parser:
         except ParseException:
             self._synchronize()
             return
+
+    def _function(self, kind: str) -> t.Any:
+        """
+        Parse the function declaration grammar.
+
+        Use `kind` to specify the function type for more specific error messages.
+
+        `function: IDENTIFIER "(" parameters? ")" block`
+        """
+        name = self._consume(TokenType.IDENTIFIER, f"Expected {kind} name.")
+        self._consume(TokenType.LEFT_PAREN, f"Expected '(' after {kind} name.")
+
+        parameters = []
+        if not self._check(TokenType.RIGHT_PAREN):
+            # If we're in here we have at least one argument
+            parameters.append(self._consume(TokenType.IDENTIFIER, "Expected parameter name."))
+            while self._match(TokenType.COMMA):
+                if len(parameters) >= MAX_ARGS:
+                    self._report_error(
+                        LoxParseError(self._peek(), f"Cannot have more than {MAX_ARGS} arguments.")
+                    )
+                parameters.append(self._consume(TokenType.IDENTIFIER, "Expected parameter name."))
+
+        self._consume(TokenType.RIGHT_PAREN, "Expected ')' after parameters.")
+        self._consume(TokenType.LEFT_BRACE, f"Expected '{{' before {kind} body.")
+        body = self._block()
+
+        return grammar.Function(name, parameters, body)
 
     def _variable_declaration(self) -> t.Any:
         """
@@ -416,7 +448,7 @@ class Parser:
         """
         Parse the unary grammar.
 
-        `unary: ( "!" | "-" ) unary | primary`
+        `unary: ( "!" | "-" ) unary | call`
         """
         if self._match(TokenType.BANG, TokenType.MINUS):
             operator = self._previous()
@@ -424,7 +456,40 @@ class Parser:
 
             return grammar.Unary(operator, right)
 
-        return self._primary()
+        return self._call()
+
+    def _finish_call(self, callee: grammar.Expr) -> grammar.Call:
+        """Helper function to parse the input arguments & generate the `Call` expression."""
+        arguments = []
+        if not self._check(TokenType.RIGHT_PAREN):
+            # If we're in here we have at least one argument
+            arguments.append(self._expression())
+            while self._match(TokenType.COMMA):
+                if len(arguments) >= MAX_ARGS:
+                    self._report_error(
+                        LoxParseError(self._peek(), f"Cannot have more than {MAX_ARGS} arguments.")
+                    )
+                arguments.append(self._expression())
+
+        closing_paren = self._consume(TokenType.RIGHT_PAREN, "Expected ')' after arguments.")
+        return grammar.Call(callee, closing_paren, arguments)
+
+    def _call(self) -> grammar.Expr:
+        """
+        Parse the call grammar.
+
+        `call: primary ( "(" arguments? ")" )*`
+        """
+        expr = self._primary()
+
+        while True:
+            if self._match(TokenType.LEFT_PAREN):
+                # Once we get to the closing parentheses, defer to a helper to parse the arguments
+                expr = self._finish_call(expr)
+            else:
+                break
+
+        return expr
 
     def _primary(self) -> grammar.Expr:
         """

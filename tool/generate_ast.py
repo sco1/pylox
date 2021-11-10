@@ -28,6 +28,7 @@ SUBCLASS_T = dict[str, dict[str, str]]
 EXPR_STRUCT = {
     "Assign": {"name": "Token", "value": "Expr"},
     "Binary": {"expr_left": "Expr", "token_operator": "Token", "expr_right": "Expr"},
+    "Call": {"callee": "Expr", "closing_paren": "Token", "arguments": "list[Expr]"},
     "Grouping": {"expr_expression": "Expr"},
     "Literal": {"object_value": "LITERAL_T"},
     "Logical": {"expr_left": "Expr", "token_operator": "Token", "expr_right": "Expr"},
@@ -38,6 +39,7 @@ EXPR_STRUCT = {
 STMT_STRUCT = {
     "Block": {"statements": "list[Stmt]"},
     "Expression": {"expr_expression": "Expr"},
+    "Function": {"name": "Token", "params": "list[Token]", "body": "list[Stmt]"},
     "If": {"condition": "Expr", "then_branch": "Stmt", "else_branch": "t.Optional[Stmt]"},
     "Var": {"name": "Token", "initializer": "t.Optional[Expr]"},
     "Print": {"expr_expression": "Expr"},

@@ -1,10 +1,15 @@
 # Grammar Specification
 ```
 program: declaration* EOF
+
 declaration:
+    | funDecl
     | varDecl
     | statement
+
+funDecl: "fun" function
 varDecl: "var" IDENTIFIER ( "=" expression )? ";"
+
 statement:
     | exprStmt
     | forStmt
@@ -12,16 +17,20 @@ statement:
     | printStmt
     | whileStmt
     | block
+
 exprStmt: expression ";"
 forStmt: "for" "(" ( varDecl | exprStamt | ";" ) expression? ";" expression? ")" statement
 ifStmt: "if" "(" expression ")" statement ( "else" statement )?
 printStmt: "print" expression ";"
 whileStmt: "while" "(" expression ")" statement
 block: "{" declaration* "}"
+
 expression: assignment
+
 assignment:
     | IDENTIFIER = assignment
     | logic_or
+
 logic_or: logic_and ( "or" logic_and )*
 logic_and: equality ( "and" equality )*
 equality: comparison ( ( "!=" | "==" ) comparison )*
@@ -29,9 +38,11 @@ comparison: term ( ( ">" | ">=" | "<" | "<=" ) term )*
 term: factor ( ( "-" | "+" ) factor )*
 factor: power ( ( "/" | "*" | "%") power )*
 power: unary ( ( "^" ) unary)*
+
 unary:
     | ( "!" | "-" ) unary
-    | primary
+    | call
+call: primary ( "(" arguments? ")" )*
 primary:
     | NUMBER
     | STRING
@@ -40,6 +51,10 @@ primary:
     | "nil"
     | "(" expression ")"
     | IDENTIFIER
+
+function: IDENTIFIER "(" parameters? ")" block
+parameters: IDENTIFIER ( "," IDENTIFIER )*
+arguments: expression ( "," expression )*
 ```
 
 ## Notes
