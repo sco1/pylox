@@ -22,6 +22,7 @@ exclude=
     venv,.venv,
 per-file-ignores =
     pylox/ast_printer.py:D102,
+    pylox/builtins.py:D101,
     pylox/error.py:D101,
     pylox/grammar.py:D101 D102,
     pylox/interpreter.py:D102,

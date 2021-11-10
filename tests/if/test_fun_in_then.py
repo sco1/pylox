@@ -12,15 +12,14 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["[line 2] Error at 'fun': Expect expression."]
+EXPECTED_STDOUTS = ["2:11: LoxParseError: Expected expression."]
 
 
-@pytest.mark.xfail(reason="Functions not implemented")
 def test_fun_in_then(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)
 
-    assert not interpreter.had_error
+    assert interpreter.had_error
     assert not interpreter.had_runtime_error
 
     all_out = capsys.readouterr().out.splitlines()

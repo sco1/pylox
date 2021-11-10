@@ -17,13 +17,13 @@ TEST_SRC = dedent(
 EXPECTED_STDOUTS = ["Error at 'arg': Already a variable with this name in this scope."]
 
 
-@pytest.mark.xfail(reason="Functions not implemented")
+@pytest.mark.xfail(reason="Resolver not implemented")
 def test_duplicate_parameter(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)
 
-    assert not interpreter.had_error
-    assert interpreter.had_runtime_error
+    assert interpreter.had_error
+    assert not interpreter.had_runtime_error
 
     all_out = capsys.readouterr().out.splitlines()
     assert all_out == EXPECTED_STDOUTS

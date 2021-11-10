@@ -20,10 +20,9 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["outer", "outer", "outer"]
+EXPECTED_STDOUTS = ["outer", "outer"]
 
 
-@pytest.mark.xfail(reason="Functions not implemented")
 def test_early_bound(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

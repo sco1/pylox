@@ -32,7 +32,7 @@ TEST_SRC = dedent(
 EXPECTED_STDOUTS = ["1.0", "2.0", "3.0"]
 
 
-@pytest.mark.xfail(reason="Functions not implemented")
+@pytest.mark.xfail(reason="Closures not implemented")
 def test_closure_in_body(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

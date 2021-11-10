@@ -147,12 +147,12 @@ class Parser:
 
         parameters = []
         if not self._check(TokenType.RIGHT_PAREN):
-            # If we're in here we have at least one argument
+            # If we're in here we have at least one parameter
             parameters.append(self._consume(TokenType.IDENTIFIER, "Expected parameter name."))
             while self._match(TokenType.COMMA):
                 if len(parameters) >= MAX_ARGS:
                     self._report_error(
-                        LoxParseError(self._peek(), f"Cannot have more than {MAX_ARGS} arguments.")
+                        LoxParseError(self._peek(), f"Cannot have more than {MAX_ARGS} parameters.")
                     )
                 parameters.append(self._consume(TokenType.IDENTIFIER, "Expected parameter name."))
 

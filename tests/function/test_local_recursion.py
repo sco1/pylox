@@ -4,26 +4,25 @@ import pytest
 
 from pylox.lox import Lox
 
-# Base cases from https://github.com/munificent/craftinginterpreters/blob/master/test/while/return_inside.lox
+# Base cases from https://github.com/munificent/craftinginterpreters/blob/master/test/function/local_recursion.lox
 TEST_SRC = dedent(
     """\
-    fun f() {
-      while (true) {
-        var i = "i";
-        return i;
+    {
+      fun fib(n) {
+        if (n < 2) return n;
+        return fib(n - 1) + fib(n - 2);
       }
-    }
 
-    print f();
-    // expect: i
+      print fib(8); // expect: 21
+    }
     """
 )
 
-EXPECTED_STDOUTS = ["i"]
+EXPECTED_STDOUTS = ["21"]
 
 
 @pytest.mark.xfail(reason="Function returns not implemented")
-def test_return_inside(capsys: pytest.CaptureFixture) -> None:
+def test_local_recursion(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)
 
