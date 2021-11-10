@@ -158,6 +158,9 @@ class Parser:
         if self._match(TokenType.PRINT):
             return self._print_statement()
 
+        if self._match(TokenType.WHILE):
+            return self._while_statement()
+
         if self._match(TokenType.LEFT_BRACE):
             return grammar.Block(self._block())
 
@@ -194,6 +197,19 @@ class Parser:
         self._consume(TokenType.SEMICOLON, "Expected ';' after value.")
 
         return grammar.Print(value)
+
+    def _while_statement(self) -> grammar.While:
+        """
+        Parse the while grammar.
+
+        `whileStmt: "while" "(" expression ")" statement`
+        """
+        self._consume(TokenType.LEFT_PAREN, "Expected '(' after 'while'.")
+        condition = self._expression()
+        self._consume(TokenType.RIGHT_PAREN, "Expected ')' after condition.")
+        body = self._statement()
+
+        return grammar.While(condition, body)
 
     def _expression_statement(self) -> grammar.Expression:
         """

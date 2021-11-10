@@ -129,3 +129,12 @@ class Print(Stmt):
 
     def accept(self, visitor: VisitorProtocol) -> t.Any:
         return visitor.visit_Print(self)
+
+
+@attr.s(slots=True)
+class While(Stmt):
+    condition: Expr = attr.ib()
+    body: Stmt = attr.ib()
+
+    def accept(self, visitor: VisitorProtocol) -> t.Any:
+        return visitor.visit_While(self)

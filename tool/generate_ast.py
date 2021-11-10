@@ -41,6 +41,7 @@ STMT_STRUCT = {
     "If": {"condition": "Expr", "then_branch": "Stmt", "else_branch": "t.Optional[Stmt]"},
     "Var": {"name": "Token", "initializer": "t.Optional[Expr]"},
     "Print": {"expr_expression": "Expr"},
+    "While": {"condition": "Expr", "body": "Stmt"},
 }
 
 INDENT = "    "

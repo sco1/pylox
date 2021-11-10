@@ -121,6 +121,10 @@ class Interpreter:
         value = self._evaluate(stmt.expr_expression)
         print(stringify(value))
 
+    def visit_While(self, stmt: grammar.While) -> None:
+        while is_truthy(self._evaluate(stmt.condition)):
+            self._evaluate(stmt.body)
+
     def visit_Literal(self, expr: grammar.Literal) -> LITERAL_T:
         return expr.object_value
 
