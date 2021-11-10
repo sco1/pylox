@@ -78,8 +78,8 @@ class Interpreter:
 
             # Optionally return to help with testing
             return retvals
-        except LoxRuntimeError:
-            raise NotImplementedError
+        except LoxRuntimeError as err:
+            self._interp.report_runtime_error(err)
 
     def _check_float_operands(self, operator: Token, *operands: t.Any) -> None:
         """Check that the provided operands are all float, generate a runtime error if not."""

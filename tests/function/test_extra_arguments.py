@@ -16,7 +16,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = [...]
+EXPECTED_STDOUTS = ["6:13: LoxRuntimeError: Expected 2 arguments but got 4."]
 
 
 def test_extra_arguments(capsys: pytest.CaptureFixture) -> None:

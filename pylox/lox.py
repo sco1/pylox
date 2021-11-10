@@ -67,6 +67,7 @@ class Lox:
     def report_runtime_error(self, err: LoxRuntimeError) -> None:
         """Report a runtime error to the terminal."""
         print(f"{err.line+1}:{err.col+1}: [bold red]{err}[/bold red]")
+        self.had_error = True
         self.had_runtime_error = True
 
 

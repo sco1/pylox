@@ -13,7 +13,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = [...]
+EXPECTED_STDOUTS = ["3:4: LoxRuntimeError: Expected 2 arguments but got 1."]
 
 
 def test_missing_arguments(capsys: pytest.CaptureFixture) -> None:
