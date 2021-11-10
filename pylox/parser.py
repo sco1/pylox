@@ -150,8 +150,11 @@ class Parser:
         """
         Parse the statement grammar.
 
-        `statement: exprStmt | ifStmt | printStmt | block`
+        `statement: exprStmt | forStmt | ifStmt | printStmt | whileStmt | block`
         """
+        if self._match(TokenType.FOR):
+            return self._for_statement()
+
         if self._match(TokenType.IF):
             return self._if_statement()
 
@@ -165,6 +168,49 @@ class Parser:
             return grammar.Block(self._block())
 
         return self._expression_statement()
+
+    def _for_statement(self) -> grammar.Stmt:
+        """
+        Parse the for grammar.
+
+        `forStmt: "for" "(" ( varDecl | exprStamt | ";" ) expression? ";" expression? ")" statement`
+
+        Rather than define a new grammar construct, the `for` statement is treated as syntatic sugar
+        for `while`, and its body used to generate the equivalent `while` loop.
+        """
+        self._consume(TokenType.LEFT_PAREN, "Expected '(' after 'for'.")
+
+        if self._match(TokenType.SEMICOLON):
+            initializer = None
+        elif self._match(TokenType.VAR):
+            initializer = self._variable_declaration()
+        else:
+            initializer = self._expression_statement()
+
+        condition = None
+        if not self._check(TokenType.SEMICOLON):
+            condition = self._expression()
+        self._consume(TokenType.SEMICOLON, "Expected ';' after loop condition.")
+
+        increment = None
+        if not self._check(TokenType.RIGHT_PAREN):
+            increment = self._expression()
+        self._consume(TokenType.RIGHT_PAREN, "Expected ')' after for clauses.")
+
+        # Build the corresponding while loop block
+        body = self._statement()
+        if increment is not None:
+            body = grammar.Block([body, grammar.Expression(increment)])
+
+        # Treat null condition as infinite loop (i.e. "while true")
+        if condition is None:
+            condition = grammar.Literal(True)
+        body = grammar.While(condition, body)
+
+        if initializer is not None:
+            body = grammar.Block([initializer, body])
+
+        return body
 
     def _if_statement(self) -> grammar.If:
         """

@@ -34,7 +34,6 @@ TEST_SRC = dedent(
 EXPECTED_STDOUTS = ["1.0", "2.0", "3.0", "0.0", "1.0", "2.0"]
 
 
-@pytest.mark.xfail(reason="For loops not implemented")
 def test_syntax(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

@@ -20,7 +20,7 @@ TEST_SRC = dedent(
 EXPECTED_STDOUTS = ["Error at '=': Invalid assignment target."]
 
 
-@pytest.mark.xfail(reason="Error handling needs updating.")
+@pytest.mark.xfail(reason="Classes not implemented.")
 def test_to_this(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)
