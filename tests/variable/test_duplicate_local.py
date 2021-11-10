@@ -14,16 +14,9 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["Error at 'a': Already a variable with this name in this scope."]
 
-
-@pytest.mark.xfail(reason="Not implemented")
-def test_duplicate_local(capsys: pytest.CaptureFixture) -> None:
+def test_duplicate_local() -> None:
     interpreter = Lox()
-    interpreter.run(TEST_SRC)
 
-    assert not interpreter.had_error
-    assert interpreter.had_runtime_error
-
-    all_out = capsys.readouterr().out.splitlines()
-    assert all_out == EXPECTED_STDOUTS
+    with pytest.raises(RuntimeError):
+        interpreter.run(TEST_SRC)

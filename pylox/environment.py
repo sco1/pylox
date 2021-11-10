@@ -15,7 +15,15 @@ class Environment:
     values: dict[str, t.Any] = attr.ib(factory=dict)
 
     def define(self, name: str, value: t.Any) -> None:
-        """Define a variable for the provided token."""
+        """
+        Define a variable for the provided token.
+
+        Raises if we are not in the global scope and a variable of the same name already exists in
+        the current scope.
+        """
+        if self.enclosing and (name in self.values):
+            raise RuntimeError(f"Cannot redefine '{name}' in a non-global scope.")
+
         self.values[name] = value
 
     def assign(self, name: Token, value: t.Any) -> None:
@@ -31,7 +39,7 @@ class Environment:
                 self.enclosing.assign(name, value)
                 return
 
-            raise RuntimeError(f"Undefined variable '{name.lexeme}''.")
+            raise RuntimeError(f"Undefined variable '{name.lexeme}'.")
 
     def get(self, name: Token) -> t.Any:
         """
@@ -46,4 +54,4 @@ class Environment:
             if self.enclosing is not None:
                 return self.enclosing.get(name)
             else:
-                raise RuntimeError(f"Undefined variable '{name.lexeme}''.")
+                raise RuntimeError(f"Undefined variable '{name.lexeme}'.")
