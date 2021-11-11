@@ -19,7 +19,6 @@ TEST_SRC = dedent(
 EXPECTED_STDOUTS = ["21.0"]
 
 
-@pytest.mark.xfail(reason="Function returns not implemented")
 def test_recursion(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 import attr
 
 from pylox import grammar
+from pylox.error import LoxReturnError
 from pylox.protocols import InterpreterProtocol
 
 
@@ -24,14 +25,17 @@ class LoxFunction(LoxCallable):
 
     declaration: grammar.Function = attr.ib()
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> None:
+    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> t.Any:
         """Call the current function instance using the provided arguments."""
         environment = interpreter.globals
 
         for param, val in zip(self.declaration.params, arguments):
             environment.define(param, val)
 
-        interpreter._execute_block(self.declaration.body, environment)
+        try:
+            interpreter._execute_block(self.declaration.body, environment)
+        except LoxReturnError as func_return:
+            return func_return.value
 
     @property
     def arity(self) -> int:  # noqa: D102

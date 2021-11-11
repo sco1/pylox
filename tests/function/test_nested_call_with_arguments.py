@@ -26,7 +26,6 @@ TEST_SRC = dedent(
 EXPECTED_STDOUTS = ["hello world"]
 
 
-@pytest.mark.xfail(reason="Function returns not implemented")
 def test_nested_call_with_arguments(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

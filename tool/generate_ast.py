@@ -42,6 +42,7 @@ STMT_STRUCT = {
     "Function": {"name": "Token", "params": "list[Token]", "body": "list[Stmt]"},
     "If": {"condition": "Expr", "then_branch": "Stmt", "else_branch": "t.Optional[Stmt]"},
     "Var": {"name": "Token", "initializer": "t.Optional[Expr]"},
+    "Return": {"keyword": "Token", "value": "Expr"},
     "Print": {"expr_expression": "Expr"},
     "While": {"condition": "Expr", "body": "Stmt"},
 }

@@ -144,6 +144,15 @@ class Var(Stmt):
 
 
 @attr.s(slots=True)
+class Return(Stmt):
+    keyword: Token = attr.ib()
+    value: Expr = attr.ib()
+
+    def accept(self, visitor: VisitorProtocol) -> t.Any:
+        return visitor.visit_Return(self)
+
+
+@attr.s(slots=True)
 class Print(Stmt):
     expr_expression: Expr = attr.ib()
 

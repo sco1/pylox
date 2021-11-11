@@ -25,7 +25,6 @@ TEST_SRC = dedent(
 EXPECTED_STDOUTS = ["True", "True"]
 
 
-@pytest.mark.xfail(reason="Function returns not implemented")
 def test_mutual_recursion(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

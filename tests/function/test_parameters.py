@@ -39,7 +39,6 @@ TEST_SRC = dedent(
 EXPECTED_STDOUTS = ["0.0", "1.0", "3.0", "6.0", "10.0", "15.0", "21.0", "28.0", "36.0"]
 
 
-@pytest.mark.xfail(reason="Function returns not implemented")
 def test_parameters(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

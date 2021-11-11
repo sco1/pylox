@@ -23,10 +23,9 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = [...]
+EXPECTED_STDOUTS = ["4:12: LoxRuntimeError: Undefined variable 'isOdd'."]
 
 
-@pytest.mark.xfail(reason="Function returns not implemented")
 def test_local_mutual_recursion(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

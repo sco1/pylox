@@ -20,7 +20,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = [...]
+EXPECTED_STDOUTS = ["i"]
 
 
 @pytest.mark.xfail(reason="Function returns not implemented")

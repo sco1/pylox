@@ -15,12 +15,14 @@ statement:
     | forStmt
     | ifStmt
     | printStmt
+    | returnStmt
     | whileStmt
     | block
 
 exprStmt: expression ";"
 forStmt: "for" "(" ( varDecl | exprStamt | ";" ) expression? ";" expression? ")" statement
 ifStmt: "if" "(" expression ")" statement ( "else" statement )?
+returnStmt: "return" expression? ";"
 printStmt: "print" expression ";"
 whileStmt: "while" "(" expression ")" statement
 block: "{" declaration* "}"

@@ -6,7 +6,7 @@ from pylox import grammar
 from pylox.builtins import load_builtins
 from pylox.callable import LoxCallable, LoxFunction
 from pylox.environment import Environment
-from pylox.error import LoxRuntimeError
+from pylox.error import LoxReturnError, LoxRuntimeError
 from pylox.protocols import InterpreterProtocol
 from pylox.tokens import LITERAL_T, Token, TokenType
 
@@ -129,6 +129,13 @@ class Interpreter:
     def visit_Print(self, stmt: grammar.Print) -> None:
         value = self._evaluate(stmt.expr_expression)
         print(stringify(value))
+
+    def visit_Return(self, stmt: grammar.Return) -> None:
+        value = None
+        if stmt.value is not None:
+            value = self._evaluate(stmt.value)
+
+        raise LoxReturnError(value)
 
     def visit_While(self, stmt: grammar.While) -> None:
         while is_truthy(self._evaluate(stmt.condition)):

@@ -182,7 +182,7 @@ class Parser:
         """
         Parse the statement grammar.
 
-        `statement: exprStmt | forStmt | ifStmt | printStmt | whileStmt | block`
+        `statement: exprStmt | forStmt | ifStmt | printStmt | returnStmt | whileStmt | block`
         """
         if self._match(TokenType.FOR):
             return self._for_statement()
@@ -192,6 +192,9 @@ class Parser:
 
         if self._match(TokenType.PRINT):
             return self._print_statement()
+
+        if self._match(TokenType.RETURN):
+            return self._return_statement()
 
         if self._match(TokenType.WHILE):
             return self._while_statement()
@@ -275,6 +278,20 @@ class Parser:
         self._consume(TokenType.SEMICOLON, "Expected ';' after value.")
 
         return grammar.Print(value)
+
+    def _return_statement(self) -> grammar.Return:
+        """
+        Parse the return grammar.
+
+        `"return" expression? ";"`
+        """
+        keyword = self._previous()
+        value = None
+        if not self._check(TokenType.SEMICOLON):
+            value = self._expression()
+
+        self._consume(TokenType.SEMICOLON, "Expected ';' after return value.")
+        return grammar.Return(keyword, value)
 
     def _while_statement(self) -> grammar.While:
         """

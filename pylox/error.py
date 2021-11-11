@@ -1,3 +1,5 @@
+import typing as t
+
 import attr
 
 from pylox.tokens import Token
@@ -31,3 +33,8 @@ class LoxRuntimeError(LoxException):
         self.line = token.lineno
         self.col = token.col_offset
         self.message = message
+
+
+class LoxReturnError(LoxRuntimeError):
+    def __init__(self, value: t.Any):
+        self.value = value
