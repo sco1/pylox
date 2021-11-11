@@ -23,7 +23,6 @@ TEST_SRC = dedent(
 EXPECTED_STDOUTS = ["i"]
 
 
-@pytest.mark.xfail(reason="Function returns not implemented")
 def test_return_closure(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

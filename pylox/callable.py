@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 import attr
 
 from pylox import grammar
+from pylox.environment import Environment
 from pylox.error import LoxReturnError
 from pylox.protocols import InterpreterProtocol
 
@@ -24,10 +25,11 @@ class LoxFunction(LoxCallable):
     """Lox function implementation."""
 
     declaration: grammar.Function = attr.ib()
+    closure: Environment = attr.ib()
 
     def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> t.Any:
         """Call the current function instance using the provided arguments."""
-        environment = interpreter.globals
+        environment = Environment(self.closure)
 
         for param, val in zip(self.declaration.params, arguments):
             environment.define(param, val)

@@ -108,7 +108,7 @@ class Interpreter:
         self._evaluate(stmt.expr_expression)
 
     def visit_Function(self, stmt: grammar.Function) -> None:
-        function = LoxFunction(stmt)
+        function = LoxFunction(stmt, self._environment)
         self._environment.define(stmt.name, function)
 
     def visit_If(self, stmt: grammar.If) -> None:
