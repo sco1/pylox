@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 
 import attr
 
-from pylox.protocols import VisitorProtocol
+from pylox.protocols.visitor import VisitorProtocol
 from pylox.tokens import LITERAL_T, Token
 
 

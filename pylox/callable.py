@@ -6,7 +6,7 @@ import attr
 from pylox import grammar
 from pylox.environment import Environment
 from pylox.error import LoxReturnError
-from pylox.protocols import InterpreterProtocol
+from pylox.protocols.interpreter import InterpreterProtocol
 
 
 class LoxCallable(ABC):  # noqa: D101

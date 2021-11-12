@@ -1,5 +1,5 @@
 from pylox.error import LoxSyntaxError
-from pylox.protocols import InterpreterProtocol
+from pylox.protocols.interpreter import InterpreterProtocol
 from pylox.tokens import LITERAL_T, Token, TokenType
 
 RESERVED = {

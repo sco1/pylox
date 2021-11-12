@@ -3,7 +3,7 @@ import typing as t
 
 from pylox.callable import LoxCallable
 from pylox.environment import Environment
-from pylox.protocols import InterpreterProtocol
+from pylox.protocols.interpreter import InterpreterProtocol
 from pylox.tokens import Token, TokenType
 
 

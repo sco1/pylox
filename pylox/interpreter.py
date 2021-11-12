@@ -7,7 +7,7 @@ from pylox.builtins import load_builtins
 from pylox.callable import LoxCallable, LoxFunction
 from pylox.environment import Environment
 from pylox.error import LoxReturnError, LoxRuntimeError
-from pylox.protocols import InterpreterProtocol
+from pylox.protocols.interpreter import InterpreterProtocol
 from pylox.tokens import LITERAL_T, Token, TokenType
 
 
