@@ -39,7 +39,9 @@ class TokenType(Enum):  # noqa: D101
 
     # Reserved Keywords
     AND = auto()
+    BREAK = auto()
     CLASS = auto()
+    CONTINUE = auto()
     ELSE = auto()
     FALSE = auto()
     FOR = auto()
