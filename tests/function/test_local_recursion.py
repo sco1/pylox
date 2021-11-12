@@ -18,10 +18,9 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["21"]
+EXPECTED_STDOUTS = ["21.0"]
 
 
-@pytest.mark.xfail(reason="Local functions not implemented")
 def test_local_recursion(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

@@ -28,6 +28,13 @@ class LoxParseError(LoxException):
         self.message = message
 
 
+class LoxResolverError(LoxException):
+    def __init__(self, token: Token, message: str) -> None:
+        self.line = token.lineno
+        self.col = token.col_offset
+        self.message = message
+
+
 class LoxRuntimeError(LoxException):
     def __init__(self, token: Token, message: str) -> None:
         self.line = token.lineno
@@ -36,5 +43,5 @@ class LoxRuntimeError(LoxException):
 
 
 class LoxReturnError(LoxRuntimeError):
-    def __init__(self, value: t.Any):
+    def __init__(self, value: t.Any) -> None:
         self.value = value

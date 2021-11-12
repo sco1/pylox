@@ -65,6 +65,7 @@ class Interpreter:
         # Environment changes as we change scopes, so we want to keep globals separate
         self.globals = load_builtins(Environment())
         self._environment = self.globals
+        self._locals = {}
 
     def interpret(self, statements: list[t.Union[grammar.Expr, grammar.Stmt]]) -> list[t.Any]:
         try:
@@ -76,6 +77,9 @@ class Interpreter:
             return retvals
         except LoxRuntimeError as err:
             self._interp.report_runtime_error(err)
+
+    def resolve(self, expr: grammar.Expr, depth: int) -> None:
+        self._locals[expr] = depth
 
     def _check_float_operands(self, operator: Token, *operands: t.Any) -> None:
         """Check that the provided operands are all float, generate a runtime error if not."""
@@ -95,6 +99,13 @@ class Interpreter:
                 self._evaluate(statement)
         finally:
             self._environment = env_cache
+
+    def _lookup_var(self, name: Token, expr: grammar.Expr) -> t.Any:
+        distance = self._locals.get(expr, None)
+        if distance is not None:
+            return self._environment.get_at(distance, name)
+        else:
+            return self.globals.get(name)
 
     def visit_Block(self, stmt: grammar.Block) -> None:
         # Environment scoping will be properly walked by the called method
@@ -165,11 +176,16 @@ class Interpreter:
                 return not is_truthy(right)
 
     def visit_Variable(self, expr: grammar.Variable) -> t.Any:
-        return self._environment.get(expr.name)
+        return self._lookup_var(expr.name, expr)
 
     def visit_Assign(self, expr: grammar.Assign) -> t.Any:
         value = self._evaluate(expr.value)
-        self._environment.assign(expr.name, value)
+
+        distance = self._locals.get(expr, None)
+        if distance is not None:
+            self._environment.assign_at(distance, expr.name, value)
+        else:
+            self.globals.assign(expr.name, value)
 
         return value
 

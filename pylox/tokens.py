@@ -60,7 +60,7 @@ class TokenType(Enum):  # noqa: D101
     EOF = auto()
 
 
-@attr.s(slots=True)
+@attr.s(slots=True, frozen=True)
 class Token:  # noqa: D101
     token_type: TokenType = attr.ib()
     lexeme: str = attr.ib()

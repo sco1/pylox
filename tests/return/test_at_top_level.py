@@ -11,10 +11,9 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = [...]
+EXPECTED_STDOUTS = ["1:1: LoxResolverError: Can't return from top-level code."]
 
 
-@pytest.mark.xfail(reason="Not implemented")
 def test_at_top_level(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

@@ -9,6 +9,7 @@ from rich.prompt import Prompt
 from pylox.error import LoxException, LoxRuntimeError
 from pylox.interpreter import Interpreter
 from pylox.parser import Parser
+from pylox.resolver import Resolver
 from pylox.scanner import Scanner
 
 pylox_cli = typer.Typer()
@@ -53,7 +54,14 @@ class Lox:
         parser = Parser(tokens, self)
         statements = parser.parse()
 
-        # Don't run the interpreter if we've had a scanning or parsing error
+        # Don't run the resolver if we've had a scanning or parsing error
+        if self.had_error:
+            return
+
+        resolver = Resolver(self.interpreter)
+        resolver.resolve(statements)
+
+        # Don't run the resolver if we've had a scanning, parsing, or resolving error
         if self.had_error:
             return
 

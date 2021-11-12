@@ -18,3 +18,6 @@ class InterpreterProtocol(t.Protocol):  # pragma: no cover
 
     def _execute_block(self, statements: list[grammar.Stmt], environment: Environment) -> None:
         ...
+
+    def resolve(self, expr: grammar.Expr, depth: int) -> None:
+        ...

@@ -13,10 +13,9 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["Error at 'a': Already a variable with this name in this scope."]
+EXPECTED_STDOUTS = ["2:7: LoxResolverError: Variable a already declared in this scope."]
 
 
-@pytest.mark.xfail(reason="Resolver not implemented")
 def test_collide_with_parameter(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

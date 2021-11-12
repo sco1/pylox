@@ -70,6 +70,7 @@ def _gen_classdef(
     inherits_from: t.Optional[str] = None,
     class_attributes: t.Optional[dict[str, str]] = None,
     slotted: bool = True,
+    frozen: bool = True,
 ) -> str:
     """
     Generate a class definition from the provided components.
@@ -90,7 +91,7 @@ def _gen_classdef(
         # fmt: off
         components.append(
             (
-                f"@attr.s(slots={slotted})\n"
+                f"@attr.s(slots={slotted}, frozen={frozen})\n"
                 f"class {class_name}({inherits_from}):"
             )
         )

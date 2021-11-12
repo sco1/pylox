@@ -14,16 +14,15 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["Error at 'a': Can't read local variable in its own initializer."]
+EXPECTED_STDOUTS = ["3:11: LoxResolverError: Can't read local variable in its own initializer."]
 
 
-@pytest.mark.xfail(reason="Not implemented")
 def test_use_local_in_initializer(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)
 
-    assert not interpreter.had_error
-    assert interpreter.had_runtime_error
+    assert interpreter.had_error
+    assert not interpreter.had_runtime_error
 
     all_out = capsys.readouterr().out.splitlines()
     assert all_out == EXPECTED_STDOUTS

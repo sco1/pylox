@@ -15,6 +15,19 @@ class Environment:
     enclosing: t.Optional[Environment] = attr.ib(default=None)
     values: dict[str, t.Any] = attr.ib(factory=dict)
 
+    def _ancestor(self, distance: int) -> Environment:
+        """
+        Walk the specified distance up the enclosing scope(s) and return the `Environment`.
+
+        This should always be getting called after the resolver is finished, so it's assumed that
+        there is a scope at the specified distance.
+        """
+        env = self
+        for _ in range(distance):
+            env = env.enclosing
+
+        return env
+
     def define(self, name: Token, value: t.Any) -> None:
         """
         Define a variable for the provided token.
@@ -35,12 +48,22 @@ class Environment:
         """
         if name.lexeme in self.values:
             self.values[name.lexeme] = value
-        else:
-            if self.enclosing is not None:
-                self.enclosing.assign(name, value)
-                return
+            return
 
-            raise LoxRuntimeError(name, f"Undefined variable '{name.lexeme}'.")
+        if self.enclosing is not None:
+            self.enclosing.assign(name, value)
+            return
+
+        raise LoxRuntimeError(name, f"Undefined variable '{name.lexeme}'.")
+
+    def assign_at(self, distance: int, name: Token, value: t.Any) -> None:
+        """
+        Update the value for the provided variable token in the scope at the specified distance.
+
+        This should always be getting called after the resolver is finished, so it's assumed that
+        the variable is present in the scope at the specified distance.
+        """
+        self._ancestor(distance).values[name.lexeme] = value
 
     def get(self, name: Token) -> t.Any:
         """
@@ -56,3 +79,12 @@ class Environment:
                 return self.enclosing.get(name)
             else:
                 raise LoxRuntimeError(name, f"Undefined variable '{name.lexeme}'.")
+
+    def get_at(self, distance: int, name: Token) -> t.Any:
+        """
+        Retrieve the value for the provided variable from the scope at the specified distance.
+
+        This should always be getting called after the resolver is finished, so it's assumed that
+        the variable is present in the scope at the specified distance.
+        """
+        return self._ancestor(distance).values[name.lexeme]

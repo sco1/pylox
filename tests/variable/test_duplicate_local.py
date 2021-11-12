@@ -14,7 +14,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["3:7: LoxRuntimeError: Cannot redefine 'a' in a non-global scope."]
+EXPECTED_STDOUTS = ["3:7: LoxResolverError: Variable a already declared in this scope."]
 
 
 def test_duplicate_local(capsys: pytest.CaptureFixture) -> None:
@@ -22,7 +22,7 @@ def test_duplicate_local(capsys: pytest.CaptureFixture) -> None:
     interpreter.run(TEST_SRC)
 
     assert interpreter.had_error
-    assert interpreter.had_runtime_error
+    assert not interpreter.had_runtime_error
 
     all_out = capsys.readouterr().out.splitlines()
     assert all_out == EXPECTED_STDOUTS

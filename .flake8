@@ -28,6 +28,7 @@ per-file-ignores =
     pylox/grammar.py:D101 D102,
     pylox/interpreter.py:D102,
     pylox/lox.py:B008,
+    pylox/resolver.py:D102,
     tests/*/test_*.py:D103 E501,
     tool/generate_ast.py:B008,
     tool/generate_tests.py:B008 E501,
