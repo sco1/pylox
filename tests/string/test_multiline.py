@@ -4,17 +4,23 @@ import pytest
 
 from pylox.lox import Lox
 
-# Base cases from https://github.com/munificent/craftinginterpreters/blob/master/test/nil/literal.lox
+# Base cases from https://github.com/munificent/craftinginterpreters/blob/master/test/string/multiline.lox
 TEST_SRC = dedent(
     """\
-    print nil; // expect: nil
+    var a = "1
+    2
+    3";
+    print a;
+    // expect: 1
+    // expect: 2
+    // expect: 3
     """
 )
 
-EXPECTED_STDOUTS = ["nil"]
+EXPECTED_STDOUTS = ["1", "2", "3"]
 
 
-def test_literal(capsys: pytest.CaptureFixture) -> None:
+def test_multiline(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)
 

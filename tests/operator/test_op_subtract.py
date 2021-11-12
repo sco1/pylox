@@ -4,17 +4,18 @@ import pytest
 
 from pylox.lox import Lox
 
-# Base cases from https://github.com/munificent/craftinginterpreters/blob/master/test/nil/literal.lox
+# Base cases from https://github.com/munificent/craftinginterpreters/blob/master/test/operator/subtract.lox
 TEST_SRC = dedent(
     """\
-    print nil; // expect: nil
+    print 4 - 3; // expect: 1
+    print 1.2 - 1.2; // expect: 0
     """
 )
 
-EXPECTED_STDOUTS = ["nil"]
+EXPECTED_STDOUTS = ["1.0", "0.0"]
 
 
-def test_literal(capsys: pytest.CaptureFixture) -> None:
+def test_subtract(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)
 

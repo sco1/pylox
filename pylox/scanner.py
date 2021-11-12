@@ -116,8 +116,10 @@ class Scanner:
             self._advance()
 
         if self._is_eof():
-            # String quotes were never closed, this should be a lox error
-            raise NotImplementedError
+            self._interpreter.report_error(
+                LoxSyntaxError(self._lineno, 0, "Unterminated string.")
+            )
+            return
 
         self._advance()  # Consume the closing quote
         literal = self.src[self._start + 1 : self._current - 1]  # Index away the quotation marks

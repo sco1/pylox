@@ -4,17 +4,19 @@ import pytest
 
 from pylox.lox import Lox
 
-# Base cases from https://github.com/munificent/craftinginterpreters/blob/master/test/nil/literal.lox
+# Base cases from https://github.com/munificent/craftinginterpreters/blob/master/test/operator/negate.lox
 TEST_SRC = dedent(
     """\
-    print nil; // expect: nil
+    print -(3); // expect: -3
+    print --(3); // expect: 3
+    print ---(3); // expect: -3
     """
 )
 
-EXPECTED_STDOUTS = ["nil"]
+EXPECTED_STDOUTS = ["-3.0", "3.0", "-3.0"]
 
 
-def test_literal(capsys: pytest.CaptureFixture) -> None:
+def test_negate(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)
 

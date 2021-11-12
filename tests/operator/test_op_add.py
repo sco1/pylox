@@ -4,17 +4,18 @@ import pytest
 
 from pylox.lox import Lox
 
-# Base cases from https://github.com/munificent/craftinginterpreters/blob/master/test/nil/literal.lox
+# Base cases from https://github.com/munificent/craftinginterpreters/blob/master/test/operator/add.lox
 TEST_SRC = dedent(
     """\
-    print nil; // expect: nil
+    print 123 + 456; // expect: 579
+    print "str" + "ing"; // expect: string
     """
 )
 
-EXPECTED_STDOUTS = ["nil"]
+EXPECTED_STDOUTS = ["579.0", "string"]
 
 
-def test_literal(capsys: pytest.CaptureFixture) -> None:
+def test_add(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)
 

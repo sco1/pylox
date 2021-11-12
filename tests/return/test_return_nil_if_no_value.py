@@ -4,17 +4,22 @@ import pytest
 
 from pylox.lox import Lox
 
-# Base cases from https://github.com/munificent/craftinginterpreters/blob/master/test/nil/literal.lox
+# Base cases from https://github.com/munificent/craftinginterpreters/blob/master/test/return/return_nil_if_no_value.lox
 TEST_SRC = dedent(
     """\
-    print nil; // expect: nil
+    fun f() {
+      return;
+      print "bad";
+    }
+
+    print f(); // expect: nil
     """
 )
 
 EXPECTED_STDOUTS = ["nil"]
 
 
-def test_literal(capsys: pytest.CaptureFixture) -> None:
+def test_return_nil_if_no_value(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)
 

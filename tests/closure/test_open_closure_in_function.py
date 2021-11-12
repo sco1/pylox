@@ -4,17 +4,23 @@ import pytest
 
 from pylox.lox import Lox
 
-# Base cases from https://github.com/munificent/craftinginterpreters/blob/master/test/nil/literal.lox
+# Base cases from https://github.com/munificent/craftinginterpreters/blob/master/test/closure/open_closure_in_function.lox
 TEST_SRC = dedent(
     """\
-    print nil; // expect: nil
+    {
+      var local = "local";
+      fun f() {
+        print local; // expect: local
+      }
+      f();
+    }
     """
 )
 
-EXPECTED_STDOUTS = ["nil"]
+EXPECTED_STDOUTS = ["local"]
 
 
-def test_literal(capsys: pytest.CaptureFixture) -> None:
+def test_open_closure_in_function(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)
 
