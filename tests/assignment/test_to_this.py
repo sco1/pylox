@@ -17,16 +17,15 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["Error at '=': Invalid assignment target."]
+EXPECTED_STDOUTS = ["3:5: LoxParseError: Expected expression."]
 
 
-@pytest.mark.xfail(reason="Classes not implemented.")
 def test_to_this(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)
 
-    assert not interpreter.had_error
-    assert interpreter.had_runtime_error
+    assert interpreter.had_error
+    assert not interpreter.had_runtime_error
 
     all_out = capsys.readouterr().out.splitlines()
     assert all_out == EXPECTED_STDOUTS

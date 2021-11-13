@@ -26,7 +26,6 @@ TEST_SRC = dedent(
 EXPECTED_STDOUTS = ["param"]
 
 
-@pytest.mark.xfail(reason="Classes not implemented")
 def test_close_over_method_parameter(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

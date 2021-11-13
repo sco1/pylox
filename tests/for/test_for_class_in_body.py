@@ -12,15 +12,14 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = [...]
+EXPECTED_STDOUTS = ["2:10: LoxParseError: Expected expression."]
 
 
-@pytest.mark.xfail(reason="Classes not implemented")
 def test_class_in_body(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)
 
-    assert not interpreter.had_error
+    assert interpreter.had_error
     assert not interpreter.had_runtime_error
 
     all_out = capsys.readouterr().out.splitlines()

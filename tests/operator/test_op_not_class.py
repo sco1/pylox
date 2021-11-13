@@ -16,7 +16,6 @@ TEST_SRC = dedent(
 EXPECTED_STDOUTS = ["False", "False"]
 
 
-@pytest.mark.xfail(reason="Classes not implemented")
 def test_not_class(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)
