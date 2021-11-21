@@ -16,6 +16,9 @@ class VisitorProtocol(t.Protocol):
     def visit_Call(self, expr: grammar.Call) -> t.Any:
         ...
 
+    def visit_Get(self, expr: grammar.Get) -> t.Any:
+        ...
+
     def visit_Grouping(self, expr: grammar.Grouping) -> t.Any:
         ...
 
@@ -25,6 +28,9 @@ class VisitorProtocol(t.Protocol):
     def visit_Logical(self, expr: grammar.Logical) -> t.Any:
         ...
 
+    def visit_Set(self, expr: grammar.Set) -> t.Any:
+        ...
+
     def visit_Variable(self, expr: grammar.Variable) -> t.Any:
         ...
 
@@ -32,6 +38,9 @@ class VisitorProtocol(t.Protocol):
         ...
 
     def visit_Block(self, expr: grammar.Block) -> t.Any:
+        ...
+
+    def visit_Class(self, expr: grammar.Class) -> t.Any:
         ...
 
     def visit_Expression(self, expr: grammar.Expression) -> t.Any:

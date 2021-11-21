@@ -4,7 +4,7 @@ from rich import print
 
 from pylox import grammar
 from pylox.builtins import load_builtins
-from pylox.callable import LoxCallable, LoxFunction
+from pylox.callable import LoxCallable, LoxClass, LoxFunction, LoxInstance
 from pylox.environment import Environment
 from pylox.error import LoxReturnError, LoxRuntimeError
 from pylox.protocols.interpreter import InterpreterProtocol
@@ -53,7 +53,7 @@ def _lox_eq(left: t.Any, right: t.Any) -> bool:
     if type(left) is not type(right):
         return False
 
-    return (left == right)
+    return left == right
 
 
 class Interpreter:
@@ -110,6 +110,15 @@ class Interpreter:
     def visit_Block(self, stmt: grammar.Block) -> None:
         # Environment scoping will be properly walked by the called method
         self._execute_block(stmt.statements, Environment(self._environment))
+
+    def visit_Class(self, stmt: grammar.Class) -> None:
+        self._environment.define(stmt.name, None)
+
+        methods = {
+            method.name.lexeme: LoxFunction(method, self._environment) for method in stmt.methods
+        }
+        new_class = LoxClass(stmt.name.lexeme, methods)
+        self._environment.assign(stmt.name, new_class)
 
     def visit_Expression(self, stmt: grammar.Expression) -> None:
         self._evaluate(stmt.expr_expression)
@@ -217,7 +226,7 @@ class Interpreter:
                 try:
                     return float(left) / float(right)
                 except ZeroDivisionError:
-                    return float('nan')
+                    return float("nan")
             case TokenType.STAR:
                 self._check_float_operands(expr.token_operator, left, right)
                 return float(left) * float(right)
@@ -253,8 +262,24 @@ class Interpreter:
 
         if len(arguments) != function.arity:
             raise LoxRuntimeError(
-                expr.closing_paren,
-                f"Expected {function.arity} arguments but got {len(arguments)}."
+                expr.closing_paren, f"Expected {function.arity} arguments but got {len(arguments)}."
             )
 
         return function.call(self, arguments)
+
+    def visit_Get(self, expr: grammar.Get) -> None:
+        object_ = self._evaluate(expr.object_)
+        if isinstance(object_, LoxInstance):
+            return object_.get(expr.name)
+
+        raise LoxRuntimeError(expr.name, "Only instances have properties.")
+
+    def visit_Set(self, expr: grammar.Set) -> t.Any:
+        object_ = self._evaluate(expr.object_)
+        if not isinstance(object_, LoxInstance):
+            raise LoxRuntimeError(expr.name, "Only instances have fields.")
+
+        value = self._evaluate(expr.value)
+        object_.set(expr.name, value)
+
+        return value

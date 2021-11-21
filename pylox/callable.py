@@ -5,25 +5,24 @@ import attr
 
 from pylox import grammar
 from pylox.environment import Environment
-from pylox.error import LoxReturnError
+from pylox.error import LoxReturnError, LoxRuntimeError
 from pylox.protocols.interpreter import InterpreterProtocol
+from pylox.tokens import Token
 
 
-class LoxCallable(ABC):  # noqa: D101
+class LoxCallable(ABC):
     @property
     @abstractmethod
-    def arity(self) -> int:  # noqa: D102
+    def arity(self) -> int:
         return NotImplemented
 
     @abstractmethod
-    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> None:  # noqa: D102
+    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> None:
         return NotImplemented
 
 
 @attr.s
 class LoxFunction(LoxCallable):
-    """Lox function implementation."""
-
     declaration: grammar.Function = attr.ib()
     closure: Environment = attr.ib()
 
@@ -40,8 +39,53 @@ class LoxFunction(LoxCallable):
             return func_return.value
 
     @property
-    def arity(self) -> int:  # noqa: D102
+    def arity(self) -> int:
         return len(self.declaration.params)
 
     def __str__(self) -> str:
         return f"<fn {self.declaration.name.lexeme}>"
+
+
+SelfLoxClass = t.TypeVar("SelfLoxClass", bound="LoxClass")
+
+
+@attr.s
+class LoxClass(LoxCallable):
+    name: str = attr.ib()
+    methods: dict = attr.ib()
+
+    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> SelfLoxClass:
+        instance = LoxInstance(self)
+        return instance
+
+    @property
+    def arity(self) -> int:
+        return 0
+
+    def find_method(self, name: str) -> t.Any:
+        return self.methods.get(name, None)
+
+    def __str__(self) -> str:
+        return f"<cls {self.name}>"
+
+
+@attr.s
+class LoxInstance:
+    instance_of: LoxClass = attr.ib()
+    fields: dict = attr.ib(factory=dict)
+
+    def get(self, name: Token) -> t.Any:
+        if name.lexeme in self.fields:
+            return self.fields[name.lexeme]
+
+        method = self.instance_of.find_method(name.lexeme)
+        if method is not None:
+            return method
+
+        raise LoxRuntimeError(name, f"Undefined property '{name.lexeme}'.")
+
+    def set(self, name: Token, value: t.Any) -> None:
+        self.fields[name] = value
+
+    def __str__(self) -> str:
+        return f"<inst {self.instance_of.name}>"

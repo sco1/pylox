@@ -3,10 +3,12 @@
 program: declaration* EOF
 
 declaration:
+    | classDecl
     | funDecl
     | varDecl
     | statement
 
+classDecl: "class" IDENTIFIER "{" function* "}"
 funDecl: "fun" function
 varDecl: "var" IDENTIFIER ( "=" expression )? ";"
 
@@ -30,7 +32,7 @@ block: "{" declaration* "}"
 expression: assignment
 
 assignment:
-    | IDENTIFIER = assignment
+    | ( call "." )? IDENTIFIER "=" assignment
     | logic_or
 
 logic_or: logic_and ( "or" logic_and )*
@@ -44,7 +46,7 @@ power: unary ( ( "^" ) unary)*
 unary:
     | ( "!" | "-" ) unary
     | call
-call: primary ( "(" arguments? ")" )*
+call: primary ( "(" arguments? ")" | "." IDENTIFIER )*
 primary:
     | NUMBER
     | STRING

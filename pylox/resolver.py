@@ -10,6 +10,7 @@ from pylox.tokens import Token
 class FunctionType(Enum):
     NONE = auto()
     FUNCTION = auto()
+    METHOD = auto()
 
 
 class Resolver:
@@ -94,13 +95,18 @@ class Resolver:
         self._scopes[-1][name.lexeme] = True
 
     def visit_Block(self, stmt: grammar.Block) -> None:
-        """Resolve variables in the provided block statement."""
         self._begin_scope()
         self.resolve(stmt.statements)
         self._end_scope()
 
+    def visit_Class(self, stmt: grammar.Class) -> None:
+        self._declare(stmt.name)
+        self._define(stmt.name)
+
+        for method in stmt.methods:
+            self._resolve_function(method, FunctionType.METHOD)
+
     def visit_Var(self, stmt: grammar.Var) -> None:
-        """Resolve variables in the provided variable statement."""
         self._declare(stmt.name)
         if stmt.initializer is not None:
             self._resolve_one(stmt.initializer)
@@ -166,6 +172,13 @@ class Resolver:
         self._resolve_one(expr.callee)
         for argument in expr.arguments:
             self._resolve_one(argument)
+
+    def visit_Get(self, expr: grammar.Get) -> None:
+        self._resolve_one(expr.object_)
+
+    def visit_Set(self, expr: grammar.Set) -> None:
+        self._resolve_one(expr.object_)
+        self._resolve_one(expr.value)
 
     def visit_Grouping(self, expr: grammar.Grouping) -> None:
         self._resolve_one(expr.expr_expression)

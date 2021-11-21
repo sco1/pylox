@@ -18,7 +18,7 @@ class Expr(ABC):  # pragma: no cover
         return NotImplemented
 
 
-@attr.s(slots=True, frozen=True)
+@attr.s(slots=True, eq=False)
 class Assign(Expr):
     name: Token = attr.ib()
     value: Expr = attr.ib()
@@ -27,7 +27,7 @@ class Assign(Expr):
         return visitor.visit_Assign(self)
 
 
-@attr.s(slots=True, frozen=True)
+@attr.s(slots=True, eq=False)
 class Binary(Expr):
     expr_left: Expr = attr.ib()
     token_operator: Token = attr.ib()
@@ -37,7 +37,7 @@ class Binary(Expr):
         return visitor.visit_Binary(self)
 
 
-@attr.s(slots=True, frozen=True)
+@attr.s(slots=True, eq=False)
 class Call(Expr):
     callee: Expr = attr.ib()
     closing_paren: Token = attr.ib()
@@ -47,7 +47,16 @@ class Call(Expr):
         return visitor.visit_Call(self)
 
 
-@attr.s(slots=True, frozen=True)
+@attr.s(slots=True, eq=False)
+class Get(Expr):
+    object_: Expr = attr.ib()
+    name: Token = attr.ib()
+
+    def accept(self, visitor: VisitorProtocol) -> t.Any:
+        return visitor.visit_Get(self)
+
+
+@attr.s(slots=True, eq=False)
 class Grouping(Expr):
     expr_expression: Expr = attr.ib()
 
@@ -55,7 +64,7 @@ class Grouping(Expr):
         return visitor.visit_Grouping(self)
 
 
-@attr.s(slots=True, frozen=True)
+@attr.s(slots=True, eq=False)
 class Literal(Expr):
     object_value: LITERAL_T = attr.ib()
 
@@ -63,7 +72,7 @@ class Literal(Expr):
         return visitor.visit_Literal(self)
 
 
-@attr.s(slots=True, frozen=True)
+@attr.s(slots=True, eq=False)
 class Logical(Expr):
     expr_left: Expr = attr.ib()
     token_operator: Token = attr.ib()
@@ -73,7 +82,17 @@ class Logical(Expr):
         return visitor.visit_Logical(self)
 
 
-@attr.s(slots=True, frozen=True)
+@attr.s(slots=True, eq=False)
+class Set(Expr):
+    object_: Expr = attr.ib()
+    name: Token = attr.ib()
+    value: Expr = attr.ib()
+
+    def accept(self, visitor: VisitorProtocol) -> t.Any:
+        return visitor.visit_Set(self)
+
+
+@attr.s(slots=True, eq=False)
 class Variable(Expr):
     name: Token = attr.ib()
 
@@ -81,7 +100,7 @@ class Variable(Expr):
         return visitor.visit_Variable(self)
 
 
-@attr.s(slots=True, frozen=True)
+@attr.s(slots=True, eq=False)
 class Unary(Expr):
     token_operator: Token = attr.ib()
     expr_right: Expr = attr.ib()
@@ -98,7 +117,7 @@ class Stmt(ABC):  # pragma: no cover
         return NotImplemented
 
 
-@attr.s(slots=True, frozen=True)
+@attr.s(slots=True, eq=False)
 class Block(Stmt):
     statements: list[Stmt] = attr.ib()
 
@@ -106,7 +125,16 @@ class Block(Stmt):
         return visitor.visit_Block(self)
 
 
-@attr.s(slots=True, frozen=True)
+@attr.s(slots=True, eq=False)
+class Class(Stmt):
+    name: Token = attr.ib()
+    methods: list[Function] = attr.ib()
+
+    def accept(self, visitor: VisitorProtocol) -> t.Any:
+        return visitor.visit_Class(self)
+
+
+@attr.s(slots=True, eq=False)
 class Expression(Stmt):
     expr_expression: Expr = attr.ib()
 
@@ -114,7 +142,7 @@ class Expression(Stmt):
         return visitor.visit_Expression(self)
 
 
-@attr.s(slots=True, frozen=True)
+@attr.s(slots=True, eq=False)
 class Function(Stmt):
     name: Token = attr.ib()
     params: list[Token] = attr.ib()
@@ -124,7 +152,7 @@ class Function(Stmt):
         return visitor.visit_Function(self)
 
 
-@attr.s(slots=True, frozen=True)
+@attr.s(slots=True, eq=False)
 class If(Stmt):
     condition: Expr = attr.ib()
     then_branch: Stmt = attr.ib()
@@ -134,7 +162,7 @@ class If(Stmt):
         return visitor.visit_If(self)
 
 
-@attr.s(slots=True, frozen=True)
+@attr.s(slots=True, eq=False)
 class Var(Stmt):
     name: Token = attr.ib()
     initializer: t.Optional[Expr] = attr.ib()
@@ -143,7 +171,7 @@ class Var(Stmt):
         return visitor.visit_Var(self)
 
 
-@attr.s(slots=True, frozen=True)
+@attr.s(slots=True, eq=False)
 class Return(Stmt):
     keyword: Token = attr.ib()
     value: Expr = attr.ib()
@@ -152,7 +180,7 @@ class Return(Stmt):
         return visitor.visit_Return(self)
 
 
-@attr.s(slots=True, frozen=True)
+@attr.s(slots=True, eq=False)
 class Print(Stmt):
     expr_expression: Expr = attr.ib()
 
@@ -160,7 +188,7 @@ class Print(Stmt):
         return visitor.visit_Print(self)
 
 
-@attr.s(slots=True, frozen=True)
+@attr.s(slots=True, eq=False)
 class While(Stmt):
     condition: Expr = attr.ib()
     body: Stmt = attr.ib()

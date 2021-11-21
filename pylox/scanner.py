@@ -4,7 +4,9 @@ from pylox.tokens import LITERAL_T, Token, TokenType
 
 RESERVED = {
     "and": TokenType.AND,
+    "break": TokenType.BREAK,
     "class": TokenType.CLASS,
+    "continue": TokenType.CONTINUE,
     "else": TokenType.ELSE,
     "false": TokenType.FALSE,
     "for": TokenType.FOR,
@@ -116,9 +118,7 @@ class Scanner:
             self._advance()
 
         if self._is_eof():
-            self._interpreter.report_error(
-                LoxSyntaxError(self._lineno, 0, "Unterminated string.")
-            )
+            self._interpreter.report_error(LoxSyntaxError(self._lineno, 0, "Unterminated string."))
             return
 
         self._advance()  # Consume the closing quote
@@ -256,7 +256,7 @@ class Scanner:
                         LoxSyntaxError(
                             self._lineno,
                             self._col_offset,
-                            f"Unsupported character encountered: '{char}'"
+                            f"Unsupported character encountered: '{char}'",
                         )
                     )
 

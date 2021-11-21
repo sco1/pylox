@@ -46,15 +46,18 @@ EXPR_STRUCT = {
     "Assign": {"name": "Token", "value": "Expr"},
     "Binary": {"expr_left": "Expr", "token_operator": "Token", "expr_right": "Expr"},
     "Call": {"callee": "Expr", "closing_paren": "Token", "arguments": "list[Expr]"},
+    "Get": {"object_": "Expr", "name": "Token"},
     "Grouping": {"expr_expression": "Expr"},
     "Literal": {"object_value": "LITERAL_T"},
     "Logical": {"expr_left": "Expr", "token_operator": "Token", "expr_right": "Expr"},
+    "Set": {"object_": "Expr", "name": "Token", "value": "Expr"},
     "Variable": {"name": "Token"},
     "Unary": {"token_operator": "Token", "expr_right": "Expr"},
 }
 
 STMT_STRUCT = {
     "Block": {"statements": "list[Stmt]"},
+    "Class": {"name": "Token", "methods": "list[Function]"},
     "Expression": {"expr_expression": "Expr"},
     "Function": {"name": "Token", "params": "list[Token]", "body": "list[Stmt]"},
     "If": {"condition": "Expr", "then_branch": "Stmt", "else_branch": "t.Optional[Stmt]"},
@@ -70,7 +73,7 @@ def _gen_classdef(
     inherits_from: t.Optional[str] = None,
     class_attributes: t.Optional[dict[str, str]] = None,
     slotted: bool = True,
-    frozen: bool = True,
+    eq: bool = False,
 ) -> str:
     """
     Generate a class definition from the provided components.
@@ -91,7 +94,7 @@ def _gen_classdef(
         # fmt: off
         components.append(
             (
-                f"@attr.s(slots={slotted}, frozen={frozen})\n"
+                f"@attr.s(slots={slotted}, eq={eq})\n"
                 f"class {class_name}({inherits_from}):"
             )
         )

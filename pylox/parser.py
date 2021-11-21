@@ -121,9 +121,11 @@ class Parser:
         """
         Parse the declaration grammar.
 
-        `declaration: funDecl | varDecl | statement`
+        `declaration: classDecl | funDecl | varDecl | statement`
         """
         try:
+            if self._match(TokenType.CLASS):
+                return self._class_declaration()
             if self._match(TokenType.FUN):
                 return self._function("function")
             if self._match(TokenType.VAR):
@@ -134,7 +136,24 @@ class Parser:
             self._synchronize()
             return
 
-    def _function(self, kind: str) -> t.Any:
+    def _class_declaration(self) -> grammar.Class:
+        """
+        Parse the class declaration grammar.
+
+        `classDecl: "class" IDENTIFIER "{" function* "}"`
+        """
+        name = self._consume(TokenType.IDENTIFIER, "Expected class name.")
+        self._consume(TokenType.LEFT_BRACE, "Expected '{' before class body.")
+
+        methods = []
+        while not self._check(TokenType.RIGHT_BRACE) and not self._is_eof():
+            methods.append(self._function("method"))
+
+        self._consume(TokenType.RIGHT_BRACE, "Expected '}' after class body.")
+
+        return grammar.Class(name, methods)
+
+    def _function(self, kind: str) -> grammar.Function:
         """
         Parse the function declaration grammar.
 
@@ -342,7 +361,7 @@ class Parser:
         """
         Parse the assignment grammar.
 
-        `assignment: IDENTIFIER = assignment | equality`
+        `assignment: ( call "." )? IDENTIFIER "=" assignment | equality`
         """
         expr = self._or()
         if self._match(TokenType.EQUAL):
@@ -351,6 +370,8 @@ class Parser:
             if isinstance(expr, grammar.Variable):
                 name = expr.name
                 return grammar.Assign(name, value)
+            elif isinstance(expr, grammar.Get):
+                return grammar.Set(expr.object_, expr.name, expr.value)
 
             self._report_error(LoxParseError(equals, "Invalid assignment target."))
 
@@ -495,7 +516,7 @@ class Parser:
         """
         Parse the call grammar.
 
-        `call: primary ( "(" arguments? ")" )*`
+        `call: primary ( "(" arguments? ")" | "." IDENTIFIER )*`
         """
         expr = self._primary()
 
@@ -503,6 +524,10 @@ class Parser:
             if self._match(TokenType.LEFT_PAREN):
                 # Once we get to the closing parentheses, defer to a helper to parse the arguments
                 expr = self._finish_call(expr)
+            elif self._match(TokenType.DOT):
+                # Property access
+                name = self._consume(TokenType.IDENTIFIER, "Expected property name after '.'.")
+                expr = grammar.Get(expr, name)
             else:
                 break
 
