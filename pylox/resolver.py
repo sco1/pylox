@@ -38,6 +38,10 @@ class Resolver:
         # returns outside of a function
         self._current_func = FunctionType.NONE
 
+        # Track whether or not we're inside a class or not; helps with things like not allowing
+        # "this" outside of a class/method
+        self._current_class = ClassType.NONE
+
     def _begin_scope(self) -> None:
         self._scopes.append({})
 
@@ -105,6 +109,9 @@ class Resolver:
         self._end_scope()
 
     def visit_Class(self, stmt: grammar.Class) -> None:
+        enclosing_class = self._current_class  # Cache to restore after resolving
+        self._current_class = ClassType.CLASS
+
         self._declare(stmt.name)
         self._define(stmt.name)
 
@@ -114,6 +121,8 @@ class Resolver:
         for method in stmt.methods:
             self._resolve_function(method, FunctionType.METHOD)
         self._end_scope()
+
+        self._current_class = enclosing_class
 
     def visit_Var(self, stmt: grammar.Var) -> None:
         self._declare(stmt.name)
@@ -190,6 +199,13 @@ class Resolver:
         self._resolve_one(expr.value)
 
     def visit_This(self, expr: grammar.This) -> None:
+        # Short-circuit if we're not inside a class
+        if self._current_class == ClassType.NONE:
+            self._interpreter._interp.report_error(
+                LoxResolverError(expr.keyword, "Can't use 'this' outside of a class.")
+            )
+            return
+
         self._resolve_local(expr, expr.keyword)
 
     def visit_Grouping(self, expr: grammar.Grouping) -> None:

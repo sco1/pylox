@@ -13,7 +13,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = [...]
+EXPECTED_STDOUTS = ["2:3: LoxResolverError: Can't use 'this' outside of a class."]
 
 
 def test_this_in_top_level_function(capsys: pytest.CaptureFixture) -> None:
