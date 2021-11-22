@@ -19,11 +19,11 @@ TEST_SRC = dedent(
     print fooMethod == fooMethod; // expect: true
 
     // Different closurizations.
-    print foo.method == foo.method; // expect: false
+    print foo.method == foo.method; // expect: true
     """
 )
 
-EXPECTED_STDOUTS = ["True", "False"]
+EXPECTED_STDOUTS = ["True", "True"]
 
 
 def test_equals_method(capsys: pytest.CaptureFixture) -> None:

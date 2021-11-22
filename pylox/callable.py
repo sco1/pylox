@@ -97,7 +97,7 @@ class LoxInstance:
         raise LoxRuntimeError(name, f"Undefined property '{name.lexeme}'.")
 
     def set(self, name: Token, value: t.Any) -> None:
-        self.fields[name] = value
+        self.fields[name.lexeme] = value
 
     def __str__(self) -> str:
         return f"<inst {self.instance_of.name}>"
