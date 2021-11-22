@@ -45,3 +45,13 @@ class LoxRuntimeError(LoxException):
 class LoxReturnError(LoxRuntimeError):
     def __init__(self, value: t.Any) -> None:
         self.value = value
+
+
+class LoxBreakError(LoxRuntimeError):
+    def __init__(self) -> None:
+        ...
+
+
+class LoxContinueError(LoxRuntimeError):
+    def __init__(self) -> None:
+        ...

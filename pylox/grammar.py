@@ -203,3 +203,19 @@ class While(Stmt):
 
     def accept(self, visitor: VisitorProtocol) -> t.Any:
         return visitor.visit_While(self)
+
+
+@attr.s(slots=True, eq=False)
+class Break(Stmt):
+    keyword: Token = attr.ib()
+
+    def accept(self, visitor: VisitorProtocol) -> t.Any:
+        return visitor.visit_Break(self)
+
+
+@attr.s(slots=True, eq=False)
+class Continue(Stmt):
+    keyword: Token = attr.ib()
+
+    def accept(self, visitor: VisitorProtocol) -> t.Any:
+        return visitor.visit_Continue(self)

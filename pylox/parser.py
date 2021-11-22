@@ -201,7 +201,18 @@ class Parser:
         """
         Parse the statement grammar.
 
-        `statement: exprStmt | forStmt | ifStmt | printStmt | returnStmt | whileStmt | block`
+        ```
+        statement:
+            | exprStmt
+            | forStmt
+            | ifStmt
+            | printStmt
+            | returnStmt
+            | whileStmt
+            | breakStmt
+            | continueStmt
+            | block
+        ```
         """
         if self._match(TokenType.FOR):
             return self._for_statement()
@@ -217,6 +228,12 @@ class Parser:
 
         if self._match(TokenType.WHILE):
             return self._while_statement()
+
+        if self._match(TokenType.BREAK):
+            return self._break_statement()
+
+        if self._match(TokenType.CONTINUE):
+            return self._continue_statement()
 
         if self._match(TokenType.LEFT_BRACE):
             return grammar.Block(self._block())
@@ -324,6 +341,26 @@ class Parser:
         body = self._statement()
 
         return grammar.While(condition, body)
+
+    def _break_statement(self) -> grammar.Break:
+        """
+        Parse the break grammar.
+
+        `breakStmt: "break" ";"`
+        """
+        keyword = self._previous()
+        self._consume(TokenType.SEMICOLON, "Expected ';' after break")
+        return grammar.Break(keyword)
+
+    def _continue_statement(self) -> grammar.Continue:
+        """
+        Parse the continue grammar.
+
+        `continueStmt: "continue" ";"`
+        """
+        keyword = self._previous()
+        self._consume(TokenType.SEMICOLON, "Expected ';' after continue")
+        return grammar.Continue(keyword)
 
     def _expression_statement(self) -> grammar.Expression:
         """

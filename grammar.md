@@ -19,6 +19,8 @@ statement:
     | printStmt
     | returnStmt
     | whileStmt
+    | breakStmt
+    | continueStmt
     | block
 
 exprStmt: expression ";"
@@ -27,6 +29,8 @@ ifStmt: "if" "(" expression ")" statement ( "else" statement )?
 returnStmt: "return" expression? ";"
 printStmt: "print" expression ";"
 whileStmt: "while" "(" expression ")" statement
+breakStmt: "break" ";"
+continueStmt: "continue" ";"
 block: "{" declaration* "}"
 
 expression: assignment

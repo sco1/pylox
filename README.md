@@ -11,6 +11,7 @@ While the text is implemented in Java and C as its high & low-level implementati
 
 ## Language Specification 
 ### Defined by Challenges
+  * (Chapter 9): `break` statements are available for `for` and `while` loops
 ### User Choice
   * Strings may be defined using either `"` or `'`
   * Modulo operator (`%`)

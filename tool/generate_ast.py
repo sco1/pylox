@@ -66,6 +66,8 @@ STMT_STRUCT = {
     "Return": {"keyword": "Token", "value": "Expr"},
     "Print": {"expr_expression": "Expr"},
     "While": {"condition": "Expr", "body": "Stmt"},
+    "Break": {"keyword": "Token"},
+    "Continue": {"keyword": "Token"},
 }
 
 

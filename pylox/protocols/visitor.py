@@ -66,3 +66,9 @@ class VisitorProtocol(t.Protocol):
 
     def visit_While(self, expr: grammar.While) -> t.Any:
         ...
+
+    def visit_Break(self, expr: grammar.Break) -> t.Any:
+        ...
+
+    def visit_Continue(self, expr: grammar.Continue) -> t.Any:
+        ...

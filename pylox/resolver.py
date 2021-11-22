@@ -19,6 +19,11 @@ class ClassType(Enum):
     CLASS = auto()
 
 
+class LoopType(Enum):
+    NONE = auto()
+    WHILE = auto()  # for loops are just while loops
+
+
 class Resolver:
     """
     The Pylox resolver!
@@ -42,6 +47,10 @@ class Resolver:
         # Track whether or not we're inside a class or not; helps with things like not allowing
         # "this" outside of a class/method
         self._current_class = ClassType.NONE
+
+        # Track whether or not we're inside a for or while loop; helps with things like not allowing
+        # break or continue outside of these blocks
+        self._current_loop = LoopType.NONE
 
     def _begin_scope(self) -> None:
         self._scopes.append({})
@@ -190,8 +199,31 @@ class Resolver:
             self._resolve_one(stmt.value)
 
     def visit_While(self, stmt: grammar.While) -> None:
+        current_loop = self._current_loop  # Cache to restore after resolving
+        self._current_loop = LoopType.WHILE
+
         self._resolve_one(stmt.condition)
         self._resolve_one(stmt.body)
+
+        self._current_loop = current_loop
+
+    def visit_Break(self, stmt: grammar.Break) -> None:
+        if self._current_loop != LoopType.WHILE:
+            self._interpreter._interp.report_error(
+                LoxResolverError(stmt.keyword, "Can't use 'break' outside of a for or while loop.")
+            )
+            return
+        return
+
+    def visit_Continue(self, stmt: grammar.Continue) -> None:
+        if self._current_loop != LoopType.WHILE:
+            self._interpreter._interp.report_error(
+                LoxResolverError(
+                    stmt.keyword, "Can't use 'continue' outside of a for or while loop."
+                )
+            )
+            return
+        return
 
     def visit_Binary(self, expr: grammar.Binary) -> None:
         self._resolve_one(expr.expr_left)
