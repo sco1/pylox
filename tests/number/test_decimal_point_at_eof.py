@@ -12,7 +12,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["2:4: LoxParseError: Expected ';' after value."]
+EXPECTED_STDOUTS = ["3:1: LoxParseError: Expected property name after '.'."]
 
 
 def test_decimal_point_at_eof(capsys: pytest.CaptureFixture) -> None:

@@ -14,7 +14,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["3:15: LoxRuntimeError: Can only call functions and classes."]
+EXPECTED_STDOUTS = ["4:5: LoxRuntimeError: Can only call functions and classes."]
 
 
 def test_object(capsys: pytest.CaptureFixture) -> None:

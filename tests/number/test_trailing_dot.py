@@ -12,7 +12,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["2:4: LoxParseError: Expected ';' after value."]
+EXPECTED_STDOUTS = ["2:5: LoxParseError: Expected property name after '.'."]
 
 
 def test_trailing_dot(capsys: pytest.CaptureFixture) -> None:

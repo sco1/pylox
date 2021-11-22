@@ -17,7 +17,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["3:5: LoxParseError: Expected expression."]
+EXPECTED_STDOUTS = ["3:10: LoxParseError: Invalid assignment target."]
 
 
 def test_to_this(capsys: pytest.CaptureFixture) -> None:
