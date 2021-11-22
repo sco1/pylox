@@ -93,11 +93,11 @@ class Set(Expr):
 
 
 @attr.s(slots=True, eq=False)
-class Variable(Expr):
-    name: Token = attr.ib()
+class This(Expr):
+    keyword: Token = attr.ib()
 
     def accept(self, visitor: VisitorProtocol) -> t.Any:
-        return visitor.visit_Variable(self)
+        return visitor.visit_This(self)
 
 
 @attr.s(slots=True, eq=False)
@@ -107,6 +107,14 @@ class Unary(Expr):
 
     def accept(self, visitor: VisitorProtocol) -> t.Any:
         return visitor.visit_Unary(self)
+
+
+@attr.s(slots=True, eq=False)
+class Variable(Expr):
+    name: Token = attr.ib()
+
+    def accept(self, visitor: VisitorProtocol) -> t.Any:
+        return visitor.visit_Variable(self)
 
 
 class Stmt(ABC):  # pragma: no cover

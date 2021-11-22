@@ -31,10 +31,13 @@ class VisitorProtocol(t.Protocol):
     def visit_Set(self, expr: grammar.Set) -> t.Any:
         ...
 
-    def visit_Variable(self, expr: grammar.Variable) -> t.Any:
+    def visit_This(self, expr: grammar.This) -> t.Any:
         ...
 
     def visit_Unary(self, expr: grammar.Unary) -> t.Any:
+        ...
+
+    def visit_Variable(self, expr: grammar.Variable) -> t.Any:
         ...
 
     def visit_Block(self, expr: grammar.Block) -> t.Any:

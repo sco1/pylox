@@ -283,3 +283,6 @@ class Interpreter:
         object_.set(expr.name, value)
 
         return value
+
+    def visit_This(self, expr: grammar.This) -> t.Any:
+        return self._lookup_var(expr.keyword, expr)

@@ -13,6 +13,11 @@ class FunctionType(Enum):
     METHOD = auto()
 
 
+class ClassType(Enum):
+    NONE = auto()
+    CLASS = auto()
+
+
 class Resolver:
     """
     The Pylox resolver!
@@ -103,8 +108,12 @@ class Resolver:
         self._declare(stmt.name)
         self._define(stmt.name)
 
+        # Declare a scope for methods that contains the class instance pre-defined as "this"
+        self._begin_scope()
+        self._scopes[-1]["this"] = True
         for method in stmt.methods:
             self._resolve_function(method, FunctionType.METHOD)
+        self._end_scope()
 
     def visit_Var(self, stmt: grammar.Var) -> None:
         self._declare(stmt.name)
@@ -179,6 +188,9 @@ class Resolver:
     def visit_Set(self, expr: grammar.Set) -> None:
         self._resolve_one(expr.object_)
         self._resolve_one(expr.value)
+
+    def visit_This(self, expr: grammar.This) -> None:
+        self._resolve_local(expr, expr.keyword)
 
     def visit_Grouping(self, expr: grammar.Grouping) -> None:
         self._resolve_one(expr.expr_expression)

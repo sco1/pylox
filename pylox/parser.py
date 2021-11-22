@@ -371,7 +371,7 @@ class Parser:
                 name = expr.name
                 return grammar.Assign(name, value)
             elif isinstance(expr, grammar.Get):
-                return grammar.Set(expr.object_, expr.name, expr.value)
+                return grammar.Set(expr.object_, expr.name, value)
 
             self._report_error(LoxParseError(equals, "Invalid assignment target."))
 
@@ -537,11 +537,18 @@ class Parser:
         """
         Parse the primary grammar.
 
-        `primary: NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" | IDENTIFIER`
+        ```
+        primary:
+            | "true"
+            | "false"
+            | "nil"
+            | "this"
+            | NUMBER
+            | STRING
+            | "(" expression ")"
+            | IDENTIFIER
+        ```
         """
-        if self._match(TokenType.NUMBER, TokenType.STRING):
-            return grammar.Literal(self._previous().literal)
-
         if self._match(TokenType.TRUE):
             return grammar.Literal(True)
 
@@ -550,6 +557,12 @@ class Parser:
 
         if self._match(TokenType.NIL):
             return grammar.Literal(None)
+
+        if self._match(TokenType.THIS):
+            return grammar.This(self._previous())
+
+        if self._match(TokenType.NUMBER, TokenType.STRING):
+            return grammar.Literal(self._previous().literal)
 
         if self._match(TokenType.LEFT_PAREN):
             expr = self._expression()

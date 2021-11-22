@@ -51,8 +51,9 @@ EXPR_STRUCT = {
     "Literal": {"object_value": "LITERAL_T"},
     "Logical": {"expr_left": "Expr", "token_operator": "Token", "expr_right": "Expr"},
     "Set": {"object_": "Expr", "name": "Token", "value": "Expr"},
-    "Variable": {"name": "Token"},
+    "This": {"keyword": "Token"},
     "Unary": {"token_operator": "Token", "expr_right": "Expr"},
+    "Variable": {"name": "Token"},
 }
 
 STMT_STRUCT = {

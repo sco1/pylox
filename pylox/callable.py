@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing as t
 from abc import ABC, abstractmethod
 
@@ -7,7 +9,7 @@ from pylox import grammar
 from pylox.environment import Environment
 from pylox.error import LoxReturnError, LoxRuntimeError
 from pylox.protocols.interpreter import InterpreterProtocol
-from pylox.tokens import Token
+from pylox.tokens import Token, TokenType
 
 
 class LoxCallable(ABC):
@@ -21,10 +23,19 @@ class LoxCallable(ABC):
         return NotImplemented
 
 
+SelfLoxFunction = t.TypeVar("SelfLoxFunction", bound="LoxFunction")
+
+
 @attr.s
 class LoxFunction(LoxCallable):
     declaration: grammar.Function = attr.ib()
     closure: Environment = attr.ib()
+
+    def bind(self, instance: LoxInstance) -> SelfLoxFunction:
+        """For class methods, define a nested closure with the instance pre-defined as `this`."""
+        env = Environment(self.closure)
+        env.define(Token(TokenType.THIS, "this", None, 0, 0), instance)
+        return LoxFunction(self.declaration, env)
 
     def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> t.Any:
         """Call the current function instance using the provided arguments."""
@@ -80,7 +91,8 @@ class LoxInstance:
 
         method = self.instance_of.find_method(name.lexeme)
         if method is not None:
-            return method
+            # bind gives the method a closure with the instance pre-defined as "this"
+            return method.bind(self)
 
         raise LoxRuntimeError(name, f"Undefined property '{name.lexeme}'.")
 

@@ -48,11 +48,12 @@ unary:
     | call
 call: primary ( "(" arguments? ")" | "." IDENTIFIER )*
 primary:
-    | NUMBER
-    | STRING
     | "true"
     | "false"
     | "nil"
+    | this
+    | NUMBER
+    | STRING
     | "(" expression ")"
     | IDENTIFIER
 
