@@ -30,12 +30,13 @@ SelfLoxFunction = t.TypeVar("SelfLoxFunction", bound="LoxFunction")
 class LoxFunction(LoxCallable):
     declaration: grammar.Function = attr.ib()
     closure: Environment = attr.ib()
+    is_initializer: bool = attr.ib(default=False)
 
     def bind(self, instance: LoxInstance) -> SelfLoxFunction:
         """For class methods, define a nested closure with the instance pre-defined as `this`."""
         env = Environment(self.closure)
         env.define(Token(TokenType.THIS, "this", None, 0, 0), instance)
-        return LoxFunction(self.declaration, env)
+        return LoxFunction(self.declaration, env, self.is_initializer)
 
     def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> t.Any:
         """Call the current function instance using the provided arguments."""
@@ -47,7 +48,15 @@ class LoxFunction(LoxCallable):
         try:
             interpreter._execute_block(self.declaration.body, environment)
         except LoxReturnError as func_return:
+            # Return current instance if we short-circuit from the class init
+            if self.is_initializer:
+                return self.closure.get_at(0, "this")
+
             return func_return.value
+
+        # Class constructor will always return the current instance, even if called directly
+        if self.is_initializer:
+            return self.closure.get_at(0, "this")
 
     @property
     def arity(self) -> int:
@@ -67,13 +76,23 @@ class LoxClass(LoxCallable):
 
     def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> SelfLoxClass:
         instance = LoxInstance(self)
+
+        # Check for an initializer & call it if defined
+        initializer = self.find_method("init")
+        if initializer is not None:
+            initializer.bind(instance).call(interpreter, arguments)
+
         return instance
 
     @property
     def arity(self) -> int:
-        return 0
+        initializer = self.find_method("init")
+        if initializer is None:
+            return 0
+        else:
+            return initializer.arity
 
-    def find_method(self, name: str) -> t.Any:
+    def find_method(self, name: str) -> LoxFunction:
         return self.methods.get(name, None)
 
     def __str__(self) -> str:

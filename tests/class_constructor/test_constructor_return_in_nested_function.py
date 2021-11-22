@@ -20,10 +20,9 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = [...]
+EXPECTED_STDOUTS = ["bar", "<inst Foo>"]
 
 
-@pytest.mark.xfail(reason="Constructor not implemented.")
 def test_return_in_nested_function(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

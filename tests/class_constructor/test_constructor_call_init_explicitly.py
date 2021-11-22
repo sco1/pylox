@@ -25,10 +25,9 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = [...]
+EXPECTED_STDOUTS = ["Foo.init(one)", "Foo.init(two)", "<inst Foo>", "init"]
 
 
-@pytest.mark.xfail(reason="Constructor not implemented.")
 def test_call_init_explicitly(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

@@ -10,6 +10,7 @@ from pylox.tokens import Token
 class FunctionType(Enum):
     NONE = auto()
     FUNCTION = auto()
+    INITIALIZER = auto()
     METHOD = auto()
 
 
@@ -119,7 +120,11 @@ class Resolver:
         self._begin_scope()
         self._scopes[-1]["this"] = True
         for method in stmt.methods:
-            self._resolve_function(method, FunctionType.METHOD)
+            if method.name.lexeme == "init":
+                declaration_type = FunctionType.INITIALIZER
+            else:
+                declaration_type = FunctionType.METHOD
+            self._resolve_function(method, declaration_type)
         self._end_scope()
 
         self._current_class = enclosing_class
@@ -176,6 +181,12 @@ class Resolver:
             return
 
         if stmt.value:
+            if self._current_func == FunctionType.INITIALIZER:
+                self._interpreter._interp.report_error(
+                    LoxResolverError(stmt.keyword, "Can't return a value from an initializer.")
+                )
+                return
+
             self._resolve_one(stmt.value)
 
     def visit_While(self, stmt: grammar.While) -> None:

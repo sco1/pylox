@@ -80,11 +80,16 @@ class Environment:
             else:
                 raise LoxRuntimeError(name, f"Undefined variable '{name.lexeme}'.")
 
-    def get_at(self, distance: int, name: Token) -> t.Any:
+    def get_at(self, distance: int, name: t.Union[Token, str]) -> t.Any:
         """
         Retrieve the value for the provided variable from the scope at the specified distance.
 
         This should always be getting called after the resolver is finished, so it's assumed that
         the variable is present in the scope at the specified distance.
         """
-        return self._ancestor(distance).values[name.lexeme]
+        if isinstance(name, Token):
+            query = name.lexeme
+        else:
+            query = name
+
+        return self._ancestor(distance).values[query]

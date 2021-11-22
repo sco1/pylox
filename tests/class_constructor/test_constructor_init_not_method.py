@@ -22,10 +22,9 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = [...]
+EXPECTED_STDOUTS = ["not initializer"]
 
 
-@pytest.mark.xfail(reason="Constructor not implemented.")
 def test_init_not_method(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

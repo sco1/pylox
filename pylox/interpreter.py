@@ -115,7 +115,10 @@ class Interpreter:
         self._environment.define(stmt.name, None)
 
         methods = {
-            method.name.lexeme: LoxFunction(method, self._environment) for method in stmt.methods
+            method.name.lexeme: LoxFunction(
+                method, self._environment, is_initializer=(method.name.lexeme == "init")
+            )
+            for method in stmt.methods
         }
         new_class = LoxClass(stmt.name.lexeme, methods)
         self._environment.assign(stmt.name, new_class)
