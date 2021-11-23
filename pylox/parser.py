@@ -509,12 +509,13 @@ class Parser:
         """
         Parse the factor grammar.
 
-        `factor: power ( ( "/" | "*" | "%" ) power )*`
+        `factor: power ( ( "*" | "/" | "\\" | "%") power )*`
         """
         return self._match_binary(
             self._power,
-            TokenType.SLASH,
             TokenType.STAR,
+            TokenType.SLASH,
+            TokenType.BACK_SLASH,
             TokenType.PERCENT,
         )
 

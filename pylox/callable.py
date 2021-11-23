@@ -12,7 +12,7 @@ from pylox.protocols.interpreter import InterpreterProtocol
 from pylox.tokens import Token, TokenType
 
 
-class LoxCallable(ABC):
+class LoxCallable(ABC):  # pragma: no cover
     @property
     @abstractmethod
     def arity(self) -> int:

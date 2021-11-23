@@ -44,7 +44,7 @@ logic_and: equality ( "and" equality )*
 equality: comparison ( ( "!=" | "==" ) comparison )*
 comparison: term ( ( ">" | ">=" | "<" | "<=" ) term )*
 term: factor ( ( "-" | "+" ) factor )*
-factor: power ( ( "/" | "*" | "%") power )*
+factor: power ( ( "*" | "/" | "\" | "%") power )*
 power: unary ( ( "^" ) unary)*
 
 unary:

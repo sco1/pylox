@@ -204,6 +204,8 @@ class Scanner:
                 self._add_token(TokenType.CARAT)
             case "%":
                 self._add_token(TokenType.PERCENT)
+            case "\\":
+                self._add_token(TokenType.BACK_SLASH)
             case "!":
                 if self._match_next("="):
                     self._add_token(TokenType.BANG_EQUAL)

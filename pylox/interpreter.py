@@ -247,15 +247,24 @@ class Interpreter:
                 raise LoxRuntimeError(
                     expr.token_operator, "Operands must either be both numbers or both strings."
                 )
+            case TokenType.STAR:
+                self._check_float_operands(expr.token_operator, left, right)
+                return float(left) * float(right)
             case TokenType.SLASH:
                 self._check_float_operands(expr.token_operator, left, right)
                 try:
                     return float(left) / float(right)
                 except ZeroDivisionError:
                     return float("nan")
-            case TokenType.STAR:
+            case TokenType.BACK_SLASH:
                 self._check_float_operands(expr.token_operator, left, right)
-                return float(left) * float(right)
+                try:
+                    return float(left) // float(right)
+                except ZeroDivisionError:
+                    return float("nan")
+            case TokenType.PERCENT:
+                self._check_float_operands(expr.token_operator, left, right)
+                return float(left) % float(right)
             case TokenType.GREATER:
                 self._check_float_operands(expr.token_operator, left, right)
                 return float(left) > float(right)
@@ -271,9 +280,6 @@ class Interpreter:
             case TokenType.CARAT:
                 self._check_float_operands(expr.token_operator, left, right)
                 return float(left) ** float(right)
-            case TokenType.PERCENT:
-                self._check_float_operands(expr.token_operator, left, right)
-                return float(left) % float(right)
             case TokenType.BANG_EQUAL:
                 return not _lox_eq(left, right)
             case TokenType.EQUAL_EQUAL:

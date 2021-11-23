@@ -16,3 +16,10 @@ While the text is implemented in Java and C as its high & low-level implementati
   * Strings may be defined using either `"` or `'`
   * Modulo operator (`%`)
   * Power operator (`^`)
+  * Integer division operator (`\`)
+  * Additional Built-ins:
+    * `abs`
+    * `ceil`
+    * `floor`
+    * `max`
+    * `min`

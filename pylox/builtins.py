@@ -1,3 +1,4 @@
+import math
 import time
 import typing as t
 
@@ -14,6 +15,30 @@ class BuiltinFunction(LoxCallable):
         return f"<builtin fn {self._shortname}>"
 
 
+class Abs(BuiltinFunction):
+    _shortname = "abs"
+
+    @property
+    def arity(self) -> int:  # noqa: D102
+        return 1
+
+    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> float:
+        """Return the absolute value of a number."""
+        return abs(arguments[0])
+
+
+class Ceil(BuiltinFunction):
+    _shortname = "ceil"
+
+    @property
+    def arity(self) -> int:  # noqa: D102
+        return 1
+
+    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> float:
+        """Return the smallest number greater than or equal to the input value."""
+        return math.ceil(arguments[0])
+
+
 class Clock(BuiltinFunction):
     _shortname = "clock"
 
@@ -26,8 +51,49 @@ class Clock(BuiltinFunction):
         return time.time()
 
 
+class Floor(BuiltinFunction):
+    _shortname = "floor"
+
+    @property
+    def arity(self) -> int:  # noqa: D102
+        return 1
+
+    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> float:
+        """Return the smallest number less than or equal to the input value."""
+        return math.floor(arguments[0])
+
+
+class Max(BuiltinFunction):
+    _shortname = "max"
+
+    @property
+    def arity(self) -> int:  # noqa: D102
+        return 2
+
+    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> float:
+        """Return the maximum of the two values."""
+        return max(arguments)
+
+
+class Min(BuiltinFunction):
+    _shortname = "min"
+
+    @property
+    def arity(self) -> int:  # noqa: D102
+        return 2
+
+    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> float:
+        """Return the minimum of the two values."""
+        return min(arguments)
+
+
 BUILTIN_MAPPING = {
+    "abs": Abs(),
+    "ceil": Ceil(),
     "clock": Clock(),
+    "floor": Floor(),
+    "max": Max(),
+    "min": Min(),
 }
 
 
