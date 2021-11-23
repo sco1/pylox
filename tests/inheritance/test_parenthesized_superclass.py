@@ -14,10 +14,9 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = [...]
+EXPECTED_STDOUTS = ["4:13: LoxParseError: Expected superclass name."]
 
 
-@pytest.mark.xfail(reason="Inheritance not implemented.")
 def test_parenthesized_superclass(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

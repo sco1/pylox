@@ -116,7 +116,7 @@ class Interpreter:
         if stmt.superclass is not None:
             superclass = self._evaluate(stmt.superclass)
             if not isinstance(superclass, LoxClass):
-                raise LoxRuntimeError(stmt.superclass, "Superclass must be a class.")
+                raise LoxRuntimeError(stmt.superclass.name, "Superclass must be a class.")
 
         self._environment.define(stmt.name, None)
 

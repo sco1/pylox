@@ -29,10 +29,9 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = [...]
+EXPECTED_STDOUTS = ["A.method(arg)"]
 
 
-@pytest.mark.xfail(reason="Inheritance not implemented.")
 def test_bound_method(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

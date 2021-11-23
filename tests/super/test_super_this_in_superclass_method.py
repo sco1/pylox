@@ -26,10 +26,9 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = [...]
+EXPECTED_STDOUTS = ["a", "b"]
 
 
-@pytest.mark.xfail(reason="Inheritance not implemented.")
 def test_this_in_superclass_method(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

@@ -24,10 +24,9 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = [...]
+EXPECTED_STDOUTS = ["value"]
 
 
-@pytest.mark.xfail(reason="Inheritance not implemented.")
 def test_constructor(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

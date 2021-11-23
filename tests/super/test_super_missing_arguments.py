@@ -23,16 +23,15 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = [...]
+EXPECTED_STDOUTS = ["9:16: LoxRuntimeError: Expected 2 arguments but got 1."]
 
 
-@pytest.mark.xfail(reason="Inheritance not implemented.")
 def test_missing_arguments(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)
 
-    assert not interpreter.had_error
-    assert not interpreter.had_runtime_error
+    assert interpreter.had_error
+    assert interpreter.had_runtime_error
 
     all_out = capsys.readouterr().out.splitlines()
     assert all_out == EXPECTED_STDOUTS

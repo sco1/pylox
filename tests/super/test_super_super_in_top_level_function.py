@@ -13,15 +13,14 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = [...]
+EXPECTED_STDOUTS = ["1:3: LoxResolverError: Can't use 'super' outside of a class."]
 
 
-@pytest.mark.xfail(reason="Inheritance not implemented.")
 def test_super_in_top_level_function(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)
 
-    assert not interpreter.had_error
+    assert interpreter.had_error
     assert not interpreter.had_runtime_error
 
     all_out = capsys.readouterr().out.splitlines()

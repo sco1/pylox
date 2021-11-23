@@ -12,10 +12,9 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = [...]
+EXPECTED_STDOUTS = ["2:13: LoxRuntimeError: Superclass must be a class."]
 
 
-@pytest.mark.xfail(reason="Inheritance not implemented.")
 def test_inherit_from_nil(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

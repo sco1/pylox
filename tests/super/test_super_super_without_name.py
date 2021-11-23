@@ -17,15 +17,14 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = [...]
+EXPECTED_STDOUTS = ["5:11: LoxParseError: Expected superclass method name."]
 
 
-@pytest.mark.xfail(reason="Inheritance not implemented.")
 def test_super_without_name(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)
 
-    assert not interpreter.had_error
+    assert interpreter.had_error
     assert not interpreter.had_runtime_error
 
     all_out = capsys.readouterr().out.splitlines()

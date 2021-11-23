@@ -32,10 +32,9 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = [...]
+EXPECTED_STDOUTS = ["Base.method()", "Base.method()"]
 
 
-@pytest.mark.xfail(reason="Inheritance not implemented.")
 def test_reassign_superclass(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

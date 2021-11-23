@@ -26,10 +26,9 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = [...]
+EXPECTED_STDOUTS = ["Derived.bar()", "Base.foo()"]
 
 
-@pytest.mark.xfail(reason="Inheritance not implemented.")
 def test_call_other_method(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

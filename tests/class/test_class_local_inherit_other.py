@@ -18,10 +18,9 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = [...]
+EXPECTED_STDOUTS = ["<cls B>"]
 
 
-@pytest.mark.xfail(reason="Inheritance not implemented.")
 def test_local_inherit_other(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)

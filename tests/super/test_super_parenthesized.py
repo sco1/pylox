@@ -20,15 +20,14 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = [...]
+EXPECTED_STDOUTS = ["8:11: LoxParseError: Expected '.' after 'super'."]
 
 
-@pytest.mark.xfail(reason="Inheritance not implemented.")
 def test_parenthesized(capsys: pytest.CaptureFixture) -> None:
     interpreter = Lox()
     interpreter.run(TEST_SRC)
 
-    assert not interpreter.had_error
+    assert interpreter.had_error
     assert not interpreter.had_runtime_error
 
     all_out = capsys.readouterr().out.splitlines()
