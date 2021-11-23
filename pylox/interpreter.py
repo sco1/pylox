@@ -65,7 +65,7 @@ class Interpreter:
         # Environment changes as we change scopes, so we want to keep globals separate
         self.globals = load_builtins(Environment())
         self._environment = self.globals
-        self._locals = {}
+        self._locals: dict[grammar.Expr, int] = {}
 
     def interpret(self, statements: list[t.Union[grammar.Expr, grammar.Stmt]]) -> list[t.Any]:
         try:
@@ -120,6 +120,12 @@ class Interpreter:
 
         self._environment.define(stmt.name, None)
 
+        # Store a reference to the superclass so the methods capture the correct environment as
+        # their closure
+        if stmt.superclass is not None:
+            self._environment = Environment(self._environment)
+            self._environment.define(Token(TokenType.SUPER, "super", None, 0, 0), superclass)
+
         methods = {
             method.name.lexeme: LoxFunction(
                 method, self._environment, is_initializer=(method.name.lexeme == "init")
@@ -127,6 +133,11 @@ class Interpreter:
             for method in stmt.methods
         }
         new_class = LoxClass(stmt.name.lexeme, superclass, methods)
+
+        if superclass is not None:
+            # Pop the environment so we get back to the current class definition
+            self._environment = self._environment.enclosing
+
         self._environment.assign(stmt.name, new_class)
 
     def visit_Expression(self, stmt: grammar.Expression) -> None:
@@ -298,6 +309,20 @@ class Interpreter:
         object_.set(expr.name, value)
 
         return value
+
+    def visit_Super(self, expr: grammar.Super) -> LoxFunction:
+        distance = self._locals[expr]
+        superclass: LoxClass = self._environment.get_at(distance, "super")
+
+        # The environment where "this" is bound is always going to be right inside the environment
+        # where "super" is bound
+        object_: LoxInstance = self._environment.get_at(distance - 1, "this")
+        method = superclass.find_method(expr.method.lexeme)
+
+        if method is None:
+            raise LoxRuntimeError(expr.method, f"Undefined property '{expr.method.lexeme}'.")
+
+        return method.bind(object_)
 
     def visit_This(self, expr: grammar.This) -> t.Any:
         return self._lookup_var(expr.keyword, expr)

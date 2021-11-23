@@ -31,6 +31,9 @@ class VisitorProtocol(t.Protocol):
     def visit_Set(self, expr: grammar.Set) -> t.Any:
         ...
 
+    def visit_Super(self, expr: grammar.Super) -> t.Any:
+        ...
+
     def visit_This(self, expr: grammar.This) -> t.Any:
         ...
 

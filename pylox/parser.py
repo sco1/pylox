@@ -592,8 +592,9 @@ class Parser:
             | "this"
             | NUMBER
             | STRING
-            | "(" expression ")"
             | IDENTIFIER
+            | "(" expression ")"
+            | "super" "." IDENTIFIER
         ```
         """
         if self._match(TokenType.TRUE):
@@ -604,6 +605,12 @@ class Parser:
 
         if self._match(TokenType.NIL):
             return grammar.Literal(None)
+
+        if self._match(TokenType.SUPER):
+            keyword = self._previous()
+            self._consume(TokenType.DOT, "Expected '.' after 'super'.")
+            method = self._consume(TokenType.IDENTIFIER, "Expected superclass method name.")
+            return grammar.Super(keyword, method)
 
         if self._match(TokenType.THIS):
             return grammar.This(self._previous())

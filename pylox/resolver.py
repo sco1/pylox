@@ -17,6 +17,7 @@ class FunctionType(Enum):
 class ClassType(Enum):
     NONE = auto()
     CLASS = auto()
+    SUBCLASS = auto()
 
 
 class LoopType(Enum):
@@ -62,8 +63,11 @@ class Resolver:
         stmt.accept(self)
 
     def resolve(self, stmt: list[grammar.Stmt]) -> None:
-        for statement in stmt:
-            self._resolve_one(statement)
+        try:
+            for statement in stmt:
+                self._resolve_one(statement)
+        except LoxResolverError as err:
+            self._interpreter._interp.report_error(err)
 
     def _resolve_local(self, expr: grammar.Expr, name: Token) -> None:
         """
@@ -99,10 +103,7 @@ class Resolver:
 
         # Disallow redeclaring a variable within the same scope
         if name.lexeme in self._scopes[-1]:
-            self._interpreter._interp.report_error(
-                LoxResolverError(name, f"Variable {name.lexeme} already declared in this scope.")
-            )
-            return
+            raise LoxResolverError(name, f"Variable {name.lexeme} already declared in this scope.")
 
         self._scopes[-1][name.lexeme] = False
 
@@ -126,13 +127,17 @@ class Resolver:
         self._define(stmt.name)
 
         if stmt.superclass is not None:
+            self._current_class = ClassType.SUBCLASS
             if stmt.name.lexeme == stmt.superclass.name.lexeme:
-                self._interpreter._interp.report_error(
-                    LoxResolverError(stmt.superclass.name, "Class cannot inherit from itself.")
-                )
-                return
+                raise LoxResolverError(stmt.superclass.name, "Class cannot inherit from itself.")
 
             self._resolve_one(stmt.superclass)
+
+            # Define super as the superclass at the time the class definitioni is executed, so any
+            # subclasses that call this method receive the correct superclass, instead of an
+            # instance of this class
+            self._begin_scope()
+            self._scopes[-1]["super"] = True
 
         # Declare a scope for methods that contains the class instance pre-defined as "this"
         self._begin_scope()
@@ -144,6 +149,9 @@ class Resolver:
                 declaration_type = FunctionType.METHOD
             self._resolve_function(method, declaration_type)
         self._end_scope()
+
+        if stmt.superclass is not None:
+            self._end_scope()
 
         self._current_class = enclosing_class
 
@@ -162,10 +170,7 @@ class Resolver:
         (e.g. `var a = a;`) will raise an error at compile time.
         """
         if self._scopes and (self._scopes[-1].get(expr.name.lexeme, None) is False):
-            self._interpreter._interp.report_error(
-                LoxResolverError(expr.name, "Can't read local variable in its own initializer.")
-            )
-            return
+            raise LoxResolverError(expr.name, "Can't read local variable in its own initializer.")
 
         self._resolve_local(expr, expr.name)
 
@@ -193,17 +198,11 @@ class Resolver:
     def visit_Return(self, stmt: grammar.Return) -> None:
         # Short-circuit if we're not inside a function
         if self._current_func == FunctionType.NONE:
-            self._interpreter._interp.report_error(
-                LoxResolverError(stmt.keyword, "Can't return from top-level code.")
-            )
-            return
+            raise LoxResolverError(stmt.keyword, "Can't return from top-level code.")
 
         if stmt.value:
             if self._current_func == FunctionType.INITIALIZER:
-                self._interpreter._interp.report_error(
-                    LoxResolverError(stmt.keyword, "Can't return a value from an initializer.")
-                )
-                return
+                raise LoxResolverError(stmt.keyword, "Can't return a value from an initializer.")
 
             self._resolve_one(stmt.value)
 
@@ -218,20 +217,16 @@ class Resolver:
 
     def visit_Break(self, stmt: grammar.Break) -> None:
         if self._current_loop != LoopType.WHILE:
-            self._interpreter._interp.report_error(
-                LoxResolverError(stmt.keyword, "Can't use 'break' outside of a for or while loop.")
+            raise LoxResolverError(
+                stmt.keyword, "Can't use 'break' outside of a for or while loop."
             )
-            return
         return
 
     def visit_Continue(self, stmt: grammar.Continue) -> None:
         if self._current_loop != LoopType.WHILE:
-            self._interpreter._interp.report_error(
-                LoxResolverError(
-                    stmt.keyword, "Can't use 'continue' outside of a for or while loop."
-                )
+            raise LoxResolverError(
+                stmt.keyword, "Can't use 'continue' outside of a for or while loop."
             )
-            return
         return
 
     def visit_Binary(self, expr: grammar.Binary) -> None:
@@ -250,13 +245,19 @@ class Resolver:
         self._resolve_one(expr.object_)
         self._resolve_one(expr.value)
 
+    def visit_Super(self, expr: grammar.Super) -> None:
+        if self._current_class == ClassType.NONE:
+            raise LoxResolverError(expr.keyword, "Can't use 'super' outside of a class.")
+
+        if self._current_class == ClassType.CLASS:
+            raise LoxResolverError(expr.keyword, "Can't use 'super' in a class with no superclass.")
+
+        self._resolve_local(expr, expr.keyword)
+
     def visit_This(self, expr: grammar.This) -> None:
         # Short-circuit if we're not inside a class
         if self._current_class == ClassType.NONE:
-            self._interpreter._interp.report_error(
-                LoxResolverError(expr.keyword, "Can't use 'this' outside of a class.")
-            )
-            return
+            raise LoxResolverError(expr.keyword, "Can't use 'this' outside of a class.")
 
         self._resolve_local(expr, expr.keyword)
 

@@ -93,6 +93,15 @@ class Set(Expr):
 
 
 @attr.s(slots=True, eq=False)
+class Super(Expr):
+    keyword: Token = attr.ib()
+    method: Token = attr.ib()
+
+    def accept(self, visitor: VisitorProtocol) -> t.Any:
+        return visitor.visit_Super(self)
+
+
+@attr.s(slots=True, eq=False)
 class This(Expr):
     keyword: Token = attr.ib()
 

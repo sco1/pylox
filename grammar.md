@@ -55,11 +55,12 @@ primary:
     | "true"
     | "false"
     | "nil"
-    | this
+    | "this"
     | NUMBER
     | STRING
-    | "(" expression ")"
     | IDENTIFIER
+    | "(" expression ")"
+    | "super" "." IDENTIFIER
 
 function: IDENTIFIER "(" parameters? ")" block
 parameters: IDENTIFIER ( "," IDENTIFIER )*
