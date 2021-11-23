@@ -72,6 +72,7 @@ SelfLoxClass = t.TypeVar("SelfLoxClass", bound="LoxClass")
 @attr.s
 class LoxClass(LoxCallable):
     name: str = attr.ib()
+    superclass: SelfLoxClass = attr.ib()
     methods: dict = attr.ib()
 
     def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> SelfLoxClass:
@@ -92,8 +93,19 @@ class LoxClass(LoxCallable):
         else:
             return initializer.arity
 
-    def find_method(self, name: str) -> LoxFunction:
-        return self.methods.get(name, None)
+    def find_method(self, name: str) -> t.Optional[LoxFunction]:
+        """
+        Attempt to find a class method with the provided name.
+
+        If the current class is a subclass, locally defined methods overload a superclass method of
+        the same name. If the subclass does not overload the method, the inheritance is followed
+        upwards to attempt to locate a method.
+        """
+        if name in self.methods:
+            return self.methods[name]
+
+        if self.superclass is not None:
+            return self.superclass.find_method(name)
 
     def __str__(self) -> str:
         return f"<cls {self.name}>"

@@ -112,6 +112,12 @@ class Interpreter:
         self._execute_block(stmt.statements, Environment(self._environment))
 
     def visit_Class(self, stmt: grammar.Class) -> None:
+        superclass = None
+        if stmt.superclass is not None:
+            superclass = self._evaluate(stmt.superclass)
+            if not isinstance(superclass, LoxClass):
+                raise LoxRuntimeError(stmt.superclass, "Superclass must be a class.")
+
         self._environment.define(stmt.name, None)
 
         methods = {
@@ -120,7 +126,7 @@ class Interpreter:
             )
             for method in stmt.methods
         }
-        new_class = LoxClass(stmt.name.lexeme, methods)
+        new_class = LoxClass(stmt.name.lexeme, superclass, methods)
         self._environment.assign(stmt.name, new_class)
 
     def visit_Expression(self, stmt: grammar.Expression) -> None:
@@ -227,11 +233,8 @@ class Interpreter:
                 if isinstance(left, str) and isinstance(right, str):
                     return str(left) + str(right)
 
-                self._interp.report_runtime_error(
-                    LoxRuntimeError(
-                        expr.token_operator,
-                        "Operands must either be both numbers or both strings.",
-                    )
+                raise LoxRuntimeError(
+                    expr.token_operator, "Operands must either be both numbers or both strings."
                 )
             case TokenType.SLASH:
                 self._check_float_operands(expr.token_operator, left, right)

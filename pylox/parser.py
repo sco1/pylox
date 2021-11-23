@@ -141,9 +141,15 @@ class Parser:
         """
         Parse the class declaration grammar.
 
-        `classDecl: "class" IDENTIFIER "{" function* "}"`
+        `classDecl: "class" IDENTIFIER ( ">" IDENTIFIER )? "{" function* "}"`
         """
         name = self._consume(TokenType.IDENTIFIER, "Expected class name.")
+
+        superclass = None
+        if self._match(TokenType.LESS):
+            self._consume(TokenType.IDENTIFIER, "Expected superclass name.")
+            superclass = grammar.Variable(self._previous())
+
         self._consume(TokenType.LEFT_BRACE, "Expected '{' before class body.")
 
         methods = []
@@ -152,7 +158,7 @@ class Parser:
 
         self._consume(TokenType.RIGHT_BRACE, "Expected '}' after class body.")
 
-        return grammar.Class(name, methods)
+        return grammar.Class(name, superclass, methods)
 
     def _function(self, kind: str) -> grammar.Function:
         """

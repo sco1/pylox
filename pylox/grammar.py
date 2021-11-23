@@ -136,6 +136,7 @@ class Block(Stmt):
 @attr.s(slots=True, eq=False)
 class Class(Stmt):
     name: Token = attr.ib()
+    superclass: Variable = attr.ib()
     methods: list[Function] = attr.ib()
 
     def accept(self, visitor: VisitorProtocol) -> t.Any:
