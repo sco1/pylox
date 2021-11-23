@@ -1,4 +1,5 @@
 import typing as t
+from collections import abc
 
 from pylox import grammar
 from pylox.error import LoxParseError
@@ -442,20 +443,35 @@ class Parser:
 
         return expr
 
+    def _match_binary(
+        self, expr_method: abc.Callable[..., grammar.Expr], *tokens: TokenType
+    ) -> grammar.Binary:
+        """
+        Helper loop for Binary expression parsing.
+
+        Expressions are assumed to be of the form:
+            `<expr_method> ( ( <tokens> ) <expr_method> )*`
+        """
+        expr = expr_method()
+        while self._match(*tokens):
+            operator = self._previous()
+            right = expr_method()
+
+            expr = grammar.Binary(expr, operator, right)
+
+        return expr
+
     def _equality(self) -> grammar.Expr:
         """
         Parse the equality grammar.
 
         `equality: comparison ( ( "!=" | "==" ) comparison )*`
         """
-        expr = self._comparison()
-        while self._match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL):
-            operator = self._previous()
-            right = self._comparison()
-
-            expr = grammar.Binary(expr, operator, right)
-
-        return expr
+        return self._match_binary(
+            self._comparison,
+            TokenType.BANG_EQUAL,
+            TokenType.EQUAL_EQUAL,
+        )
 
     def _comparison(self) -> grammar.Expr:
         """
@@ -463,16 +479,13 @@ class Parser:
 
         `comparison: term ( ( ">" | ">=" | "<" | "<=" ) term )*`
         """
-        expr = self._term()
-        while self._match(
-            TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL
-        ):
-            operator = self._previous()
-            right = self._term()
-
-            expr = grammar.Binary(expr, operator, right)
-
-        return expr
+        return self._match_binary(
+            self._term,
+            TokenType.GREATER,
+            TokenType.GREATER_EQUAL,
+            TokenType.LESS,
+            TokenType.LESS_EQUAL,
+        )
 
     def _term(self) -> grammar.Expr:
         """
@@ -480,14 +493,11 @@ class Parser:
 
         `term: factor ( ( "-" | "+" ) factor )*`
         """
-        expr = self._factor()
-        while self._match(TokenType.MINUS, TokenType.PLUS):
-            operator = self._previous()
-            right = self._factor()
-
-            expr = grammar.Binary(expr, operator, right)
-
-        return expr
+        return self._match_binary(
+            self._factor,
+            TokenType.MINUS,
+            TokenType.PLUS,
+        )
 
     def _factor(self) -> grammar.Expr:
         """
@@ -495,14 +505,12 @@ class Parser:
 
         `factor: power ( ( "/" | "*" | "%" ) power )*`
         """
-        expr = self._power()
-        while self._match(TokenType.SLASH, TokenType.STAR, TokenType.PERCENT):
-            operator = self._previous()
-            right = self._power()
-
-            expr = grammar.Binary(expr, operator, right)
-
-        return expr
+        return self._match_binary(
+            self._power,
+            TokenType.SLASH,
+            TokenType.STAR,
+            TokenType.PERCENT,
+        )
 
     def _power(self) -> grammar.Expr:
         """
@@ -510,14 +518,10 @@ class Parser:
 
         `power: unary ( ( "^" ) unary )*`
         """
-        expr = self._unary()
-        while self._match(TokenType.CARAT):
-            operator = self._previous()
-            right = self._unary()
-
-            expr = grammar.Binary(expr, operator, right)
-
-        return expr
+        return self._match_binary(
+            self._unary,
+            TokenType.CARAT,
+        )
 
     def _unary(self) -> grammar.Expr:
         """
