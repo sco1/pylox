@@ -21,7 +21,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["0.0", "inner", "1.0", "inner"]
+EXPECTED_STDOUTS = ["0", "inner", "1", "inner"]
 
 
 def test_nested_for_break(capsys: pytest.CaptureFixture) -> None:

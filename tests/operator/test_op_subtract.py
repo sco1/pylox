@@ -12,7 +12,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["1.0", "0.0"]
+EXPECTED_STDOUTS = ["1", "0.0"]
 
 
 def test_subtract(capsys: pytest.CaptureFixture) -> None:

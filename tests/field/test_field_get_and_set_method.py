@@ -35,7 +35,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["other", "1.0", "method", "2.0"]
+EXPECTED_STDOUTS = ["other", "1", "method", "2"]
 
 
 def test_get_and_set_method(capsys: pytest.CaptureFixture) -> None:

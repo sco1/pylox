@@ -18,7 +18,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["21.0"]
+EXPECTED_STDOUTS = ["21"]
 
 
 def test_local_recursion(capsys: pytest.CaptureFixture) -> None:

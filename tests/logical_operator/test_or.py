@@ -29,7 +29,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["1.0", "1.0", "True", "False", "False", "False", "True"]
+EXPECTED_STDOUTS = ["1", "1", "True", "False", "False", "False", "True"]
 
 
 def test_or(capsys: pytest.CaptureFixture) -> None:

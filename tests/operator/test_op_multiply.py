@@ -12,7 +12,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["15.0", "3.702"]
+EXPECTED_STDOUTS = ["15", "3.702"]
 
 
 def test_multiply(capsys: pytest.CaptureFixture) -> None:

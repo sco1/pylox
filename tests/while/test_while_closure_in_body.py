@@ -29,7 +29,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["1.0", "2.0", "3.0"]
+EXPECTED_STDOUTS = ["1", "2", "3"]
 
 
 def test_closure_in_body(capsys: pytest.CaptureFixture) -> None:

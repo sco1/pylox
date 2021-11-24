@@ -14,10 +14,10 @@ TEST_SRC = dedent(
     print 20 - 3 * 4; // expect: 8
 
     // / has higher precedence than +.
-    print 2 + 6 / 3; // expect: 4
+    print 2 + 6 / 3; // expect: 4.0
 
     // / has higher precedence than -.
-    print 2 - 6 / 3; // expect: 0
+    print 2 - 6 / 3; // expect: 0.0
 
     // < has higher precedence than ==.
     print false == 2 < 1; // expect: true
@@ -43,19 +43,19 @@ TEST_SRC = dedent(
 )
 
 EXPECTED_STDOUTS = [
-    "14.0",
-    "8.0",
+    "14",
+    "8",
     "4.0",
     "0.0",
     "True",
     "True",
     "True",
     "True",
-    "0.0",
-    "0.0",
-    "0.0",
-    "0.0",
-    "4.0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "4",
 ]
 
 

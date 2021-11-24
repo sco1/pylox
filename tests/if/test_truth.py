@@ -18,7 +18,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["false", "nil", "True", "0.0", "empty"]
+EXPECTED_STDOUTS = ["false", "nil", "True", "0", "empty"]
 
 
 def test_truth(capsys: pytest.CaptureFixture) -> None:

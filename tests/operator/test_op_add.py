@@ -12,7 +12,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["579.0", "string"]
+EXPECTED_STDOUTS = ["579", "string"]
 
 
 def test_add(capsys: pytest.CaptureFixture) -> None:

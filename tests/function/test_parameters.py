@@ -36,7 +36,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["0.0", "1.0", "3.0", "6.0", "10.0", "15.0", "21.0", "28.0", "36.0"]
+EXPECTED_STDOUTS = ["0", "1", "3", "6", "10", "15", "21", "28", "36"]
 
 
 def test_parameters(capsys: pytest.CaptureFixture) -> None:

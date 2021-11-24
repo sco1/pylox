@@ -130,8 +130,8 @@ class Scanner:
         """
         Handle numeric literal token generation.
 
-        Both integers and floats are consumed into the single `NUMBER` token type & represented
-        internally as Python `float` objects.
+        Both integers and floats are consumed into the single `NUMBER` token type. However, Lox does
+        distinguish between integers and floats.
 
         NOTE: Leading & trailing decimals are not supported (e.g. `.123` and `123.`)
         """
@@ -141,13 +141,19 @@ class Scanner:
 
         # Check for fractional component
         # Use peek offset to check the character after the period
+        is_float = False
         if self._peek() == "." and self._peek(offset=1).isdigit():
+            is_float = True
             self._advance()  # Consume the period
 
             while self._peek().isdigit():
                 self._advance()
 
-        self._add_token(TokenType.NUMBER, float(self.src[self._start : self._current]))
+        val = self.src[self._start : self._current]
+        if is_float:
+            self._add_token(TokenType.NUMBER, float(val))
+        else:
+            self._add_token(TokenType.NUMBER, int(val))
 
     def _identifier(self) -> None:
         """Handle identifier & keyword token generation."""

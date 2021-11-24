@@ -29,7 +29,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["foo1", "1.0"]
+EXPECTED_STDOUTS = ["foo1", "1"]
 
 
 def test_method_binds_this(capsys: pytest.CaptureFixture) -> None:

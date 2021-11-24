@@ -81,9 +81,16 @@ class Interpreter:
     def resolve(self, expr: grammar.Expr, depth: int) -> None:
         self._locals[expr] = depth
 
-    def _check_float_operands(self, operator: Token, *operands: t.Any) -> None:
-        """Check that the provided operands are all float, generate a runtime error if not."""
-        if all((isinstance(operand, float) for operand in operands)):
+    def _check_numeric_operands(self, operator: Token, *operands: t.Any) -> None:
+        """Check that the provided operands are all numeric, generate a runtime error if not."""
+        # Need to write the explicit loop (vs `all(isinstance(...))`) since bool subclasses int
+        for operand in operands:
+            if isinstance(operand, (bool, str)):
+                break
+
+            if isinstance(operand, (float, int)):
+                continue
+        else:
             return
 
         raise LoxRuntimeError(operator, "Operands must be numbers.")
@@ -208,8 +215,8 @@ class Interpreter:
         right = self._evaluate(expr.expr_right)
         match expr.token_operator.token_type:
             case TokenType.MINUS:
-                self._check_float_operands(expr.token_operator, right)
-                return -float(right)
+                self._check_numeric_operands(expr.token_operator, right)
+                return -right
             case TokenType.BANG:
                 return not is_truthy(right)
 
@@ -234,52 +241,54 @@ class Interpreter:
 
         match expr.token_operator.token_type:
             case TokenType.MINUS:
-                self._check_float_operands(expr.token_operator, left, right)
-                return float(left) - float(right)
+                self._check_numeric_operands(expr.token_operator, left, right)
+                return left - right
             case TokenType.PLUS:
                 # Plus can support both the artithmetic operation as well as string concatenation
-                if isinstance(left, float) and isinstance(right, float):
-                    return float(left) + float(right)
-
-                if isinstance(left, str) and isinstance(right, str):
-                    return str(left) + str(right)
+                if isinstance(left, bool) or isinstance(right, bool):
+                    # Explicitly skip bool since it's an int subclass
+                    pass
+                elif isinstance(left, (float, int)) and isinstance(right, (float, int)):
+                    return left + right
+                elif isinstance(left, str) and isinstance(right, str):
+                    return f"{left}{right}"
 
                 raise LoxRuntimeError(
                     expr.token_operator, "Operands must either be both numbers or both strings."
                 )
             case TokenType.STAR:
-                self._check_float_operands(expr.token_operator, left, right)
-                return float(left) * float(right)
+                self._check_numeric_operands(expr.token_operator, left, right)
+                return left * right
             case TokenType.SLASH:
-                self._check_float_operands(expr.token_operator, left, right)
+                self._check_numeric_operands(expr.token_operator, left, right)
                 try:
-                    return float(left) / float(right)
+                    return left / right
                 except ZeroDivisionError:
                     return float("nan")
             case TokenType.BACK_SLASH:
-                self._check_float_operands(expr.token_operator, left, right)
+                self._check_numeric_operands(expr.token_operator, left, right)
                 try:
-                    return float(left) // float(right)
+                    return left // right
                 except ZeroDivisionError:
                     return float("nan")
             case TokenType.PERCENT:
-                self._check_float_operands(expr.token_operator, left, right)
-                return float(left) % float(right)
+                self._check_numeric_operands(expr.token_operator, left, right)
+                return left % right
             case TokenType.GREATER:
-                self._check_float_operands(expr.token_operator, left, right)
-                return float(left) > float(right)
+                self._check_numeric_operands(expr.token_operator, left, right)
+                return left > right
             case TokenType.GREATER_EQUAL:
-                self._check_float_operands(expr.token_operator, left, right)
-                return float(left) >= float(right)
+                self._check_numeric_operands(expr.token_operator, left, right)
+                return left >= right
             case TokenType.LESS:
-                self._check_float_operands(expr.token_operator, left, right)
-                return float(left) < float(right)
+                self._check_numeric_operands(expr.token_operator, left, right)
+                return left < right
             case TokenType.LESS_EQUAL:
-                self._check_float_operands(expr.token_operator, left, right)
-                return float(left) <= float(right)
+                self._check_numeric_operands(expr.token_operator, left, right)
+                return left <= right
             case TokenType.CARAT:
-                self._check_float_operands(expr.token_operator, left, right)
-                return float(left) ** float(right)
+                self._check_numeric_operands(expr.token_operator, left, right)
+                return left ** right
             case TokenType.BANG_EQUAL:
                 return not _lox_eq(left, right)
             case TokenType.EQUAL_EQUAL:

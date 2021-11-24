@@ -17,7 +17,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["123.0", "987654.0", "0.0", "-0.0", "123.456", "-0.001"]
+EXPECTED_STDOUTS = ["123", "987654", "0", "0", "123.456", "-0.001"]
 
 
 def test_literals(capsys: pytest.CaptureFixture) -> None:

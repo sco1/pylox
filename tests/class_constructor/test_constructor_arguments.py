@@ -21,7 +21,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["init", "1.0", "2.0"]
+EXPECTED_STDOUTS = ["init", "1", "2"]
 
 
 def test_arguments(capsys: pytest.CaptureFixture) -> None:

@@ -14,7 +14,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["0.0"]
+EXPECTED_STDOUTS = ["0"]
 
 
 def test_for_break(capsys: pytest.CaptureFixture) -> None:

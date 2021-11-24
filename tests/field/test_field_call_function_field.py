@@ -25,7 +25,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["bar", "1.0", "2.0"]
+EXPECTED_STDOUTS = ["bar", "1", "2"]
 
 
 def test_call_function_field(capsys: pytest.CaptureFixture) -> None:

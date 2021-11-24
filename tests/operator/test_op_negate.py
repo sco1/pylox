@@ -13,7 +13,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["-3.0", "3.0", "-3.0"]
+EXPECTED_STDOUTS = ["-3", "3", "-3"]
 
 
 def test_negate(capsys: pytest.CaptureFixture) -> None:
