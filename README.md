@@ -1,5 +1,8 @@
 # pylox
-[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/sco1-pylox)](https://pypi.org/project/sco1-pylox/)
+[![PyPI - Version](https://img.shields.io/pypi/v/sco1-pylox)](https://pypi.org/project/sco1-pylox/)
+[![PyPI - License](https://img.shields.io/pypi/l/sco1-pylox?color=magenta)](https://github.com/sco1/sco1-pylox/blob/main/LICENSE)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/sco1/pylox/main.svg)](https://results.pre-commit.ci/latest/github/sco1/pylox/main)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-black)](https://github.com/psf/black)
 [![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/sco1/pylox)
 
