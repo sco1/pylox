@@ -23,11 +23,14 @@ For the sake of fitting within a decently sized text, the fully implemented Lox 
   * Power operator (`^`)
   * Integer division operator (`\`)
   * Both floats and integers are represented
-    * Returns from operations between mismatched types follow Python's semantics
+    * Return type from operations follows Python3's semantics
 
 ### Additional Built-ins:
+Unless otherwise noted, behavior mirrors the similarly named Python function
   * `abs`
   * `ceil`
   * `floor`
+  * `input`
   * `max`
   * `min`
+  * `read_text` (via `pathlib.Path.read_text`)

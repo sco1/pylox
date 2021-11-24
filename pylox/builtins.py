@@ -1,6 +1,7 @@
 import math
 import time
 import typing as t
+from pathlib import Path
 
 from pylox.callable import LoxCallable
 from pylox.environment import Environment
@@ -63,6 +64,18 @@ class Floor(BuiltinFunction):
         return math.floor(arguments[0])
 
 
+class Input(BuiltinFunction):
+    _shortname = "input"
+
+    @property
+    def arity(self) -> int:  # noqa: D102
+        return 1
+
+    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> str:
+        """Prompt the user for a line of input using the provided prompt."""
+        return input(arguments[0])
+
+
 class Max(BuiltinFunction):
     _shortname = "max"
 
@@ -87,13 +100,27 @@ class Min(BuiltinFunction):
         return min(arguments)
 
 
+class ReadText(BuiltinFunction):
+    _shortname = "read_text"
+
+    @property
+    def arity(self) -> int:  # noqa: D102
+        return 1
+
+    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> str:
+        """Return the contents of the specified file as a string."""
+        return Path(arguments[0]).read_text()
+
+
 BUILTIN_MAPPING = {
     "abs": Abs(),
     "ceil": Ceil(),
     "clock": Clock(),
     "floor": Floor(),
+    "input": Input(),
     "max": Max(),
     "min": Min(),
+    "read_text": ReadText(),
 }
 
 
