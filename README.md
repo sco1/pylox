@@ -15,6 +15,7 @@ While the text is implemented in Java and C as its high & low-level implementati
 ## Differences From Text
 For the sake of fitting within a decently sized text, the fully implemented Lox spec omits features that users of other programming languages may miss. Often these are discussed as notes within a chapter, or presented as challenges at the end of a chapter. Significant difference in this implementation from the text reference are noted below.
 ### Defined by Challenges
+  * (Chapter 4): Arbitrarily nested block comments (`/* ... */`)
   * (Chapter 9): `break` statements are available for `for` and `while` loops
 ### User Choice
   * Division by zero returns `NaN` (Python's `float('nan')`)

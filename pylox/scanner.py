@@ -118,8 +118,7 @@ class Scanner:
             self._advance()
 
         if self._is_eof():
-            self._interpreter.report_error(LoxSyntaxError(self._lineno, 0, "Unterminated string."))
-            return
+            raise LoxSyntaxError(self._lineno, 0, "Unterminated string.")
 
         self._advance()  # Consume the closing quote
         literal = self.src[self._start + 1 : self._current - 1]  # Index away the quotation marks
@@ -182,6 +181,42 @@ class Scanner:
             )
         )
 
+    def _handle_block_comment(self) -> None:
+        """
+        Discard source contents until the closing block comment tag (`*/`) is reached.
+
+        Handle arbitrary levels of nested block comments & discard until we exit the topmost block
+        comment, or raise if EOF is reached.
+        """
+        nest_level = 1
+        while nest_level > 0:
+            if self._is_eof():
+                # Unterminated block comment
+                raise LoxSyntaxError(
+                    self._lineno,
+                    # Manually calc EOF column location since we're not advancing tokens
+                    (self._current - self._line_start - 1),
+                    "Unterminated block comment.",
+                )
+
+            # Bump line numbers while we discard them since they won't hit the token scanner
+            if self._peek() == "\n":
+                self._bump_line()
+
+            # Opening a new level of block comment
+            if self._peek() == "/" and self._peek(1) == "*":
+                nest_level += 1
+                self._advance()
+                self._advance()
+
+            # Closing one level of block comments
+            if self._peek() == "*" and self._peek(1) == "/":
+                nest_level -= 1
+                self._advance()
+                self._advance()
+
+            self._advance()
+
     def _scan_token(self) -> None:
         """Consume the next source character(s) & dispatch the appropriate token generation."""
         char = self._advance()
@@ -238,6 +273,11 @@ class Scanner:
                     # Consume characters until we get to the end of either the line or the file
                     while not any((self._peek() == "\n", self._is_eof())):
                         self._advance()
+                elif self._match_next("*"):
+                    # /* begins a block comment; comments are discarded
+                    # Consume characters until we get to the end of the comment (*/) or the file
+                    # Keep track of nesting levels so we don't terminate early
+                    self._handle_block_comment()
                 else:
                     self._add_token(TokenType.SLASH)
             case " " | "\r" | "\t":
@@ -260,12 +300,10 @@ class Scanner:
                 elif is_alpha(char):
                     self._identifier()
                 else:
-                    self._interpreter.report_error(
-                        LoxSyntaxError(
-                            self._lineno,
-                            self._col_offset,
-                            f"Unsupported character encountered: '{char}'",
-                        )
+                    raise LoxSyntaxError(
+                        self._lineno,
+                        self._col_offset,
+                        f"Unsupported character encountered: '{char}'",
                     )
 
     def scan_tokens(self) -> list[Token]:
@@ -278,7 +316,11 @@ class Scanner:
         """
         while not self._is_eof():
             self._start = self._current
-            self._scan_token()
+
+            try:
+                self._scan_token()
+            except LoxSyntaxError as err:
+                self._interpreter.report_error(err)
 
         self.tokens.append(
             Token(
