@@ -88,7 +88,7 @@ class Interpreter:
             if isinstance(operand, (bool, str)):
                 break
 
-            if isinstance(operand, (float, int)):
+            if isinstance(operand, (float, int)):  # pragma: no branch
                 continue
         else:
             return
@@ -219,6 +219,10 @@ class Interpreter:
                 return -right
             case TokenType.BANG:
                 return not is_truthy(right)
+            case _:  # pragma: no cover
+                raise LoxRuntimeError(
+                    expr, f"Unexpected Unary operator: '{expr.token_operator.lexeme}'"
+                )
 
     def visit_Variable(self, expr: grammar.Variable) -> t.Any:
         return self._lookup_var(expr.name, expr)
@@ -293,6 +297,10 @@ class Interpreter:
                 return not _lox_eq(left, right)
             case TokenType.EQUAL_EQUAL:
                 return _lox_eq(left, right)
+            case _:  # pragma: no cover
+                raise LoxRuntimeError(
+                    expr, f"Unexpected Binary operator: '{expr.token_operator.lexeme}'"
+                )
 
     def visit_Call(self, expr: grammar.Call) -> None:
         function = self._evaluate(expr.callee)

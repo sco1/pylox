@@ -7,12 +7,16 @@ from pylox.lox import Lox
 # Base cases from https://github.com/munificent/craftinginterpreters/blob/master/test/operator/divide.lox
 TEST_SRC = dedent(
     """\
-    print 8 / 2;         // expect: 4
-    print 12.34 / 12.34;  // expect: 1
+    print 8 / 2;          // expect: 4.0
+    print 12.34 / 12.34;  // expect: 1.0
+    print 1 / 0;          // expect: "nan"
+    print 10 \\ 3;        // expect: 3
+    print 12.5 \\ 4;      // expect: 3.0
+    print 1 \\ 0;         // expect: "nan"
     """
 )
 
-EXPECTED_STDOUTS = ["4.0", "1.0"]
+EXPECTED_STDOUTS = ["4.0", "1.0", "nan", "3", "3.0", "nan"]
 
 
 def test_divide(capsys: pytest.CaptureFixture) -> None:

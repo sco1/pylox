@@ -14,7 +14,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["3:7: LoxResolverError: Variable a already declared in this scope."]
+EXPECTED_STDOUTS = ["3:7: LoxResolverError: Variable 'a' already declared in this scope."]
 
 
 def test_duplicate_local(capsys: pytest.CaptureFixture) -> None:

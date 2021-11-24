@@ -35,9 +35,6 @@ class Environment:
         Raises if we are not in the global scope and a variable of the same name already exists in
         the current scope.
         """
-        if self.enclosing and (name.lexeme in self.values):
-            raise LoxRuntimeError(name, f"Cannot redefine '{name.lexeme}' in a non-global scope.")
-
         self.values[name.lexeme] = value
 
     def assign(self, name: Token, value: t.Any) -> None:

@@ -14,7 +14,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["2:9: LoxResolverError: Variable arg already declared in this scope."]
+EXPECTED_STDOUTS = ["2:9: LoxResolverError: Variable 'arg' already declared in this scope."]
 
 
 def test_duplicate_parameter(capsys: pytest.CaptureFixture) -> None:

@@ -103,7 +103,9 @@ class Resolver:
 
         # Disallow redeclaring a variable within the same scope
         if name.lexeme in self._scopes[-1]:
-            raise LoxResolverError(name, f"Variable {name.lexeme} already declared in this scope.")
+            raise LoxResolverError(
+                name, f"Variable '{name.lexeme}' already declared in this scope."
+            )
 
         self._scopes[-1][name.lexeme] = False
 

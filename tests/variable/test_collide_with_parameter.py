@@ -13,7 +13,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = ["2:7: LoxResolverError: Variable a already declared in this scope."]
+EXPECTED_STDOUTS = ["2:7: LoxResolverError: Variable 'a' already declared in this scope."]
 
 
 def test_collide_with_parameter(capsys: pytest.CaptureFixture) -> None:
