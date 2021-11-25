@@ -1,3 +1,4 @@
+from functools import partial
 from textwrap import dedent
 
 import pytest_check as check
@@ -31,24 +32,32 @@ TEST_SRC = dedent(
     """
 )
 
+PARTIAL_TOKEN = partial(Token, lineno=0, end_lineno=0)
 TRUTH_TOKENS = [
-    Token(token_type=TokenType.AND, lexeme="and", literal=None, lineno=0, col_offset=0),
-    Token(token_type=TokenType.CLASS, lexeme="class", literal=None, lineno=0, col_offset=4),
-    Token(token_type=TokenType.ELSE, lexeme="else", literal=None, lineno=0, col_offset=10),
-    Token(token_type=TokenType.FALSE, lexeme="false", literal=None, lineno=0, col_offset=15),
-    Token(token_type=TokenType.FOR, lexeme="for", literal=None, lineno=0, col_offset=21),
-    Token(token_type=TokenType.FUN, lexeme="fun", literal=None, lineno=0, col_offset=25),
-    Token(token_type=TokenType.IF, lexeme="if", literal=None, lineno=0, col_offset=29),
-    Token(token_type=TokenType.NIL, lexeme="nil", literal=None, lineno=0, col_offset=32),
-    Token(token_type=TokenType.OR, lexeme="or", literal=None, lineno=0, col_offset=36),
-    Token(token_type=TokenType.PRINT, lexeme="print", literal=None, lineno=0, col_offset=39),
-    Token(token_type=TokenType.RETURN, lexeme="return", literal=None, lineno=0, col_offset=45),
-    Token(token_type=TokenType.SUPER, lexeme="super", literal=None, lineno=0, col_offset=52),
-    Token(token_type=TokenType.THIS, lexeme="this", literal=None, lineno=0, col_offset=58),
-    Token(token_type=TokenType.TRUE, lexeme="true", literal=None, lineno=0, col_offset=63),
-    Token(token_type=TokenType.VAR, lexeme="var", literal=None, lineno=0, col_offset=68),
-    Token(token_type=TokenType.WHILE, lexeme="while", literal=None, lineno=0, col_offset=72),
-    Token(token_type=TokenType.EOF, lexeme="", literal=None, lineno=19, col_offset=0),
+    PARTIAL_TOKEN(token_type=TokenType.AND, lexeme="and", col_offset=0, end_col_offset=3),
+    PARTIAL_TOKEN(token_type=TokenType.CLASS, lexeme="class", col_offset=4, end_col_offset=9),
+    PARTIAL_TOKEN(token_type=TokenType.ELSE, lexeme="else", col_offset=10, end_col_offset=14),
+    PARTIAL_TOKEN(token_type=TokenType.FALSE, lexeme="false", col_offset=15, end_col_offset=20),
+    PARTIAL_TOKEN(token_type=TokenType.FOR, lexeme="for", col_offset=21, end_col_offset=24),
+    PARTIAL_TOKEN(token_type=TokenType.FUN, lexeme="fun", col_offset=25, end_col_offset=28),
+    PARTIAL_TOKEN(token_type=TokenType.IF, lexeme="if", col_offset=29, end_col_offset=31),
+    PARTIAL_TOKEN(token_type=TokenType.NIL, lexeme="nil", col_offset=32, end_col_offset=35),
+    PARTIAL_TOKEN(token_type=TokenType.OR, lexeme="or", col_offset=36, end_col_offset=38),
+    PARTIAL_TOKEN(token_type=TokenType.PRINT, lexeme="print", col_offset=39, end_col_offset=44),
+    PARTIAL_TOKEN(token_type=TokenType.RETURN, lexeme="return", col_offset=45, end_col_offset=51),
+    PARTIAL_TOKEN(token_type=TokenType.SUPER, lexeme="super", col_offset=52, end_col_offset=57),
+    PARTIAL_TOKEN(token_type=TokenType.THIS, lexeme="this", col_offset=58, end_col_offset=62),
+    PARTIAL_TOKEN(token_type=TokenType.TRUE, lexeme="true", col_offset=63, end_col_offset=67),
+    PARTIAL_TOKEN(token_type=TokenType.VAR, lexeme="var", col_offset=68, end_col_offset=71),
+    PARTIAL_TOKEN(token_type=TokenType.WHILE, lexeme="while", col_offset=72, end_col_offset=77),
+    PARTIAL_TOKEN(
+        token_type=TokenType.EOF,
+        lexeme="",
+        lineno=19,
+        end_lineno=19,
+        col_offset=0,
+        end_col_offset=0,
+    ),
 ]
 
 

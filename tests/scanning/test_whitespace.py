@@ -25,15 +25,50 @@ TEST_SRC = dedent(
 )
 
 TRUTH_TOKENS = [
-    Token(token_type=TokenType.IDENTIFIER, lexeme="space", literal=None, lineno=0, col_offset=0),
-    Token(token_type=TokenType.IDENTIFIER, lexeme="tabs", literal=None, lineno=0, col_offset=9),
-    Token(token_type=TokenType.IDENTIFIER, lexeme="newline", literal=None, lineno=0, col_offset=17),
-    Token(token_type=TokenType.IDENTIFIER, lexeme="end", literal=None, lineno=5, col_offset=0),
-    Token(token_type=TokenType.EOF, lexeme="", literal=None, lineno=12, col_offset=0),
+    Token(
+        token_type=TokenType.IDENTIFIER,
+        lexeme="space",
+        lineno=0,
+        end_lineno=0,
+        col_offset=0,
+        end_col_offset=5,
+    ),
+    Token(
+        token_type=TokenType.IDENTIFIER,
+        lexeme="tabs",
+        lineno=0,
+        end_lineno=0,
+        col_offset=9,
+        end_col_offset=13,
+    ),
+    Token(
+        token_type=TokenType.IDENTIFIER,
+        lexeme="newline",
+        lineno=0,
+        end_lineno=0,
+        col_offset=17,
+        end_col_offset=24,
+    ),
+    Token(
+        token_type=TokenType.IDENTIFIER,
+        lexeme="end",
+        lineno=5,
+        end_lineno=5,
+        col_offset=0,
+        end_col_offset=3,
+    ),
+    Token(
+        token_type=TokenType.EOF,
+        lexeme="",
+        lineno=12,
+        end_lineno=12,
+        col_offset=0,
+        end_col_offset=0,
+    ),
 ]
 
 
-def test_keyword_scanning() -> None:
+def test_whitespace_scanning() -> None:
     scanner = Scanner(TEST_SRC, Lox())
     tokens = scanner.scan_tokens()
 

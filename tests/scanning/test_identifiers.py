@@ -1,3 +1,4 @@
+from functools import partial
 from textwrap import dedent
 
 import pytest_check as check
@@ -24,22 +25,37 @@ TEST_SRC = dedent(
     """
 )
 
+PARTIAL_TOKEN = partial(Token, lineno=0, end_lineno=0)
+
 TRUTH_TOKENS = [
-    Token(token_type=TokenType.IDENTIFIER, lexeme="andy", literal=None, lineno=0, col_offset=0),
-    Token(token_type=TokenType.IDENTIFIER, lexeme="formless", literal=None, lineno=0, col_offset=5),
-    Token(token_type=TokenType.IDENTIFIER, lexeme="fo", literal=None, lineno=0, col_offset=14),
-    Token(token_type=TokenType.IDENTIFIER, lexeme="_", literal=None, lineno=0, col_offset=17),
-    Token(token_type=TokenType.IDENTIFIER, lexeme="_123", literal=None, lineno=0, col_offset=19),
-    Token(token_type=TokenType.IDENTIFIER, lexeme="_abc", literal=None, lineno=0, col_offset=24),
-    Token(token_type=TokenType.IDENTIFIER, lexeme="ab123", literal=None, lineno=0, col_offset=29),
-    Token(
+    PARTIAL_TOKEN(token_type=TokenType.IDENTIFIER, lexeme="andy", col_offset=0, end_col_offset=4),
+    PARTIAL_TOKEN(
+        token_type=TokenType.IDENTIFIER, lexeme="formless", col_offset=5, end_col_offset=13
+    ),
+    PARTIAL_TOKEN(token_type=TokenType.IDENTIFIER, lexeme="fo", col_offset=14, end_col_offset=16),
+    PARTIAL_TOKEN(token_type=TokenType.IDENTIFIER, lexeme="_", col_offset=17, end_col_offset=18),
+    PARTIAL_TOKEN(token_type=TokenType.IDENTIFIER, lexeme="_123", col_offset=19, end_col_offset=23),
+    PARTIAL_TOKEN(token_type=TokenType.IDENTIFIER, lexeme="_abc", col_offset=24, end_col_offset=28),
+    PARTIAL_TOKEN(
+        token_type=TokenType.IDENTIFIER, lexeme="ab123", col_offset=29, end_col_offset=34
+    ),
+    PARTIAL_TOKEN(
         token_type=TokenType.IDENTIFIER,
         lexeme="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_",
         literal=None,
         lineno=1,
+        end_lineno=1,
         col_offset=0,
+        end_col_offset=63,
     ),
-    Token(token_type=TokenType.EOF, lexeme="", literal=None, lineno=12, col_offset=0),
+    PARTIAL_TOKEN(
+        token_type=TokenType.EOF,
+        lexeme="",
+        lineno=12,
+        end_lineno=12,
+        col_offset=0,
+        end_col_offset=0,
+    ),
 ]
 
 

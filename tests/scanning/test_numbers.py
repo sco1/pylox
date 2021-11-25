@@ -35,7 +35,7 @@ TRUTH_TOKENS = [
 ]
 
 
-def test_keyword_scanning() -> None:
+def test_number_scanning() -> None:
     scanner = Scanner(TEST_SRC, Lox())
     tokens = scanner.scan_tokens()
 

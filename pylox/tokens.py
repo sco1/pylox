@@ -65,9 +65,11 @@ class TokenType(Enum):  # noqa: D101
 class Token:  # noqa: D101
     token_type: TokenType = attr.ib()
     lexeme: str = attr.ib()
-    literal: LITERAL_T = attr.ib()
-    lineno: int = attr.ib()  # Zero-indexed
-    col_offset: int = attr.ib()  # Zero-indexed
+    literal: LITERAL_T = attr.ib(default=None)
+    lineno: int = attr.ib(default=-1)  # Zero-indexed
+    end_lineno: int = attr.ib(default=-1)  # Zero-indexed
+    col_offset: int = attr.ib(default=-1)  # Zero-indexed, relative to the starting line
+    end_col_offset: int = attr.ib(default=-1)  # Zero indexed, relative to the ending line
 
     def __str__(self) -> str:
         return f"{self.token_type} {self.lexeme} {self.literal}"

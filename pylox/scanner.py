@@ -1,3 +1,5 @@
+from collections import namedtuple
+
 from pylox.error import LoxSyntaxError
 from pylox.protocols.interpreter import InterpreterProtocol
 from pylox.tokens import LITERAL_T, Token, TokenType
@@ -22,6 +24,8 @@ RESERVED = {
     "var": TokenType.VAR,
     "while": TokenType.WHILE,
 }
+
+OFFSET_TUPLE = namedtuple("OffsetTuple", ["lineno", "end_lineno", "col_offset", "end_col_offset"])
 
 
 def is_alpha(char: str) -> bool:
@@ -59,6 +63,9 @@ class Scanner:
         self._current = 0  # Index of current character being considered
         self._lineno = 0
         self._line_start = 0  # Index of the start of the current line in the full source string
+
+        # For parsing of multi-line strings, keep track of the starting column on the starting line
+        self._last_str_start_col = 0
 
     @property
     def _col_offset(self) -> int:
@@ -109,10 +116,14 @@ class Scanner:
 
         The `close` kwarg specifies the type of closing quotation to expect (`"` or `'`).
         """
+        # Multiline strings have an off by 1 end column idx, I haven't figured out why yet
+        is_multiline_string = False
         # Consume characters until we get to the corresponding closing quote
         # If we get to the end of the file before the quote is closed, raise an error
+        self._last_str_start_col = self._col_offset
         while not any((self._peek() == close, self._is_eof())):
             if self._peek() == "\n":
+                is_multiline_string = True
                 self._bump_line()
 
             self._advance()
@@ -123,7 +134,7 @@ class Scanner:
         self._advance()  # Consume the closing quote
         literal = self.src[self._start + 1 : self._current - 1]  # Index away the quotation marks
 
-        self._add_token(TokenType.STRING, literal)
+        self._add_token(TokenType.STRING, literal, is_multiline_string)
 
     def _number(self) -> None:
         """
@@ -164,20 +175,43 @@ class Scanner:
         token_type = RESERVED.get(lexeme, TokenType.IDENTIFIER)
         self._add_token(token_type)
 
-    def _add_token(self, token_type: TokenType, literal: LITERAL_T = None) -> None:
+    def _calculate_offsets(self, token_type: TokenType, is_multiline_string: bool) -> OFFSET_TUPLE:
+        lexeme = self.src[self._start : self._current]
+        if token_type == TokenType.STRING:
+            # Currently, only string tokens should be able to span multiple lines
+            return OFFSET_TUPLE(
+                # self._lineno will be the line where the string terminates, so we need to "rewind"
+                self._lineno - lexeme.count("\n"),
+                self._lineno,
+                self._last_str_start_col,
+                # self._current should be the character immediately after the closing quote
+                # Correct for multiline strings' end column idx being off by 1, can't figure out why
+                self._current - self._line_start - is_multiline_string,
+            )
+        else:
+            return OFFSET_TUPLE(
+                self._lineno, self._lineno, self._col_offset, self._col_offset + len(lexeme)
+            )
+
+    def _add_token(
+        self, token_type: TokenType, literal: LITERAL_T = None, is_multiline_string: bool = False
+    ) -> None:
         """
         Add a token of the specified type to the internal list of tokens.
 
         A `literal` value may be optionally provided for tokens that use it (e.g. `STRING`,
         `NUMERIC`)
         """
+        offsets = self._calculate_offsets(token_type, is_multiline_string)
         self.tokens.append(
             Token(
                 token_type=token_type,
                 lexeme=self.src[self._start : self._current],
                 literal=literal,
-                lineno=self._lineno,
-                col_offset=self._col_offset,
+                lineno=offsets.lineno,
+                end_lineno=offsets.end_lineno,
+                col_offset=offsets.col_offset,
+                end_col_offset=offsets.end_col_offset,
             )
         )
 
@@ -328,7 +362,9 @@ class Scanner:
                 lexeme="",
                 literal=None,
                 lineno=self._lineno,
+                end_lineno=self._lineno,
                 col_offset=0,
+                end_col_offset=0,
             )
         )
 

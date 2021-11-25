@@ -127,7 +127,7 @@ BUILTIN_MAPPING = {
 def load_builtins(global_environment: Environment) -> Environment:
     """Insert Lox's built-ins into the provided global environment."""
     for name, func in BUILTIN_MAPPING.items():
-        token = Token(TokenType.FUN, name, None, -1, -1)
+        token = Token(TokenType.FUN, name)
         global_environment.define(token, func)
 
     return global_environment
