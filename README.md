@@ -25,6 +25,8 @@ For the sake of fitting within a decently sized text, the fully implemented Lox 
   * Integer division operator (`\`)
   * Both floats and integers are represented
     * Return type from operations follows Python3's semantics
+  * Containers
+    * `array()`
 
 ### Additional Built-ins:
 Unless otherwise noted, behavior mirrors the similarly named Python function
@@ -32,6 +34,7 @@ Unless otherwise noted, behavior mirrors the similarly named Python function
   * `ceil`
   * `floor`
   * `input`
+  * `len`
   * `max`
   * `min`
   * `read_text` (via `pathlib.Path.read_text`)

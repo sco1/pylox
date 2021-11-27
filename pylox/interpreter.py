@@ -314,7 +314,10 @@ class Interpreter:
                 expr.closing_paren, f"Expected {function.arity} arguments but got {len(arguments)}."
             )
 
-        return function.call(self, arguments)
+        try:
+            return function.call(self, arguments)
+        except NotImplementedError as err:
+            raise LoxRuntimeError(expr.closing_paren, str(err))
 
     def visit_Get(self, expr: grammar.Get) -> None:
         object_ = self._evaluate(expr.object_)

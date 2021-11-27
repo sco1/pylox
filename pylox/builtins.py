@@ -3,7 +3,8 @@ import time
 import typing as t
 from pathlib import Path
 
-from pylox.callable import LoxCallable
+from pylox.callable import LoxCallable, LoxInstance
+from pylox.containers.array import LoxArray
 from pylox.environment import Environment
 from pylox.protocols.interpreter import InterpreterProtocol
 from pylox.tokens import Token, TokenType
@@ -23,9 +24,21 @@ class Abs(BuiltinFunction):
     def arity(self) -> int:  # noqa: D102
         return 1
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> float:
+    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> t.Union[float, int]:
         """Return the absolute value of a number."""
         return abs(arguments[0])
+
+
+class Array(BuiltinFunction):
+    _shortname = "array"
+
+    @property
+    def arity(self) -> int:  # noqa: D102
+        return 1
+
+    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> LoxArray:
+        """Initialize an n-sized Lox array of `None` values."""
+        return LoxArray(arguments[0])
 
 
 class Ceil(BuiltinFunction):
@@ -35,7 +48,7 @@ class Ceil(BuiltinFunction):
     def arity(self) -> int:  # noqa: D102
         return 1
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> float:
+    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> t.Union[float, int]:
         """Return the smallest number greater than or equal to the input value."""
         return math.ceil(arguments[0])
 
@@ -59,7 +72,7 @@ class Floor(BuiltinFunction):
     def arity(self) -> int:  # noqa: D102
         return 1
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> float:
+    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> t.Union[float, int]:
         """Return the smallest number less than or equal to the input value."""
         return math.floor(arguments[0])
 
@@ -76,6 +89,28 @@ class Input(BuiltinFunction):
         return input(arguments[0])
 
 
+class Len(BuiltinFunction):
+    _shortname = "len"
+
+    @property
+    def arity(self) -> int:  # noqa: D102
+        return 1
+
+    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> int:
+        """
+        Return the length of the specified object.
+
+        This assumes that the underlying Python object defines a `__str__` method.
+        """
+        if isinstance(arguments[0], str):
+            return len(arguments[0])
+
+        if isinstance(arguments[0], LoxInstance):
+            return len(arguments[0])
+
+        raise NotImplementedError(f"Object of type '{type(arguments[0]).__name__}' has no length.")
+
+
 class Max(BuiltinFunction):
     _shortname = "max"
 
@@ -83,7 +118,7 @@ class Max(BuiltinFunction):
     def arity(self) -> int:  # noqa: D102
         return 2
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> float:
+    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> t.Union[float, int]:
         """Return the maximum of the two values."""
         return max(arguments)
 
@@ -95,7 +130,7 @@ class Min(BuiltinFunction):
     def arity(self) -> int:  # noqa: D102
         return 2
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> float:
+    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> t.Union[float, int]:
         """Return the minimum of the two values."""
         return min(arguments)
 
@@ -114,10 +149,12 @@ class ReadText(BuiltinFunction):
 
 BUILTIN_MAPPING = {
     "abs": Abs(),
+    "array": Array(),
     "ceil": Ceil(),
     "clock": Clock(),
     "floor": Floor(),
     "input": Input(),
+    "len": Len(),
     "max": Max(),
     "min": Min(),
     "read_text": ReadText(),
