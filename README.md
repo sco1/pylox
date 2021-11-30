@@ -38,3 +38,5 @@ Unless otherwise noted, behavior mirrors the similarly named Python function
   * `max`
   * `min`
   * `read_text` (via `pathlib.Path.read_text`)
+  * `string_array`
+    * Gives a `LoxArray` whose contents are equivalent to `collections.deque(<some string>)`

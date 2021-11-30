@@ -1,6 +1,7 @@
 import math
 import time
 import typing as t
+from collections import deque
 from pathlib import Path
 
 from pylox.callable import LoxCallable, LoxInstance
@@ -147,6 +148,20 @@ class ReadText(BuiltinFunction):
         return Path(arguments[0]).read_text()
 
 
+class StringArray(BuiltinFunction):
+    _shortname = "string_array"
+
+    @property
+    def arity(self) -> int:  # noqa: D102
+        return 1
+
+    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> LoxArray:
+        """Break the input string into a `LoxArray` of individual characters."""
+        out_array = LoxArray(0)
+        out_array.fields = deque(arguments[0])
+        return out_array
+
+
 BUILTIN_MAPPING = {
     "abs": Abs(),
     "array": Array(),
@@ -158,6 +173,7 @@ BUILTIN_MAPPING = {
     "max": Max(),
     "min": Min(),
     "read_text": ReadText(),
+    "string_array": StringArray(),
 }
 
 
