@@ -236,6 +236,26 @@ class Std(BuiltinFunction):
         return statistics.stdev(arguments[0].fields)
 
 
+class Str2Num(BuiltinFunction):
+    _shortname = "str2num"
+
+    @property
+    def arity(self) -> int:  # noqa: D102
+        return 1
+
+    def call(self, interpreter: InterpreterProtocol, arguments: list[str]) -> NUMERIC:
+        """Convert the provided string into an integer or float."""
+        try:
+            return int(list[0])
+        except ValueError:
+            try:
+                return float(list[0])
+            except ValueError:
+                pass
+
+        raise ValueError(f"Cannot convert '{arguments[0]}' to an integer or float.")
+
+
 class StringArray(BuiltinFunction):
     _shortname = "string_array"
 
@@ -265,6 +285,7 @@ BUILTIN_MAPPING = {
     "ord": Ord(),
     "read_text": ReadText(),
     "std": Std(),
+    "str2num": Str2Num(),
     "string_array": StringArray(),
 }
 
