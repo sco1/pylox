@@ -11,6 +11,14 @@ from pylox.protocols.interpreter import InterpreterProtocol
 from pylox.tokens import Token, TokenType
 
 
+def _lox_arrayize(in_iter: t.Iterable) -> LoxArray:
+    """Build a `LoxArray` instance to represent the input iterable."""
+    out_array = LoxArray(0)
+    out_array.fields = deque(in_iter)
+
+    return out_array
+
+
 class BuiltinFunction(LoxCallable):
     """Base class for Lox's built-in functions."""
 
@@ -157,9 +165,7 @@ class StringArray(BuiltinFunction):
 
     def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> LoxArray:
         """Break the input string into a `LoxArray` of individual characters."""
-        out_array = LoxArray(0)
-        out_array.fields = deque(arguments[0])
-        return out_array
+        return _lox_arrayize(arguments[0])
 
 
 BUILTIN_MAPPING = {

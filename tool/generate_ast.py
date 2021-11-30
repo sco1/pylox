@@ -3,8 +3,7 @@ from pathlib import Path
 from textwrap import dedent
 
 import typer
-
-# from rich import print
+from rich import print
 
 astgen_cli = typer.Typer()
 CURRENT_DIR = Path()

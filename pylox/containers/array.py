@@ -110,7 +110,15 @@ class LoxArray(LoxContainer):
 
     def __str__(self) -> str:
         """Build a more `list`-like string representation to disguise that we're using `deque`."""
-        return f"[{', '.join(str(thing) for thing in self.fields)}]"
+        # Manual loop rather than list comp since we need to explicitly handle None as "nil"
+        out_contents = []
+        for thing in self.fields:
+            if thing is None:
+                out_contents.append("nil")
+            else:
+                out_contents.append(repr(thing))
+
+        return f"[{', '.join(out_contents)}]"
 
     def get(self, method_name: Token) -> LoxCallable:
         """Dispatch the matching Array method, or raise `LoxRuntimeError` if not defined."""
@@ -123,7 +131,7 @@ class LoxArray(LoxContainer):
         match method_name.lexeme:
             case "append":
                 return _Append(self, method_name)
-            case "append_left":
+            case "appendleft":
                 return _AppendLeft(self, method_name)
             case "clear":
                 return _Clear(self, method_name)
@@ -134,4 +142,4 @@ class LoxArray(LoxContainer):
             case "reverse":
                 return _Reverse(self, method_name)
             case _:
-                raise LoxRuntimeError(method_name, f"Undefined method: '{method_name.lexeme}'")
+                raise LoxRuntimeError(method_name, f"Undefined method: '{method_name.lexeme}'.")

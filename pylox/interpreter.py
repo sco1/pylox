@@ -1,6 +1,6 @@
 import typing as t
 
-from rich import print
+import rich
 
 from pylox import grammar
 from pylox.builtins import load_builtins
@@ -9,6 +9,16 @@ from pylox.environment import Environment
 from pylox.error import LoxBreakError, LoxContinueError, LoxReturnError, LoxRuntimeError
 from pylox.protocols.interpreter import InterpreterProtocol
 from pylox.tokens import LITERAL_T, Token, TokenType
+
+
+def print(obj: t.Any) -> None:
+    """
+    Overload `print` with Rich's `print` but also escaping markup tags first.
+
+    Without escaping first, Rich will print e.g. `LoxArray(1)` as an empty string because it
+    interprets `[nil]` as a markup tag instead of our array
+    """
+    rich.print(rich.markup.escape(str(obj)))
 
 
 def is_truthy(obj: t.Any) -> bool:
