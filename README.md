@@ -32,11 +32,17 @@ For the sake of fitting within a decently sized text, the fully implemented Lox 
 Unless otherwise noted, behavior mirrors the similarly named Python function
   * `abs`
   * `ceil`
+  * `divmod`
   * `floor`
   * `input`
   * `len`
   * `max`
+  * `mean`
+  * `median`
   * `min`
+  * `mode`
+  * `ord`
   * `read_text` (via `pathlib.Path.read_text`)
+  * `std`
   * `string_array`
     * Gives a `LoxArray` whose contents are equivalent to `collections.deque(<some string>)`

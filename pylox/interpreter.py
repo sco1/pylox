@@ -326,7 +326,7 @@ class Interpreter:
 
         try:
             return function.call(self, arguments)
-        except NotImplementedError as err:
+        except (NotImplementedError, TypeError) as err:
             raise LoxRuntimeError(expr.closing_paren, str(err))
 
     def visit_Get(self, expr: grammar.Get) -> None:
