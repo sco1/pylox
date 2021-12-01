@@ -1,3 +1,4 @@
+import ast
 from collections import namedtuple
 
 from pylox.error import LoxSyntaxError
@@ -132,7 +133,12 @@ class Scanner:
             raise LoxSyntaxError(self._lineno, 0, "Unterminated string.")
 
         self._advance()  # Consume the closing quote
-        literal = self.src[self._start + 1 : self._current - 1]  # Index away the quotation marks
+
+        # Since we want our literal to be, well, literal, we need to eval it
+        # In order to handle multi-line strings, we can wrap our lexeme in triple quotes and then
+        # pass to a safe eval
+        # Thanks @asottile for the nudge :)
+        literal = ast.literal_eval(f'"""{self.src[self._start + 1 : self._current - 1]}"""')
 
         self._add_token(TokenType.STRING, literal, is_multiline_string)
 
