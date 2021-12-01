@@ -28,6 +28,10 @@ TEST_SRC = dedent(
 
     arr.clear();
     print arr; // expect: []
+
+    arr.append("foo");
+    arr.append("bar");
+    print arr.join(""); // expect: "foobar"
     """
 )
 
@@ -41,6 +45,7 @@ EXPECTED_STDOUTS = [
     "foo",
     "[nil]",
     "[]",
+    "foobar",
 ]
 
 

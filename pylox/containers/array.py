@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import itertools
 import typing as t
 from collections import deque
 
@@ -47,8 +48,26 @@ class _Clear(LoxCallable):
     def arity(self) -> int:
         return 0
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> None:
+    def call(self, interpreter: InterpreterProtocol, arguments: list) -> None:
         self.parent.fields.clear()
+
+
+@attr.s
+class _Join(LoxCallable):
+    parent: LoxArray = attr.ib()
+    call_token: Token = attr.ib()
+
+    @property
+    def arity(self) -> int:
+        return 1
+
+    def call(self, interpreter: InterpreterProtocol, arguments: list[str]) -> str:
+        """
+        Join the `LoxArray` contents using the specified delimiter.
+
+        All array contents must be strings.
+        """
+        return arguments[0].join(self.parent.fields)
 
 
 @attr.s
@@ -60,7 +79,7 @@ class _Pop(LoxCallable):
     def arity(self) -> int:
         return 0
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> None:
+    def call(self, interpreter: InterpreterProtocol, arguments: list) -> None:
         try:
             return self.parent.fields.pop()
         except IndexError:
@@ -76,7 +95,7 @@ class _PopLeft(LoxCallable):
     def arity(self) -> int:
         return 0
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> None:
+    def call(self, interpreter: InterpreterProtocol, arguments: list) -> None:
         try:
             return self.parent.fields.popleft()
         except IndexError:
@@ -92,8 +111,26 @@ class _Reverse(LoxCallable):
     def arity(self) -> int:
         return 0
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> None:
+    def call(self, interpreter: InterpreterProtocol, arguments: list) -> None:
         return self.parent.fields.reverse()
+
+
+@attr.s
+class _Slice(LoxCallable):
+    parent: LoxArray = attr.ib()
+    call_token: Token = attr.ib()
+
+    @property
+    def arity(self) -> int:
+        return 3
+
+    def call(self, interpreter: InterpreterProtocol, arguments: list[int]) -> None:
+        start, stop, step = arguments
+        out_array = LoxArray(0)
+
+        # Use islice since we can't slice a deque directly
+        out_array.fields = deque(itertools.islice(self.parent.fields, start, stop, step))
+        return out_array
 
 
 class LoxArray(LoxContainer):
@@ -135,11 +172,15 @@ class LoxArray(LoxContainer):
                 return _AppendLeft(self, method_name)
             case "clear":
                 return _Clear(self, method_name)
+            case "join":
+                return _Join(self, method_name)
             case "pop":
                 return _Pop(self, method_name)
             case "popleft":
                 return _PopLeft(self, method_name)
             case "reverse":
                 return _Reverse(self, method_name)
+            case "slice":
+                return _Slice(self, method_name)
             case _:
                 raise LoxRuntimeError(method_name, f"Undefined method: '{method_name.lexeme}'.")
