@@ -246,10 +246,10 @@ class Str2Num(BuiltinFunction):
     def call(self, interpreter: InterpreterProtocol, arguments: list[str]) -> NUMERIC:
         """Convert the provided string into an integer or float."""
         try:
-            return int(list[0])
+            return int(arguments[0])
         except ValueError:
             try:
-                return float(list[0])
+                return float(arguments[0])
             except ValueError:
                 pass
 
