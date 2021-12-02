@@ -17,6 +17,10 @@ class LoxException(BaseException):
         return f"{type(self).__name__}: {self.message}"
 
 
+class LoxPreProcessorError(LoxException):
+    ...
+
+
 class LoxSyntaxError(LoxException):
     ...
 

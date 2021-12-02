@@ -9,6 +9,7 @@ from rich.prompt import Prompt
 from pylox.error import LoxException, LoxRuntimeError
 from pylox.interpreter import Interpreter
 from pylox.parser import Parser
+from pylox.preprocessor import PreProcessor
 from pylox.resolver import Resolver
 from pylox.scanner import Scanner
 
@@ -48,7 +49,9 @@ class Lox:
 
     def run(self, src: str) -> None:
         """Run the specified source."""
-        scanner = Scanner(src, self)
+        preprocessor = PreProcessor(src)
+
+        scanner = Scanner(preprocessor.resolved_src, self)
         tokens = scanner.scan_tokens()
 
         parser = Parser(tokens, self)

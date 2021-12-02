@@ -48,6 +48,7 @@ class TokenType(Enum):  # noqa: D101
     FOR = auto()
     FUN = auto()
     IF = auto()
+    INCLUDE = auto()
     NIL = auto()
     OR = auto()
     PRINT = auto()

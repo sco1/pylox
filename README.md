@@ -27,6 +27,8 @@ For the sake of fitting within a decently sized text, the fully implemented Lox 
     * Return type from operations follows Python3's semantics
   * Containers
     * `array()`
+  * A basic `include` header system
+    * Supports "stdlib" imports (`<header_name>`) and path imports (`"path/to/file"`)
 
 ### Additional Built-ins:
 Unless otherwise noted, behavior mirrors the similarly named Python function
@@ -47,3 +49,7 @@ Unless otherwise noted, behavior mirrors the similarly named Python function
   * `str2num`
   * `string_array`
     * Gives a `LoxArray` whose contents are equivalent to `collections.deque(<some string>)`
+
+### Pure lox headers
+  * `split_on`
+  * `array_sum`
