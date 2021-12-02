@@ -13,14 +13,6 @@ TEST_SRC = dedent(
     123.456
     .456
     123.
-
-    // expect: NUMBER 123 123
-    // expect: NUMBER 123.456 123.456
-    // expect: DOT . null
-    // expect: NUMBER 456 456
-    // expect: NUMBER 123 123
-    // expect: DOT . null
-    // expect: EOF  null
     """
 )
 
@@ -31,7 +23,7 @@ TRUTH_TOKENS = [
     Token(token_type=TokenType.NUMBER, lexeme="456", literal=456, lineno=2, col_offset=1),
     Token(token_type=TokenType.NUMBER, lexeme="123", literal=123, lineno=3, col_offset=0),
     Token(token_type=TokenType.DOT, lexeme=".", literal=None, lineno=3, col_offset=3),
-    Token(token_type=TokenType.EOF, lexeme="", literal=None, lineno=12, col_offset=0),
+    Token(token_type=TokenType.EOF, lexeme="", literal=None, lineno=4, col_offset=0),
 ]
 
 

@@ -196,6 +196,8 @@ class Interpreter:
                 self._evaluate(stmt.body)
         except LoxBreakError:
             return
+        except LoxContinueError:
+            raise NotImplementedError
 
     def visit_Break(self, stmt: grammar.Break) -> None:
         raise LoxBreakError()
@@ -326,7 +328,7 @@ class Interpreter:
 
         try:
             return function.call(self, arguments)
-        except (NotImplementedError, TypeError) as err:
+        except (NotImplementedError, TypeError, ValueError) as err:
             raise LoxRuntimeError(expr.closing_paren, str(err))
 
     def visit_Get(self, expr: grammar.Get) -> None:

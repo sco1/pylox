@@ -15,12 +15,6 @@ TEST_SRC = dedent(
     "multi-
     line-
     string"
-
-    // expect: STRING ""
-    // expect: STRING "string" string
-    // expect: STRING 'string' string
-    // expect: STRING "multi-\\nline-\\nstring" multi-\\nline-\\nstring
-    // expect: EOF null
     """
 )
 
@@ -65,8 +59,8 @@ TRUTH_TOKENS = [
         token_type=TokenType.EOF,
         lexeme="",
         literal=None,
-        lineno=12,
-        end_lineno=12,
+        lineno=6,
+        end_lineno=6,
         col_offset=0,
         end_col_offset=0,
     ),

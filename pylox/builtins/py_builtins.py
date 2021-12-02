@@ -22,7 +22,7 @@ def _lox_arrayize(in_iter: t.Iterable) -> LoxArray:
     return out_array
 
 
-class BuiltinFunction(LoxCallable):
+class BuiltinFunction(LoxCallable):  # pragma: no cover
     """Base class for Lox's built-in functions."""
 
     def __str__(self) -> str:

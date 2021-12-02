@@ -11,27 +11,6 @@ from pylox.tokens import Token, TokenType
 TEST_SRC = dedent(
     """\
     (){};,+-=!*==<=>=!=<>/.
-
-    // expect: LEFT_PAREN ( null
-    // expect: RIGHT_PAREN ) null
-    // expect: LEFT_BRACE { null
-    // expect: RIGHT_BRACE } null
-    // expect: SEMICOLON ; null
-    // expect: COMMA , null
-    // expect: PLUS + null
-    // expect: MINUS - null
-    // expect: BANG ! null
-    // expect: EQUAL = null
-    // expect: STAR * null
-    // expect: EQUAL_EQUAL == null
-    // expect: LESS_EQUAL <= null
-    // expect: GREATER_EQUAL >= null
-    // expect: BANG_EQUAL != null
-    // expect: LESS < null
-    // expect: GREATER > null
-    // expect: SLASH / null
-    // expect: DOT . null
-    // expect: EOF  null
     """
 )
 
@@ -62,8 +41,8 @@ TRUTH_TOKENS = [
     PARTIAL_TOKEN(
         token_type=TokenType.EOF,
         lexeme="",
-        lineno=22,
-        end_lineno=22,
+        lineno=1,
+        end_lineno=1,
         col_offset=0,
         end_col_offset=0,
     ),

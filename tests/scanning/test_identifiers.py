@@ -12,16 +12,6 @@ TEST_SRC = dedent(
     """\
     andy formless fo _ _123 _abc ab123
     abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_
-
-    // expect: IDENTIFIER andy null
-    // expect: IDENTIFIER formless null
-    // expect: IDENTIFIER fo null
-    // expect: IDENTIFIER _ null
-    // expect: IDENTIFIER _123 null
-    // expect: IDENTIFIER _abc null
-    // expect: IDENTIFIER ab123 null
-    // expect: IDENTIFIER abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_ null
-    // expect: EOF  null
     """
 )
 
@@ -51,8 +41,8 @@ TRUTH_TOKENS = [
     PARTIAL_TOKEN(
         token_type=TokenType.EOF,
         lexeme="",
-        lineno=12,
-        end_lineno=12,
+        lineno=2,
+        end_lineno=2,
         col_offset=0,
         end_col_offset=0,
     ),

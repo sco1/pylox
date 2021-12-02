@@ -10,25 +10,7 @@ from pylox.tokens import Token, TokenType
 # Base test cases from https://github.com/munificent/craftinginterpreters/blob/master/test/scanning/keywords.lox
 TEST_SRC = dedent(
     """\
-    and class else false for fun if nil or print return super this true var while
-
-    // expect: AND and null
-    // expect: CLASS class null
-    // expect: ELSE else null
-    // expect: FALSE false null
-    // expect: FOR for null
-    // expect: FUN fun null
-    // expect: IF if null
-    // expect: NIL nil null
-    // expect: OR or null
-    // expect: PRINT print null
-    // expect: RETURN return null
-    // expect: SUPER super null
-    // expect: THIS this null
-    // expect: TRUE true null
-    // expect: VAR var null
-    // expect: WHILE while null
-    // expect: EOF null
+    and class else false for fun if nil or print return super this true var while break continue include
     """
 )
 
@@ -50,11 +32,18 @@ TRUTH_TOKENS = [
     PARTIAL_TOKEN(token_type=TokenType.TRUE, lexeme="true", col_offset=63, end_col_offset=67),
     PARTIAL_TOKEN(token_type=TokenType.VAR, lexeme="var", col_offset=68, end_col_offset=71),
     PARTIAL_TOKEN(token_type=TokenType.WHILE, lexeme="while", col_offset=72, end_col_offset=77),
+    PARTIAL_TOKEN(token_type=TokenType.BREAK, lexeme="break", col_offset=78, end_col_offset=83),
+    PARTIAL_TOKEN(
+        token_type=TokenType.CONTINUE, lexeme="continue", col_offset=84, end_col_offset=92
+    ),
+    PARTIAL_TOKEN(
+        token_type=TokenType.INCLUDE, lexeme="include", col_offset=93, end_col_offset=100
+    ),
     PARTIAL_TOKEN(
         token_type=TokenType.EOF,
         lexeme="",
-        lineno=19,
-        end_lineno=19,
+        lineno=1,
+        end_lineno=1,
         col_offset=0,
         end_col_offset=0,
     ),
@@ -64,6 +53,8 @@ TRUTH_TOKENS = [
 def test_keyword_scanning() -> None:
     scanner = Scanner(TEST_SRC, Lox())
     tokens = scanner.scan_tokens()
+
+    print(f"n tokens: {len(tokens)}")
 
     for idx, token in enumerate(tokens):
         check.equal(token, TRUTH_TOKENS[idx])

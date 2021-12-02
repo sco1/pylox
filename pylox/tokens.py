@@ -72,5 +72,5 @@ class Token:  # noqa: D101
     col_offset: int = attr.ib(default=-1)  # Zero-indexed, relative to the starting line
     end_col_offset: int = attr.ib(default=-1)  # Zero indexed, relative to the ending line
 
-    def __str__(self) -> str:
+    def __str__(self) -> str:  # pragma: no cover
         return f"{self.token_type} {self.lexeme} {self.literal}"

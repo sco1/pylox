@@ -181,11 +181,11 @@ class Scanner:
         lexeme = self.src[self._start : self._current]
         token_type = RESERVED.get(lexeme, TokenType.IDENTIFIER)
 
+        self._add_token(token_type)
+
         # All includes should be resolved before we reach the scanner.
         if token_type == TokenType.INCLUDE:
             raise LoxSyntaxError(self._lineno, self._col_offset, "Unresolved include statement.")
-
-        self._add_token(token_type)
 
     def _calculate_offsets(self, token_type: TokenType, is_multiline_string: bool) -> OFFSET_TUPLE:
         lexeme = self.src[self._start : self._current]

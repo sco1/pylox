@@ -15,12 +15,6 @@ TEST_SRC = dedent(
 
 
     end
-
-    // expect: IDENTIFIER space null
-    // expect: IDENTIFIER tabs null
-    // expect: IDENTIFIER newline null
-    // expect: IDENTIFIER end null
-    // expect: EOF  null
     """
 )
 
@@ -60,8 +54,8 @@ TRUTH_TOKENS = [
     Token(
         token_type=TokenType.EOF,
         lexeme="",
-        lineno=12,
-        end_lineno=12,
+        lineno=6,
+        end_lineno=6,
         col_offset=0,
         end_col_offset=0,
     ),
