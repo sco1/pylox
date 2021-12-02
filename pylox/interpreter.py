@@ -3,7 +3,7 @@ import typing as t
 import rich
 
 from pylox import grammar
-from pylox.builtins import load_builtins
+from pylox.builtins.py_builtins import load_builtins
 from pylox.callable import LoxCallable, LoxClass, LoxFunction, LoxInstance
 from pylox.environment import Environment
 from pylox.error import LoxBreakError, LoxContinueError, LoxReturnError, LoxRuntimeError

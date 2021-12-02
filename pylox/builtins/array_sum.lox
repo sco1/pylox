@@ -1,0 +1,9 @@
+fun array_sum(in_array) {
+    // Calculate the sum of the input array.
+    // The array is assumed to contain only numeric values.
+    var total = 0;
+    for (var i = 0; i < len(in_array); i = i + 1) {
+        total = total + in_array.get(i);
+    }
+    return total;
+}

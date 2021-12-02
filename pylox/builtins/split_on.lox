@@ -1,0 +1,21 @@
+fun split_on(in_str, delimiter) {
+    // Split the input string on the specified delimiter & return a LoxArray of strings
+    var split_txt = string_array(in_str);
+    var out = array(0);
+    var substr = "";
+    for (var i = 0; i < len(in_str); i = i + 1) {
+        if (split_txt.get(i) == delimiter) {
+            out.append(substr);
+            substr = "";
+        }
+        else {
+            substr = substr + split_txt.get(i);
+        }
+    }
+
+    // Catch any stragglers
+    if (len(substr) > 0) {
+        out.append(substr);
+    }
+    return out;
+}

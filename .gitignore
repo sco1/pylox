@@ -45,5 +45,5 @@ htmlcov
 # mypy
 .mypy_cache/
 
-# Lox files
-*.lox
+# Dummy lox file
+scratch.lox
