@@ -6,7 +6,7 @@ import attr
 
 from pylox.callable import LoxCallable, LoxInstance
 from pylox.error import LoxRuntimeError
-from pylox.protocols.interpreter import InterpreterProtocol
+from pylox.protocols.interpreter import SourceInterpreterProtocol
 from pylox.tokens import Token
 
 
@@ -19,7 +19,7 @@ class _ContainerSetter(LoxCallable):
     def arity(self) -> int:
         return 2
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> None:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[t.Any]) -> None:
         idx, value = arguments
 
         try:
@@ -37,7 +37,7 @@ class _ContainerGetter(LoxCallable):
     def arity(self) -> int:
         return 1
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> t.Any:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[t.Any]) -> t.Any:
         try:
             return self.parent.fields[arguments[0]]
         except IndexError:
@@ -59,7 +59,7 @@ class LoxContainer(LoxInstance):
     def __str__(self) -> str:
         return str(self.fields)
 
-    def get(self, method_name: Token) -> t.Any:
+    def get(self, method_name: Token) -> LoxCallable:
         """Define basic setting & indexing methods."""
         match method_name.lexeme:
             case "get":
@@ -69,6 +69,6 @@ class LoxContainer(LoxInstance):
             case _:
                 raise LoxRuntimeError(method_name, f"Undefined method: '{method_name.lexeme}'")
 
-    def set(self, val: t.Any) -> None:
+    def set(self, name: Token, val: t.Any) -> None:
         """Block `Set` expression, all methods dispatched by `Get` expressions."""
         raise LoxRuntimeError(val, "Cannot add properties to LoxSet.")

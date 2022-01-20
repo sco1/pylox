@@ -3,7 +3,7 @@ from collections import abc
 
 from pylox import grammar
 from pylox.error import LoxParseError
-from pylox.protocols.interpreter import InterpreterProtocol
+from pylox.protocols.interpreter import LoxInterpreterProtocol
 from pylox.tokens import Token, TokenType
 
 MAX_ARGS = 255
@@ -20,7 +20,7 @@ class Parser:
     See `grammar.md` in the project root for the formal grammar definition.
     """
 
-    def __init__(self, tokens: list[Token], interpreter: InterpreterProtocol) -> None:
+    def __init__(self, tokens: list[Token], interpreter: LoxInterpreterProtocol) -> None:
         self.tokens = tokens
         self._interpreter = interpreter
 
@@ -72,7 +72,7 @@ class Parser:
         """Return the most recently consumed token."""
         return self.tokens[self._current - 1]
 
-    def _consume(self, query_token_type: TokenType, msg: str) -> t.Union[Token, ParseException]:
+    def _consume(self, query_token_type: TokenType, msg: str) -> Token:
         """
         Check if the current token matches the query token type.
 
@@ -80,10 +80,10 @@ class Parser:
         raised with the provided error message & a `ParseException` returned to assist with
         synchronization.
         """
-        if self._check(query_token_type):
-            return self._advance()
+        if not self._check(query_token_type):
+            self._report_error(LoxParseError(self._peek(), msg))
 
-        self._report_error(LoxParseError(self._peek(), msg))
+        return self._advance()
 
     def _report_error(self, err: LoxParseError) -> ParseException:
         """Report the provided error to the invoking interpreter & return an exception for sync."""

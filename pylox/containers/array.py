@@ -9,7 +9,7 @@ import attr
 from pylox.callable import LoxCallable
 from pylox.containers.base import LoxContainer
 from pylox.error import LoxRuntimeError
-from pylox.protocols.interpreter import InterpreterProtocol
+from pylox.protocols.interpreter import SourceInterpreterProtocol
 from pylox.tokens import Token
 
 
@@ -22,7 +22,7 @@ class _Append(LoxCallable):
     def arity(self) -> int:
         return 1
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> None:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[t.Any]) -> None:
         self.parent.fields.append(arguments[0])
 
 
@@ -35,7 +35,7 @@ class _AppendLeft(LoxCallable):
     def arity(self) -> int:
         return 1
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> None:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[t.Any]) -> None:
         self.parent.fields.appendleft(arguments[0])
 
 
@@ -48,7 +48,7 @@ class _Clear(LoxCallable):
     def arity(self) -> int:
         return 0
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list) -> None:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list) -> None:
         self.parent.fields.clear()
 
 
@@ -61,7 +61,7 @@ class _Join(LoxCallable):
     def arity(self) -> int:
         return 1
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[str]) -> str:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[str]) -> str:
         """
         Join the `LoxArray` contents using the specified delimiter.
 
@@ -79,7 +79,7 @@ class _Pop(LoxCallable):
     def arity(self) -> int:
         return 0
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list) -> None:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list) -> t.Any:
         try:
             return self.parent.fields.pop()
         except IndexError:
@@ -95,7 +95,7 @@ class _PopLeft(LoxCallable):
     def arity(self) -> int:
         return 0
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list) -> None:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list) -> t.Any:
         try:
             return self.parent.fields.popleft()
         except IndexError:
@@ -111,8 +111,9 @@ class _Reverse(LoxCallable):
     def arity(self) -> int:
         return 0
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list) -> None:
-        return self.parent.fields.reverse()
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list) -> None:
+        self.parent.fields.reverse()
+        return
 
 
 @attr.s
@@ -124,7 +125,7 @@ class _Slice(LoxCallable):
     def arity(self) -> int:
         return 3
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[int]) -> None:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[int]) -> LoxArray:
         start, stop, step = arguments
         out_array = LoxArray(0)
 

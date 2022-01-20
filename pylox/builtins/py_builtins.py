@@ -8,7 +8,7 @@ from pathlib import Path
 from pylox.callable import LoxCallable, LoxInstance
 from pylox.containers.array import LoxArray
 from pylox.environment import Environment
-from pylox.protocols.interpreter import InterpreterProtocol
+from pylox.protocols.interpreter import SourceInterpreterProtocol
 from pylox.tokens import Token, TokenType
 
 NUMERIC = t.Union[float, int]
@@ -36,7 +36,7 @@ class Abs(BuiltinFunction):
     def arity(self) -> int:  # noqa: D102
         return 1
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[NUMERIC]) -> NUMERIC:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[NUMERIC]) -> NUMERIC:
         """Return the absolute value of a number."""
         return abs(arguments[0])
 
@@ -48,7 +48,7 @@ class Array(BuiltinFunction):
     def arity(self) -> int:  # noqa: D102
         return 1
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[int]) -> LoxArray:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[int]) -> LoxArray:
         """Initialize an n-sized Lox array of `None` values."""
         return LoxArray(arguments[0])
 
@@ -60,7 +60,7 @@ class Ceil(BuiltinFunction):
     def arity(self) -> int:  # noqa: D102
         return 1
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[NUMERIC]) -> int:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[NUMERIC]) -> int:
         """Return the smallest number greater than or equal to the input value."""
         return math.ceil(arguments[0])
 
@@ -72,7 +72,7 @@ class Clock(BuiltinFunction):
     def arity(self) -> int:  # noqa: D102
         return 0
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list) -> float:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list) -> float:
         """Return the time in seconds since the epoch as a floating point number."""
         return time.time()
 
@@ -84,7 +84,7 @@ class DivMod(BuiltinFunction):
     def arity(self) -> int:  # noqa: D102
         return 2
 
-    def call(self, interpreter: InterpreterProtocol, arguments: NUMERIC) -> LoxArray:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: NUMERIC) -> LoxArray:
         """Return a `LoxArray` with the quotient and remainder from integer division."""
         return _lox_arrayize(divmod(*arguments))
 
@@ -96,7 +96,7 @@ class Floor(BuiltinFunction):
     def arity(self) -> int:  # noqa: D102
         return 1
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[NUMERIC]) -> int:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[NUMERIC]) -> int:
         """Return the smallest number less than or equal to the input value."""
         return math.floor(arguments[0])
 
@@ -108,7 +108,7 @@ class Input(BuiltinFunction):
     def arity(self) -> int:  # noqa: D102
         return 1
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[str]) -> str:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[str]) -> str:
         """Prompt the user for a line of input using the provided prompt."""
         return input(arguments[0])
 
@@ -120,7 +120,7 @@ class Len(BuiltinFunction):
     def arity(self) -> int:  # noqa: D102
         return 1
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> int:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[t.Any]) -> int:
         """
         Return the length of the specified object.
 
@@ -142,7 +142,7 @@ class Max(BuiltinFunction):
     def arity(self) -> int:  # noqa: D102
         return 2
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[NUMERIC]) -> NUMERIC:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[NUMERIC]) -> NUMERIC:
         """Return the maximum of the two values."""
         return max(arguments)
 
@@ -154,7 +154,7 @@ class Mean(BuiltinFunction):
     def arity(self) -> int:  # noqa: D102
         return 1
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[LoxArray]) -> float:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[LoxArray]) -> float:
         """Return the sample arithmetic mean of the data in the input `LoxArray`."""
         return statistics.mean(arguments[0].fields)
 
@@ -166,7 +166,7 @@ class Median(BuiltinFunction):
     def arity(self) -> int:  # noqa: D102
         return 1
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[LoxArray]) -> float:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[LoxArray]) -> float:
         """
         Return the median (middle value) of the input `LoxArray`.
 
@@ -183,7 +183,7 @@ class Min(BuiltinFunction):
     def arity(self) -> int:  # noqa: D102
         return 2
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[NUMERIC]) -> NUMERIC:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[NUMERIC]) -> NUMERIC:
         """Return the minimum of the two values."""
         return min(arguments)
 
@@ -195,7 +195,7 @@ class Mode(BuiltinFunction):
     def arity(self) -> int:  # noqa: D102
         return 1
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[LoxArray]) -> float:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[LoxArray]) -> float:
         """Return the single most common data point from the input `LoxArray`."""
         return statistics.mode(arguments[0].fields)
 
@@ -207,7 +207,7 @@ class Ord(BuiltinFunction):
     def arity(self) -> int:  # noqa: D102
         return 1
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[str]) -> int:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[str]) -> int:
         """Return an integer representing the Unicode code point of the input character."""
         return ord(arguments[0])
 
@@ -219,7 +219,7 @@ class ReadText(BuiltinFunction):
     def arity(self) -> int:  # noqa: D102
         return 1
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[str]) -> str:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[str]) -> str:
         """Return the contents of the specified file as a string."""
         return Path(arguments[0]).read_text()
 
@@ -231,7 +231,7 @@ class Std(BuiltinFunction):
     def arity(self) -> int:  # noqa: D102
         return 1
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[LoxArray]) -> float:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[LoxArray]) -> float:
         """Return the sample standard deviation of the input `LoxArray`."""
         return statistics.stdev(arguments[0].fields)
 
@@ -243,7 +243,7 @@ class Str2Num(BuiltinFunction):
     def arity(self) -> int:  # noqa: D102
         return 1
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[str]) -> NUMERIC:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[str]) -> NUMERIC:
         """Convert the provided string into an integer or float."""
         try:
             return int(arguments[0])
@@ -263,7 +263,7 @@ class StringArray(BuiltinFunction):
     def arity(self) -> int:  # noqa: D102
         return 1
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[str]) -> LoxArray:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[str]) -> LoxArray:
         """Break the input string into a `LoxArray` of individual characters."""
         return _lox_arrayize(arguments[0])
 

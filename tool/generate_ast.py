@@ -58,12 +58,12 @@ EXPR_STRUCT = {
 
 STMT_STRUCT = {
     "Block": {"statements": "list[Stmt]"},
-    "Class": {"name": "Token", "superclass": "Variable", "methods": "list[Function]"},
+    "Class": {"name": "Token", "superclass": "t.Optional[Variable]", "methods": "list[Function]"},
     "Expression": {"expr_expression": "Expr"},
     "Function": {"name": "Token", "params": "list[Token]", "body": "list[Stmt]"},
     "If": {"condition": "Expr", "then_branch": "Stmt", "else_branch": "t.Optional[Stmt]"},
     "Var": {"name": "Token", "initializer": "t.Optional[Expr]"},
-    "Return": {"keyword": "Token", "value": "Expr"},
+    "Return": {"keyword": "Token", "value": "t.Optional[Expr]"},
     "Print": {"expr_expression": "Expr"},
     "While": {"condition": "Expr", "body": "Stmt"},
     "Break": {"keyword": "Token"},

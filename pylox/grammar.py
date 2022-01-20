@@ -145,7 +145,7 @@ class Block(Stmt):
 @attr.s(slots=True, eq=False)
 class Class(Stmt):
     name: Token = attr.ib()
-    superclass: Variable = attr.ib()
+    superclass: t.Optional[Variable] = attr.ib()
     methods: list[Function] = attr.ib()
 
     def accept(self, visitor: VisitorProtocol) -> t.Any:
@@ -192,7 +192,7 @@ class Var(Stmt):
 @attr.s(slots=True, eq=False)
 class Return(Stmt):
     keyword: Token = attr.ib()
-    value: Expr = attr.ib()
+    value: t.Optional[Expr] = attr.ib()
 
     def accept(self, visitor: VisitorProtocol) -> t.Any:
         return visitor.visit_Return(self)

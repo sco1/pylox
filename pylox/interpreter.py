@@ -7,7 +7,8 @@ from pylox.builtins.py_builtins import load_builtins
 from pylox.callable import LoxCallable, LoxClass, LoxFunction, LoxInstance
 from pylox.environment import Environment
 from pylox.error import LoxBreakError, LoxContinueError, LoxReturnError, LoxRuntimeError
-from pylox.protocols.interpreter import InterpreterProtocol
+from pylox.protocols.interpreter import LoxInterpreterProtocol
+from pylox.protocols.typing import BoolEq
 from pylox.tokens import LITERAL_T, Token, TokenType
 
 
@@ -49,11 +50,12 @@ def stringify(obj: t.Any) -> str:
     return str(obj)
 
 
-def _lox_eq(left: t.Any, right: t.Any) -> bool:
+def _lox_eq(left: BoolEq, right: BoolEq) -> bool:
     """
     Special case equality since Lox diverges from Python's behavior.
 
-    Two basic assumptions are enforced:
+    Some basic assumptions are enforced:
+        * The incoming types have `__eq__`s that return `bool`
         * `None` (`"nil"`) and `False` are falsy, everything else is truthy
         * Comparison between unlike types is always `False`
         * `nan` (`float("nan")`) is not equal to anything
@@ -69,7 +71,9 @@ def _lox_eq(left: t.Any, right: t.Any) -> bool:
 class Interpreter:
     """The Pylox interpreter!"""
 
-    def __init__(self, interp: InterpreterProtocol) -> None:
+    _interp: LoxInterpreterProtocol
+
+    def __init__(self, interp: LoxInterpreterProtocol) -> None:
         self._interp = interp  # Terrible name but we're in interpreter.py's Interpreter class v0v
 
         # Environment changes as we change scopes, so we want to keep globals separate
@@ -77,7 +81,7 @@ class Interpreter:
         self._environment = self.globals
         self._locals: dict[grammar.Expr, int] = {}
 
-    def interpret(self, statements: list[t.Union[grammar.Expr, grammar.Stmt]]) -> list[t.Any]:
+    def interpret(self, statements: t.Sequence[t.Union[grammar.Expr, grammar.Stmt]]) -> list[t.Any]:
         try:
             retvals = []
             for statement in statements:
@@ -233,7 +237,8 @@ class Interpreter:
                 return not is_truthy(right)
             case _:  # pragma: no cover
                 raise LoxRuntimeError(
-                    expr, f"Unexpected Unary operator: '{expr.token_operator.lexeme}'"
+                    expr.token_operator,
+                    f"Unexpected Unary operator: '{expr.token_operator.lexeme}'",
                 )
 
     def visit_Variable(self, expr: grammar.Variable) -> t.Any:
@@ -311,10 +316,11 @@ class Interpreter:
                 return _lox_eq(left, right)
             case _:  # pragma: no cover
                 raise LoxRuntimeError(
-                    expr, f"Unexpected Binary operator: '{expr.token_operator.lexeme}'"
+                    expr.token_operator,
+                    f"Unexpected Binary operator: '{expr.token_operator.lexeme}'",
                 )
 
-    def visit_Call(self, expr: grammar.Call) -> None:
+    def visit_Call(self, expr: grammar.Call) -> t.Any:
         function = self._evaluate(expr.callee)
         arguments = [self._evaluate(argument) for argument in expr.arguments]
 
@@ -331,7 +337,7 @@ class Interpreter:
         except (NotImplementedError, TypeError, ValueError) as err:
             raise LoxRuntimeError(expr.closing_paren, str(err))
 
-    def visit_Get(self, expr: grammar.Get) -> None:
+    def visit_Get(self, expr: grammar.Get) -> t.Any:
         object_ = self._evaluate(expr.object_)
         if isinstance(object_, LoxInstance):
             return object_.get(expr.name)

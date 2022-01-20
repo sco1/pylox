@@ -57,8 +57,9 @@ class Lox:
         parser = Parser(tokens, self)
         statements = parser.parse()
 
-        # Don't run the resolver if we've had a scanning or parsing error
-        if self.had_error:
+        # Don't run the resolver if we've had a scanning or parsing error, or if we didn't get any
+        # statements
+        if self.had_error or not statements:
             return
 
         resolver = Resolver(self.interpreter)

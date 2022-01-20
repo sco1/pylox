@@ -8,7 +8,7 @@ import attr
 from pylox import grammar
 from pylox.environment import Environment
 from pylox.error import LoxReturnError, LoxRuntimeError
-from pylox.protocols.interpreter import InterpreterProtocol
+from pylox.protocols.interpreter import SourceInterpreterProtocol
 from pylox.tokens import Token, TokenType
 
 
@@ -16,11 +16,11 @@ class LoxCallable(ABC):  # pragma: no cover
     @property
     @abstractmethod
     def arity(self) -> int:
-        return NotImplemented
+        raise NotImplementedError
 
     @abstractmethod
-    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> None:
-        return NotImplemented
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[t.Any]) -> t.Any:
+        raise NotImplementedError
 
 
 SelfLoxFunction = t.TypeVar("SelfLoxFunction", bound="LoxFunction")
@@ -32,13 +32,13 @@ class LoxFunction(LoxCallable):
     closure: Environment = attr.ib()
     is_initializer: bool = attr.ib(default=False)
 
-    def bind(self, instance: LoxInstance) -> SelfLoxFunction:
+    def bind(self, instance: LoxInstance) -> LoxFunction:
         """For class methods, define a nested closure with the instance pre-defined as `this`."""
         env = Environment(self.closure)
         env.define(Token(TokenType.THIS, "this", None, 0, 0), instance)
         return LoxFunction(self.declaration, env, self.is_initializer)
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> t.Any:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[t.Any]) -> t.Any:
         """Call the current function instance using the provided arguments."""
         environment = Environment(self.closure)
 
@@ -66,16 +66,13 @@ class LoxFunction(LoxCallable):
         return f"<fn {self.declaration.name.lexeme}>"
 
 
-SelfLoxClass = t.TypeVar("SelfLoxClass", bound="LoxClass")
-
-
 @attr.s
 class LoxClass(LoxCallable):
     name: str = attr.ib()
-    superclass: SelfLoxClass = attr.ib()
-    methods: dict = attr.ib()
+    superclass: t.Optional[LoxClass] = attr.ib()
+    methods: dict[str, LoxFunction] = attr.ib()
 
-    def call(self, interpreter: InterpreterProtocol, arguments: list[t.Any]) -> SelfLoxClass:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[t.Any]) -> LoxInstance:
         instance = LoxInstance(self)
 
         # Check for an initializer & call it if defined
@@ -106,6 +103,8 @@ class LoxClass(LoxCallable):
 
         if self.superclass is not None:
             return self.superclass.find_method(name)
+
+        return None
 
     def __str__(self) -> str:
         return f"<cls {self.name}>"

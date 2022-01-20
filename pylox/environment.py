@@ -24,7 +24,7 @@ class Environment:
         """
         env = self
         for _ in range(distance):
-            env = env.enclosing
+            env = env.enclosing  # type: ignore[assignment]
 
         return env
 

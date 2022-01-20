@@ -3,7 +3,7 @@ from enum import Enum, auto
 
 from pylox import grammar
 from pylox.error import LoxResolverError
-from pylox.protocols.interpreter import InterpreterProtocol
+from pylox.protocols.interpreter import SourceInterpreterProtocol
 from pylox.tokens import Token
 
 
@@ -34,7 +34,7 @@ class Resolver:
     to perform some (limited) sentiment analysis.
     """
 
-    def __init__(self, interpreter: InterpreterProtocol) -> None:
+    def __init__(self, interpreter: SourceInterpreterProtocol) -> None:
         self._interpreter = interpreter
 
         # Scope stack is LIFO
@@ -62,7 +62,7 @@ class Resolver:
     def _resolve_one(self, stmt: t.Union[grammar.Stmt, grammar.Expr]) -> None:
         stmt.accept(self)
 
-    def resolve(self, stmt: list[grammar.Stmt]) -> None:
+    def resolve(self, stmt: t.Sequence[t.Union[grammar.Expr, grammar.Stmt]]) -> None:
         try:
             for statement in stmt:
                 self._resolve_one(statement)

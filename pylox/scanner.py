@@ -2,7 +2,7 @@ import ast
 from collections import namedtuple
 
 from pylox.error import LoxSyntaxError
-from pylox.protocols.interpreter import InterpreterProtocol
+from pylox.protocols.interpreter import LoxInterpreterProtocol
 from pylox.tokens import LITERAL_T, Token, TokenType
 
 RESERVED = {
@@ -27,7 +27,7 @@ RESERVED = {
     "while": TokenType.WHILE,
 }
 
-OFFSET_TUPLE = namedtuple("OffsetTuple", ["lineno", "end_lineno", "col_offset", "end_col_offset"])
+OffsetTuple = namedtuple("OffsetTuple", ["lineno", "end_lineno", "col_offset", "end_col_offset"])
 
 
 def is_alpha(char: str) -> bool:
@@ -54,7 +54,7 @@ def is_alnum(char: str) -> bool:
 class Scanner:
     """The pylox tokenizer."""
 
-    def __init__(self, src: str, interpreter: InterpreterProtocol) -> None:
+    def __init__(self, src: str, interpreter: LoxInterpreterProtocol) -> None:
         self.src = src
         self._interpreter = interpreter
         self.tokens: list[Token] = []
@@ -187,11 +187,11 @@ class Scanner:
         if token_type == TokenType.INCLUDE:
             raise LoxSyntaxError(self._lineno, self._col_offset, "Unresolved include statement.")
 
-    def _calculate_offsets(self, token_type: TokenType, is_multiline_string: bool) -> OFFSET_TUPLE:
+    def _calculate_offsets(self, token_type: TokenType, is_multiline_string: bool) -> OffsetTuple:
         lexeme = self.src[self._start : self._current]
         if token_type == TokenType.STRING:
             # Currently, only string tokens should be able to span multiple lines
-            return OFFSET_TUPLE(
+            return OffsetTuple(
                 # self._lineno will be the line where the string terminates, so we need to "rewind"
                 self._lineno - lexeme.count("\n"),
                 self._lineno,
@@ -201,7 +201,7 @@ class Scanner:
                 self._current - self._line_start - is_multiline_string,
             )
         else:
-            return OFFSET_TUPLE(
+            return OffsetTuple(
                 self._lineno, self._lineno, self._col_offset, self._col_offset + len(lexeme)
             )
 
