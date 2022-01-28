@@ -23,5 +23,5 @@ def test_expression_parsing(in_src: str, truth_value: float) -> None:
 
     check.is_false(interpreter.had_error)
 
-    _, val = interpreter.interpreter.interpret(expr)
+    _, val = interpreter.interpreter.interpret(expr)  # type: ignore[arg-type]
     check.equal(val, truth_value)

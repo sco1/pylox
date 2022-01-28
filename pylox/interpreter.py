@@ -82,15 +82,15 @@ class Interpreter:
         self._locals: dict[grammar.Expr, int] = {}
 
     def interpret(self, statements: t.Sequence[t.Union[grammar.Expr, grammar.Stmt]]) -> list[t.Any]:
+        retvals = []
         try:
-            retvals = []
             for statement in statements:
                 retvals = self._evaluate(statement)
-
-            # Optionally return to help with testing
-            return retvals
         except LoxRuntimeError as err:
             self._interp.report_runtime_error(err)
+
+        # Optionally return to help with testing
+        return retvals
 
     def resolve(self, expr: grammar.Expr, depth: int) -> None:
         self._locals[expr] = depth

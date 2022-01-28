@@ -25,4 +25,4 @@ def test_expression_parsing(in_src: str, truth_ast: str) -> None:
     check.is_false(interpreter.had_error)
 
     prettyprinter = AstPrinter()
-    check.equal(prettyprinter.dump(expr), truth_ast)
+    check.equal(prettyprinter.dump(expr), truth_ast)  # type: ignore[arg-type]

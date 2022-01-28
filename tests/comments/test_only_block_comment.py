@@ -12,7 +12,7 @@ TEST_SRC = dedent(
     """
 )
 
-EXPECTED_STDOUTS = []
+EXPECTED_STDOUTS: list[str] = []
 
 
 def test_block_comment_at_eof(capsys: pytest.CaptureFixture) -> None:

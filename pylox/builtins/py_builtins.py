@@ -23,12 +23,23 @@ def _lox_arrayize(in_iter: t.Iterable) -> LoxArray:
     return out_array
 
 
-def _arrayize_match(in_match: re.Match) -> LoxArray:
-    return _lox_arrayize((in_match[0], *in_match.groups()))
+def _arrayize_match(in_match: re.Match | None) -> LoxArray:
+    """
+    Expand the provided match object into a `LoxArray`.
+
+    If the match is not empty, the first element of the resulting array is the full match followed
+    by all group matches, if there was grouping in the pattern.
+    """
+    if in_match:
+        return _lox_arrayize((in_match[0], *in_match.groups()))
+    else:
+        return LoxArray(0)
 
 
 class BuiltinFunction(LoxCallable):  # pragma: no cover
     """Base class for Lox's built-in functions."""
+
+    _shortname: str
 
     def __str__(self) -> str:
         return f"<builtin fn {self._shortname}>"
@@ -89,9 +100,9 @@ class DivMod(BuiltinFunction):
     def arity(self) -> int:
         return 2
 
-    def call(self, interpreter: SourceInterpreterProtocol, arguments: NUMERIC) -> LoxArray:
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[NUMERIC]) -> LoxArray:
         """Return a `LoxArray` with the quotient and remainder from integer division."""
-        return _lox_arrayize(divmod(*arguments))
+        return _lox_arrayize(divmod(arguments[0], arguments[1]))
 
 
 class Floor(BuiltinFunction):
