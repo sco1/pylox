@@ -153,6 +153,8 @@ class LoxArray(LoxContainer):
         for thing in self.fields:
             if thing is None:
                 out_contents.append("nil")
+            elif isinstance(thing, LoxArray):
+                out_contents.append(str(thing))
             else:
                 out_contents.append(repr(thing))
 
