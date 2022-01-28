@@ -1,4 +1,5 @@
 import math
+import re
 import statistics
 import time
 import typing as t
@@ -22,6 +23,10 @@ def _lox_arrayize(in_iter: t.Iterable) -> LoxArray:
     return out_array
 
 
+def _arrayize_match(in_match: re.Match) -> LoxArray:
+    return _lox_arrayize((in_match[0], *in_match.groups()))
+
+
 class BuiltinFunction(LoxCallable):  # pragma: no cover
     """Base class for Lox's built-in functions."""
 
@@ -33,7 +38,7 @@ class Abs(BuiltinFunction):
     _shortname = "abs"
 
     @property
-    def arity(self) -> int:  # noqa: D102
+    def arity(self) -> int:
         return 1
 
     def call(self, interpreter: SourceInterpreterProtocol, arguments: list[NUMERIC]) -> NUMERIC:
@@ -45,7 +50,7 @@ class Array(BuiltinFunction):
     _shortname = "array"
 
     @property
-    def arity(self) -> int:  # noqa: D102
+    def arity(self) -> int:
         return 1
 
     def call(self, interpreter: SourceInterpreterProtocol, arguments: list[int]) -> LoxArray:
@@ -57,7 +62,7 @@ class Ceil(BuiltinFunction):
     _shortname = "ceil"
 
     @property
-    def arity(self) -> int:  # noqa: D102
+    def arity(self) -> int:
         return 1
 
     def call(self, interpreter: SourceInterpreterProtocol, arguments: list[NUMERIC]) -> int:
@@ -69,7 +74,7 @@ class Clock(BuiltinFunction):
     _shortname = "clock"
 
     @property
-    def arity(self) -> int:  # noqa: D102
+    def arity(self) -> int:
         return 0
 
     def call(self, interpreter: SourceInterpreterProtocol, arguments: list) -> float:
@@ -81,7 +86,7 @@ class DivMod(BuiltinFunction):
     _shortname = "divmod"
 
     @property
-    def arity(self) -> int:  # noqa: D102
+    def arity(self) -> int:
         return 2
 
     def call(self, interpreter: SourceInterpreterProtocol, arguments: NUMERIC) -> LoxArray:
@@ -93,7 +98,7 @@ class Floor(BuiltinFunction):
     _shortname = "floor"
 
     @property
-    def arity(self) -> int:  # noqa: D102
+    def arity(self) -> int:
         return 1
 
     def call(self, interpreter: SourceInterpreterProtocol, arguments: list[NUMERIC]) -> int:
@@ -105,7 +110,7 @@ class Input(BuiltinFunction):
     _shortname = "input"
 
     @property
-    def arity(self) -> int:  # noqa: D102
+    def arity(self) -> int:
         return 1
 
     def call(self, interpreter: SourceInterpreterProtocol, arguments: list[str]) -> str:
@@ -117,7 +122,7 @@ class Len(BuiltinFunction):
     _shortname = "len"
 
     @property
-    def arity(self) -> int:  # noqa: D102
+    def arity(self) -> int:
         return 1
 
     def call(self, interpreter: SourceInterpreterProtocol, arguments: list[t.Any]) -> int:
@@ -139,7 +144,7 @@ class Max(BuiltinFunction):
     _shortname = "max"
 
     @property
-    def arity(self) -> int:  # noqa: D102
+    def arity(self) -> int:
         return 2
 
     def call(self, interpreter: SourceInterpreterProtocol, arguments: list[NUMERIC]) -> NUMERIC:
@@ -151,7 +156,7 @@ class Mean(BuiltinFunction):
     _shortname = "mean"
 
     @property
-    def arity(self) -> int:  # noqa: D102
+    def arity(self) -> int:
         return 1
 
     def call(self, interpreter: SourceInterpreterProtocol, arguments: list[LoxArray]) -> float:
@@ -163,7 +168,7 @@ class Median(BuiltinFunction):
     _shortname = "median"
 
     @property
-    def arity(self) -> int:  # noqa: D102
+    def arity(self) -> int:
         return 1
 
     def call(self, interpreter: SourceInterpreterProtocol, arguments: list[LoxArray]) -> float:
@@ -180,7 +185,7 @@ class Min(BuiltinFunction):
     _shortname = "min"
 
     @property
-    def arity(self) -> int:  # noqa: D102
+    def arity(self) -> int:
         return 2
 
     def call(self, interpreter: SourceInterpreterProtocol, arguments: list[NUMERIC]) -> NUMERIC:
@@ -192,7 +197,7 @@ class Mode(BuiltinFunction):
     _shortname = "mode"
 
     @property
-    def arity(self) -> int:  # noqa: D102
+    def arity(self) -> int:
         return 1
 
     def call(self, interpreter: SourceInterpreterProtocol, arguments: list[LoxArray]) -> float:
@@ -204,7 +209,7 @@ class Ord(BuiltinFunction):
     _shortname = "ord"
 
     @property
-    def arity(self) -> int:  # noqa: D102
+    def arity(self) -> int:
         return 1
 
     def call(self, interpreter: SourceInterpreterProtocol, arguments: list[str]) -> int:
@@ -212,11 +217,85 @@ class Ord(BuiltinFunction):
         return ord(arguments[0])
 
 
+class ReFindall(BuiltinFunction):
+    _shortname = "re_findall"
+
+    @property
+    def arity(self) -> int:
+        return 2
+
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[str]) -> LoxArray:
+        """
+        Return all non-overlapping matches of pattern in string, as an array of strings or arrays.
+
+        The string is scanned left-to-right, and matches are returned in the order found. Empty
+        matches are included in the result.
+
+        The result depends on the number of capturing groups in the pattern. If there are no groups,
+        return an array of strings matching the whole pattern. If there is exactly one group, return
+        an array of strings matching that group. If multiple groups are present, return an array of
+        arrays of strings matching the groups.
+
+        Non-capturing groups do not affect the form of the result.
+        """
+        matches = re.findall(arguments[0], arguments[1])
+        if isinstance(matches[0], tuple):
+            return _lox_arrayize((_lox_arrayize(groups) for groups in matches))
+        else:
+            return _lox_arrayize(matches)
+
+
+class ReMatch(BuiltinFunction):
+    _shortname = "re_match"
+
+    @property
+    def arity(self) -> int:
+        return 2
+
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[str]) -> LoxArray:
+        """
+        Match if the pattern matches zero or more characters at the beginning of the string.
+
+        The first value in the array will always correspond to `match.group(0)`; if the pattern
+        contains one or more groups then the array will match the output of `match.groups()`
+        """
+        return _arrayize_match(re.match(arguments[0], arguments[1]))
+
+
+class ReSearch(BuiltinFunction):
+    _shortname = "re_search"
+
+    @property
+    def arity(self) -> int:
+        return 2
+
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[str]) -> LoxArray:
+        """
+        Scan through string looking for the first location where the pattern produces a match.
+
+        The first value in the array will always correspond to `match.group(0)`; if the pattern
+        contains one or more groups then the array will match the output of `match.groups()`
+        """
+        return _arrayize_match(re.search(arguments[0], arguments[1]))
+
+
+class ReSub(BuiltinFunction):
+    _shortname = "re_sub"
+
+    @property
+    def arity(self) -> int:
+        return 3
+
+    def call(self, interpreter: SourceInterpreterProtocol, arguments: list[str]) -> str:
+        """Replace the leftmost non-overlapping occurrences of the pattern in the given string."""
+        return re.sub(arguments[0], arguments[1], arguments[2])
+
+
 class ReadText(BuiltinFunction):
     _shortname = "read_text"
 
     @property
-    def arity(self) -> int:  # noqa: D102
+    def arity(self) -> int:
         return 1
 
     def call(self, interpreter: SourceInterpreterProtocol, arguments: list[str]) -> str:
@@ -228,7 +307,7 @@ class Std(BuiltinFunction):
     _shortname = "std"
 
     @property
-    def arity(self) -> int:  # noqa: D102
+    def arity(self) -> int:
         return 1
 
     def call(self, interpreter: SourceInterpreterProtocol, arguments: list[LoxArray]) -> float:
@@ -240,7 +319,7 @@ class Str2Num(BuiltinFunction):
     _shortname = "str2num"
 
     @property
-    def arity(self) -> int:  # noqa: D102
+    def arity(self) -> int:
         return 1
 
     def call(self, interpreter: SourceInterpreterProtocol, arguments: list[str]) -> NUMERIC:
@@ -260,7 +339,7 @@ class StringArray(BuiltinFunction):
     _shortname = "string_array"
 
     @property
-    def arity(self) -> int:  # noqa: D102
+    def arity(self) -> int:
         return 1
 
     def call(self, interpreter: SourceInterpreterProtocol, arguments: list[str]) -> LoxArray:
@@ -283,6 +362,10 @@ BUILTIN_MAPPING = {
     "min": Min(),
     "mode": Mode(),
     "ord": Ord(),
+    "re_findall": ReFindall(),
+    "re_match": ReMatch(),
+    "re_search": ReSearch(),
+    "re_sub": ReSub(),
     "read_text": ReadText(),
     "std": Std(),
     "str2num": Str2Num(),

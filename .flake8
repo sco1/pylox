@@ -23,7 +23,7 @@ exclude=
 per-file-ignores =
     pylox/protocols/*.py:D101 D102,
     pylox/ast_printer.py:D102,
-    pylox/builtins/py_builtins.py:D101,
+    pylox/builtins/py_builtins.py:D101 D102,
     pylox/callable.py: D101 D102,
     pylox/error.py:D101,
     pylox/grammar.py:D101 D102,

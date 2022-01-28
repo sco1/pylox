@@ -49,6 +49,7 @@ pre-commit = "^2.14"
 pytest = "^6.2"
 pytest-check = "^1.0"
 pytest-cov = "^3.0"
+time-machine = "^2.6"
 tox = "^3.24"
 
 [tool.black]

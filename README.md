@@ -29,27 +29,43 @@ For the sake of fitting within a decently sized text, the fully implemented Lox 
     * `array()`
   * A basic `include` header system
     * Supports "stdlib" imports (`<header_name>`) and path imports (`"path/to/file"`)
+    * Recursive `include` not supported
+    * Imported source assumed to be valid code
 
 ### Additional Built-ins:
-Unless otherwise noted, behavior mirrors the similarly named Python function
-  * `abs`
-  * `ceil`
-  * `divmod`
-  * `floor`
+Unless otherwise noted, behavior mirrors the similarly named Python function.
+
+#### General
   * `input`
   * `len`
-  * `max`
-  * `mean`
-  * `median`
-  * `min`
-  * `mode`
   * `ord`
   * `read_text` (via `pathlib.Path.read_text`)
-  * `std`
   * `str2num`
   * `string_array`
     * Gives a `LoxArray` whose contents are equivalent to `collections.deque(<some string>)`
 
+#### Math
+  * `abs`
+  * `ceil`
+  * `divmod`
+  * `floor`
+  * `max`
+  * `min`
+
+#### Regex
+For methods whose Python equivalent returns [Match objects](https://docs.python.org/3/library/re.html#match-objects), a `LoxArray` is returned. The first value in the array will always correspond to `match.group(0)`; if the pattern contains one or more groups then the array will match the output of `match.groups()`
+
+  * `re_findall`
+  * `re_match`
+  * `re_search`
+  * `re_sub`
+
+#### Stats
+  * `mean`
+  * `median`
+  * `mode`
+  * `std`
+
 ### Pure lox headers
-  * `split_on`
-  * `array_sum`
+  * `<array_sum>`
+  * `<split_on>`
