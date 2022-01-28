@@ -1,4 +1,5 @@
 import re
+import warnings
 from pathlib import Path
 
 INCLUDE_DIRECTIVE = re.compile(r"include\s+([\"\'\<].+[\"\'\>])$")
@@ -45,6 +46,7 @@ class PreProcessor:
             * One path per `include` line
             * Referenced source files do not themselves have any imports
         """
+        seen_imports: set[Path] = set()  # Track fully resolved import paths
         out_src = self.in_src.splitlines(keepends=True)
         for idx, line in enumerate(out_src):
             if line.strip():  # Ignore empty lines
@@ -53,11 +55,23 @@ class PreProcessor:
                         case "<":
                             # Pylox builtin
                             module_name = include.group(1).strip("<>")
-                            out_src[idx] = load_if_exists(BUILTINS_PATH / f"{module_name}.lox")
+                            module_path = (BUILTINS_PATH / f"{module_name}.lox").resolve()
                         case "'" | '"':
                             # Path to source file
                             module_name = include.group(1).strip("'\"")
-                            out_src[idx] = load_if_exists(Path(module_name))
+                            module_path = Path(module_name).resolve()
+                        case _:
+                            raise ValueError(f"Unknown include prefix: '{include.group(1)[0]}'")
+
+                    out_src[idx] = load_if_exists(module_path)
+
+                    if module_path in seen_imports:
+                        warnings.warn(
+                            f"Duplicate include founds: '{include.group(1)}'",
+                            ImportWarning,
+                        )
+                    seen_imports.add(module_path)
+
                 else:
                     # End of include block reached
                     break

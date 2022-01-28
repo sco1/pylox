@@ -5,7 +5,7 @@ fun split_on(in_str, delimiter) {
     var substr = "";
     for (var i = 0; i < len(in_str); i = i + 1) {
         if (split_txt.get(i) == delimiter) {
-            out.append(substr);
+            out.append(str2num(substr));
             substr = "";
         }
         else {
