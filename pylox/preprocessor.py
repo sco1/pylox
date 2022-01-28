@@ -28,6 +28,9 @@ class PreProcessor:
 
     def __init__(self, src: str) -> None:
         self.in_src = src
+
+        self.has_includes = False
+        self.n_included_lines = 0
         self.resolve_source()
 
     def resolve_source(self) -> None:
@@ -63,7 +66,11 @@ class PreProcessor:
                         case _:
                             raise ValueError(f"Unknown include prefix: '{include.group(1)[0]}'")
 
-                    out_src[idx] = load_if_exists(module_path)
+                    incoming_src = load_if_exists(module_path)
+                    out_src[idx] = incoming_src
+
+                    # Subtract 1 line since we're replacing the line with the include directive
+                    self.n_included_lines += incoming_src.count("\n") - 1
 
                     if module_path in seen_imports:
                         warnings.warn(
@@ -75,5 +82,9 @@ class PreProcessor:
                 else:
                     # End of include block reached
                     break
+
+        # Check once rather than every time we matched an include directive
+        if seen_imports:
+            self.has_includes = True
 
         self.resolved_src = "".join(out_src)

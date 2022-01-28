@@ -20,8 +20,11 @@ Prompt.prompt_suffix = ""  # Get rid of the default colon suffix
 class Lox:
     """The pylox interpreter core."""
 
+    preprocessor: PreProcessor | None
+
     def __init__(self) -> None:
         self.interpreter = Interpreter(self)
+        self.preprocessor = None
 
         self.had_error = False
         self.had_runtime_error = False
@@ -49,9 +52,9 @@ class Lox:
 
     def run(self, src: str) -> None:
         """Run the specified source."""
-        preprocessor = PreProcessor(src)
+        self.preprocessor = PreProcessor(src)
 
-        scanner = Scanner(preprocessor.resolved_src, self)
+        scanner = Scanner(self.preprocessor.resolved_src, self)
         tokens = scanner.scan_tokens()
 
         parser = Parser(tokens, self)
@@ -71,14 +74,25 @@ class Lox:
 
         self.interpreter.interpret(statements)
 
+    def _build_error_string(self, err: LoxException | LoxRuntimeError) -> str:
+        """Adjust error location for any imports & make a colorful error."""
+        line, col = err.line, err.col
+
+        # Adjust the lineno to account for any inserted source code from include directive(s)
+        # It would be good to eventually be able to associate this with the problematic import
+        if self.preprocessor and self.preprocessor.has_includes:
+            line -= self.preprocessor.n_included_lines
+
+        return f"{line+1}:{col+1}: [bold red]{err}[/bold red]"
+
     def report_error(self, err: LoxException) -> None:
         """Report a general exception to the terminal."""
-        print(f"{err.line+1}:{err.col+1}: [bold red]{err}[/bold red]")
+        print(self._build_error_string(err))
         self.had_error = True
 
     def report_runtime_error(self, err: LoxRuntimeError) -> None:
         """Report a runtime error to the terminal."""
-        print(f"{err.line+1}:{err.col+1}: [bold red]{err}[/bold red]")
+        print(self._build_error_string(err))
         self.had_error = True
         self.had_runtime_error = True
 
