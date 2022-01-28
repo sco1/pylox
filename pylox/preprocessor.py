@@ -1,6 +1,19 @@
 import re
+from pathlib import Path
 
 INCLUDE_DIRECTIVE = re.compile(r"include\s+([\"\'\<].+[\"\'\>])$")
+
+BUILTINS_PATH = Path(__file__).parent / "builtins"
+if not BUILTINS_PATH.exists():
+    raise OSError(f"Could not locate builtins directory, expected: '{BUILTINS_PATH.resolve()}'")
+
+
+def load_if_exists(filepath: Path) -> str:
+    """If a file exists, return its contents, otherwise raise an error."""
+    if not filepath.exists():
+        raise ValueError(f"Could not locate source file: '{filepath}'")
+
+    return filepath.read_text()
 
 
 class PreProcessor:
@@ -38,9 +51,13 @@ class PreProcessor:
                 if include := INCLUDE_DIRECTIVE.search(line):
                     match include.group(1)[0]:
                         case "<":
-                            out_src[idx] = "print 'builtin include found';\n"
+                            # Pylox builtin
+                            module_name = include.group(1).strip("<>")
+                            out_src[idx] = load_if_exists(BUILTINS_PATH / f"{module_name}.lox")
                         case "'" | '"':
-                            out_src[idx] = "print 'path to include found';\n"
+                            # Path to source file
+                            module_name = include.group(1).strip("'\"")
+                            out_src[idx] = load_if_exists(Path(module_name))
                 else:
                     # End of include block reached
                     break
