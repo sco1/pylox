@@ -309,7 +309,7 @@ class Interpreter:
                 return left <= right
             case TokenType.CARAT:
                 self._check_numeric_operands(expr.token_operator, left, right)
-                return left ** right
+                return left**right
             case TokenType.BANG_EQUAL:
                 return not _lox_eq(left, right)
             case TokenType.EQUAL_EQUAL:
