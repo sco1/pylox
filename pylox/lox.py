@@ -75,15 +75,32 @@ class Lox:
         self.interpreter.interpret(statements)
 
     def _build_error_string(self, err: LoxException | LoxRuntimeError) -> str:
-        """Adjust error location for any imports & make a colorful error."""
+        """
+        Adjust error location for any imports & make a colorful error.
+
+        If an error occurs on a line of source that has been included, repoint the error to the
+        `include` statement in the source on disk and update the error string.
+        """
+        pre = ""  # Error string helper prefix to update if we're erroring inside included source
         line, col = err.line, err.col
 
         # Adjust the lineno to account for any inserted source code from include directive(s)
-        # It would be good to eventually be able to associate this with the problematic import
         if self.preprocessor and self.preprocessor.has_includes:
-            line -= self.preprocessor.n_included_lines
+            if line <= self.preprocessor.n_included_lines:
+                pre = f"[bold magenta](Error in included source)[/bold magenta] {line+1}:{col+1}: "
+                # Find which include statement we came from
+                for include in self.preprocessor.import_metadata:
+                    if line in include.line_range:
+                        line = include.include_line
+                        col = 0
+                        break
+            else:
+                # Catch-all for errors that span outside of included source (e.g. expecting block
+                # closing)
+                # Not the best error message in some cases, but is workable for now
+                line -= self.preprocessor.n_included_lines
 
-        return f"{line+1}:{col+1}: [bold red]{err}[/bold red]"
+        return f"{line+1}:{col+1}: {pre}[bold red]{err}[/bold red]"
 
     def report_error(self, err: LoxException) -> None:
         """Report a general exception to the terminal."""
