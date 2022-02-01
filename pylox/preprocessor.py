@@ -5,7 +5,7 @@ from pathlib import Path
 INCLUDE_DIRECTIVE = re.compile(r"include\s+([\"\'\<].+[\"\'\>])$")
 
 BUILTINS_PATH = Path(__file__).parent / "builtins"
-if not BUILTINS_PATH.exists():
+if not BUILTINS_PATH.exists():  # pragma: no cover
     raise OSError(f"Could not locate builtins directory, expected: '{BUILTINS_PATH.resolve()}'")
 
 
@@ -63,7 +63,7 @@ class PreProcessor:
                             # Path to source file
                             module_name = include.group(1).strip("'\"")
                             module_path = Path(module_name).resolve()
-                        case _:
+                        case _:  # pragma: no cover
                             raise ValueError(f"Unknown include prefix: '{include.group(1)[0]}'")
 
                     incoming_src = load_if_exists(module_path)
@@ -74,8 +74,10 @@ class PreProcessor:
 
                     if module_path in seen_imports:
                         warnings.warn(
-                            f"Duplicate include founds: '{include.group(1)}'",
-                            ImportWarning,
+                            UserWarning(
+                                f"Duplicate include founds: '{include.group(1)}'",
+                                ImportWarning,
+                            )
                         )
                     seen_imports.add(module_path)
 
