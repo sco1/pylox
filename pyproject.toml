@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sco1-pylox"
-version = "0.4.0"
+version = "0.5.0"
 description = "A Python interpreter for the Lox programming language."
 authors = ["sco1 <sco1.git@gmail.com>"]
 
