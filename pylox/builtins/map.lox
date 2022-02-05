@@ -1,0 +1,9 @@
+fun map(in_arr, func) {
+    // Apply the provided function to every element of the input array.
+    var out = array(0);
+    for (var i = 0; i < len(in_arr); i = i + 1) {
+        out.append(func(in_arr.get(i)));
+    }
+
+    return out;
+}

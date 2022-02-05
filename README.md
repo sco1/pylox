@@ -69,4 +69,5 @@ For methods whose Python equivalent returns [Match objects](https://docs.python.
 ### Pure lox headers
   * `<array_sum>`
   * `<hello_world>`
+  * `<map>`
   * `<split_on>`
