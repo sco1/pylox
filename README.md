@@ -4,7 +4,7 @@
 [![PyPI - License](https://img.shields.io/pypi/l/sco1-pylox?color=magenta)](https://github.com/sco1/sco1-pylox/blob/main/LICENSE)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/sco1/pylox/main.svg)](https://results.pre-commit.ci/latest/github/sco1/pylox/main)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-black)](https://github.com/psf/black)
-[![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/sco1/pylox)
+[![Open in Visual Studio Code](https://img.shields.io/badge/Open%20in-VSCode.dev-blue)](https://vscode.dev/github.com/sco1/pylox)
 
 ## Introduction
 This is my Python implementation of an interpreter for the Lox programming language from Robert Nystrom's *[Crafting Interpreters](https://craftinginterpreters.com/)*.
