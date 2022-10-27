@@ -3,7 +3,7 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<ma
 
 ## [0.5.1]
 ### Fixed
-* Fix incorrect output type for `split_on`; the main loop contained a `str2num` call but the function should only return a `LoxArray` of strings.
+* Fix incorrect output type for `<split_on>`; the main loop contained a `str2num` call but the function should only return a `LoxArray` of strings.
 
 ### Added
 * Add `<map>` to pure-lox stdlib headers.
