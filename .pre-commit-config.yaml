@@ -20,14 +20,18 @@ repos:
           - flake8-bugbear
           - flake8-docstrings
           - flake8-fixme
+          - pep8-naming
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
+      - id: check-case-conflict
+      - id: check-json
       - id: check-merge-conflict
       - id: check-toml
       - id: check-yaml
       - id: end-of-file-fixer
       - id: mixed-line-ending
+      - id: trailing-whitespace
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: v1.10.0
     hooks:
