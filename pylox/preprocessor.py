@@ -101,7 +101,8 @@ class PreProcessor:
                             UserWarning(
                                 f"Duplicate include founds: '{include.group(1)}'",
                                 ImportWarning,
-                            )
+                            ),
+                            stacklevel=2,
                         )
                     seen_imports.add(module_path)
 
