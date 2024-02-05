@@ -17,12 +17,10 @@ class LoxException(BaseException):
         return f"{type(self).__name__}: {self.message}"
 
 
-class LoxPreProcessorError(LoxException):
-    ...
+class LoxPreProcessorError(LoxException): ...
 
 
-class LoxSyntaxError(LoxException):
-    ...
+class LoxSyntaxError(LoxException): ...
 
 
 class LoxParseError(LoxException):
@@ -52,10 +50,8 @@ class LoxReturnError(LoxRuntimeError):
 
 
 class LoxBreakError(LoxRuntimeError):
-    def __init__(self) -> None:
-        ...
+    def __init__(self) -> None: ...
 
 
 class LoxContinueError(LoxRuntimeError):
-    def __init__(self) -> None:
-        ...
+    def __init__(self) -> None: ...
