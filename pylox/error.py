@@ -17,10 +17,10 @@ class LoxException(BaseException):
         return f"{type(self).__name__}: {self.message}"
 
 
-class LoxPreProcessorError(LoxException): ...
+class LoxPreProcessorError(LoxException): ...  # noqa: E701
 
 
-class LoxSyntaxError(LoxException): ...
+class LoxSyntaxError(LoxException): ...  # noqa: E701
 
 
 class LoxParseError(LoxException):
