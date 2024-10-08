@@ -25,7 +25,7 @@ class _ContainerSetter(LoxCallable):
         try:
             self.parent.fields[idx] = value
         except IndexError:
-            raise LoxRuntimeError(self.call_token, "Assignment index out of range.")
+            raise LoxRuntimeError(self.call_token, "Assignment index out of range.") from None
 
 
 @attr.s
@@ -41,7 +41,7 @@ class _ContainerGetter(LoxCallable):
         try:
             return self.parent.fields[arguments[0]]
         except IndexError:
-            raise LoxRuntimeError(self.call_token, "Index out of range.")
+            raise LoxRuntimeError(self.call_token, "Index out of range.") from None
 
 
 class LoxContainer(LoxInstance):
