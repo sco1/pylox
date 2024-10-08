@@ -83,7 +83,7 @@ class _Pop(LoxCallable):
         try:
             return self.parent.fields.pop()
         except IndexError:
-            raise LoxRuntimeError(self.call_token, "Cannot pop from empty array.")
+            raise LoxRuntimeError(self.call_token, "Cannot pop from empty array.") from None
 
 
 @attr.s
@@ -99,7 +99,7 @@ class _PopLeft(LoxCallable):
         try:
             return self.parent.fields.popleft()
         except IndexError:
-            raise LoxRuntimeError(self.call_token, "Cannot pop from empty array.")
+            raise LoxRuntimeError(self.call_token, "Cannot pop from empty array.") from None
 
 
 @attr.s

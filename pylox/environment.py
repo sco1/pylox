@@ -75,7 +75,7 @@ class Environment:
             if self.enclosing is not None:
                 return self.enclosing.get(name)
             else:
-                raise LoxRuntimeError(name, f"Undefined variable '{name.lexeme}'.")
+                raise LoxRuntimeError(name, f"Undefined variable '{name.lexeme}'.") from None
 
     def get_at(self, distance: int, name: t.Union[Token, str]) -> t.Any:
         """
