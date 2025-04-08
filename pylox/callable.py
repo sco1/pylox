@@ -42,7 +42,7 @@ class LoxFunction(LoxCallable):
         """Call the current function instance using the provided arguments."""
         environment = Environment(self.closure)
 
-        for param, val in zip(self.declaration.params, arguments):
+        for param, val in zip(self.declaration.params, arguments, strict=False):
             environment.define(param, val)
 
         try:
