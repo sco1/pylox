@@ -1,5 +1,5 @@
 # pylox
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/sco1-pylox/0.5.1?logo=python&logoColor=FFD43B)](https://pypi.org/project/sco1-pylox/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/sco1-pylox/0.5.2?logo=python&logoColor=FFD43B)](https://pypi.org/project/sco1-pylox/)
 [![PyPI](https://img.shields.io/pypi/v/sco1-pylox?logo=Python&logoColor=FFD43B)](https://pypi.org/project/sco1-pylox/)
 [![PyPI - License](https://img.shields.io/pypi/l/sco1-pylox?color=magenta)](https://github.com/sco1/sco1-pylox/blob/main/LICENSE)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/sco1/pylox/main.svg)](https://results.pre-commit.ci/latest/github/sco1/pylox/main)

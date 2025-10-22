@@ -1,6 +1,6 @@
 [project]
 name = "sco1-pylox"
-version = "0.5.1"
+version = "0.5.2"
 description = "A Python interpreter for the Lox programming language."
 license = "MIT"
 license-files = ["LICENSE"]
