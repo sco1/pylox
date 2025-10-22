@@ -12,9 +12,11 @@ select = [
     "B",    # flake8-bugbear
     "C4",   # flake8-comprehensions
     "D",    # pydocstyle/flake8-docstrings
+    "E",    # pycodestyle
     "F",    # Pyflakes
     "FIX",  # flake8-fixme
     "N",    # pep8-naming
+    "W",    # pycodestyle
 ]
 
 ignore = [
@@ -60,7 +62,7 @@ ignore = [
 "pylox/interpreter.py" = ["D102",]
 "pylox/lox.py" = ["B008",]
 "pylox/resolver.py" = ["D101", "D102",]
-"tests/*/test_*.py" = ["D101", "D103",]
+"tests/*/test_*.py" = ["D101", "D103","E501"]
 "tool/generate_ast.py" = ["B008",]
 "tool/generate_tests.py" = ["B008"]
 

@@ -1,7 +1,6 @@
 import typing as t
+from dataclasses import dataclass
 from enum import Enum, auto
-
-import attr
 
 LITERAL_T = t.Union[str, float, bool, None]
 
@@ -62,15 +61,15 @@ class TokenType(Enum):  # noqa: D101
     EOF = auto()
 
 
-@attr.s(slots=True, frozen=True)
+@dataclass(slots=True, frozen=True)
 class Token:  # noqa: D101
-    token_type: TokenType = attr.ib()
-    lexeme: str = attr.ib()
-    literal: LITERAL_T = attr.ib(default=None)
-    lineno: int = attr.ib(default=-1)  # Zero-indexed
-    end_lineno: int = attr.ib(default=-1)  # Zero-indexed
-    col_offset: int = attr.ib(default=-1)  # Zero-indexed, relative to the starting line
-    end_col_offset: int = attr.ib(default=-1)  # Zero indexed, relative to the ending line
+    token_type: TokenType
+    lexeme: str
+    literal: LITERAL_T = None
+    lineno: int = -1  # Zero-indexed
+    end_lineno: int = -1  # Zero-indexed
+    col_offset: int = -1  # Zero-indexed, relative to the starting line
+    end_col_offset: int = -1  # Zero indexed, relative to the ending line
 
     def __str__(self) -> str:  # pragma: no cover
         return f"{self.token_type} {self.lexeme} {self.literal}"

@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import typing as t
-
-import attr
+from dataclasses import dataclass
 
 from pylox.callable import LoxCallable, LoxInstance
 from pylox.error import LoxRuntimeError
@@ -10,10 +9,10 @@ from pylox.protocols.interpreter import SourceInterpreterProtocol
 from pylox.tokens import Token
 
 
-@attr.s
+@dataclass
 class _ContainerSetter(LoxCallable):
-    parent: LoxContainer = attr.ib()
-    call_token: Token = attr.ib()
+    parent: LoxContainer
+    call_token: Token
 
     @property
     def arity(self) -> int:
@@ -28,10 +27,10 @@ class _ContainerSetter(LoxCallable):
             raise LoxRuntimeError(self.call_token, "Assignment index out of range.") from None
 
 
-@attr.s
+@dataclass
 class _ContainerGetter(LoxCallable):
-    parent: LoxContainer = attr.ib()
-    call_token: Token = attr.ib()
+    parent: LoxContainer
+    call_token: Token
 
     @property
     def arity(self) -> int:
