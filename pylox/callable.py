@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import typing as t
 from abc import ABC, abstractmethod
-
-import attr
+from dataclasses import dataclass, field
 
 from pylox import grammar
 from pylox.environment import Environment
@@ -26,11 +25,11 @@ class LoxCallable(ABC):  # pragma: no cover
 SelfLoxFunction = t.TypeVar("SelfLoxFunction", bound="LoxFunction")
 
 
-@attr.s
+@dataclass
 class LoxFunction(LoxCallable):
-    declaration: grammar.Function = attr.ib()
-    closure: Environment = attr.ib()
-    is_initializer: bool = attr.ib(default=False)
+    declaration: grammar.Function
+    closure: Environment
+    is_initializer: bool = False
 
     def bind(self, instance: LoxInstance) -> LoxFunction:
         """For class methods, define a nested closure with the instance pre-defined as `this`."""
@@ -66,11 +65,11 @@ class LoxFunction(LoxCallable):
         return f"<fn {self.declaration.name.lexeme}>"
 
 
-@attr.s
+@dataclass
 class LoxClass(LoxCallable):
-    name: str = attr.ib()
-    superclass: t.Optional[LoxClass] = attr.ib()
-    methods: dict[str, LoxFunction] = attr.ib()
+    name: str
+    superclass: t.Optional[LoxClass]
+    methods: dict[str, LoxFunction]
 
     def call(self, interpreter: SourceInterpreterProtocol, arguments: list[t.Any]) -> LoxInstance:
         instance = LoxInstance(self)
@@ -110,10 +109,10 @@ class LoxClass(LoxCallable):
         return f"<cls {self.name}>"
 
 
-@attr.s
+@dataclass
 class LoxInstance:
-    instance_of: LoxClass = attr.ib()
-    fields: dict = attr.ib(factory=dict)
+    instance_of: LoxClass
+    fields: dict = field(default_factory=dict)
 
     def get(self, name: Token) -> t.Any:
         if name.lexeme in self.fields:

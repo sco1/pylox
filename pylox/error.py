@@ -1,17 +1,16 @@
 import typing as t
-
-import attr
+from dataclasses import dataclass
 
 from pylox.tokens import Token
 
 
-@attr.s(slots=True)
+@dataclass(slots=True)
 class LoxException(BaseException):
     """Base Lox exception type."""
 
-    line: int = attr.ib()
-    col: int = attr.ib()
-    message: str = attr.ib()
+    line: int
+    col: int
+    message: str
 
     def __str__(self) -> str:
         return f"{type(self).__name__}: {self.message}"

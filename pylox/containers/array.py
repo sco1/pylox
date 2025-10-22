@@ -3,8 +3,7 @@ from __future__ import annotations
 import itertools
 import typing as t
 from collections import deque
-
-import attr
+from dataclasses import dataclass
 
 from pylox.callable import LoxCallable
 from pylox.containers.base import LoxContainer
@@ -13,10 +12,10 @@ from pylox.protocols.interpreter import SourceInterpreterProtocol
 from pylox.tokens import Token
 
 
-@attr.s
+@dataclass
 class _Append(LoxCallable):
-    parent: LoxArray = attr.ib()
-    call_token: Token = attr.ib()
+    parent: LoxArray
+    call_token: Token
 
     @property
     def arity(self) -> int:
@@ -26,10 +25,10 @@ class _Append(LoxCallable):
         self.parent.fields.append(arguments[0])
 
 
-@attr.s
+@dataclass
 class _AppendLeft(LoxCallable):
-    parent: LoxArray = attr.ib()
-    call_token: Token = attr.ib()
+    parent: LoxArray
+    call_token: Token
 
     @property
     def arity(self) -> int:
@@ -39,10 +38,10 @@ class _AppendLeft(LoxCallable):
         self.parent.fields.appendleft(arguments[0])
 
 
-@attr.s
+@dataclass
 class _Clear(LoxCallable):
-    parent: LoxArray = attr.ib()
-    call_token: Token = attr.ib()
+    parent: LoxArray
+    call_token: Token
 
     @property
     def arity(self) -> int:
@@ -52,10 +51,10 @@ class _Clear(LoxCallable):
         self.parent.fields.clear()
 
 
-@attr.s
+@dataclass
 class _Join(LoxCallable):
-    parent: LoxArray = attr.ib()
-    call_token: Token = attr.ib()
+    parent: LoxArray
+    call_token: Token
 
     @property
     def arity(self) -> int:
@@ -70,10 +69,10 @@ class _Join(LoxCallable):
         return arguments[0].join(self.parent.fields)
 
 
-@attr.s
+@dataclass
 class _Pop(LoxCallable):
-    parent: LoxArray = attr.ib()
-    call_token: Token = attr.ib()
+    parent: LoxArray
+    call_token: Token
 
     @property
     def arity(self) -> int:
@@ -86,10 +85,10 @@ class _Pop(LoxCallable):
             raise LoxRuntimeError(self.call_token, "Cannot pop from empty array.") from None
 
 
-@attr.s
+@dataclass
 class _PopLeft(LoxCallable):
-    parent: LoxArray = attr.ib()
-    call_token: Token = attr.ib()
+    parent: LoxArray
+    call_token: Token
 
     @property
     def arity(self) -> int:
@@ -102,10 +101,10 @@ class _PopLeft(LoxCallable):
             raise LoxRuntimeError(self.call_token, "Cannot pop from empty array.") from None
 
 
-@attr.s
+@dataclass
 class _Reverse(LoxCallable):
-    parent: LoxArray = attr.ib()
-    call_token: Token = attr.ib()
+    parent: LoxArray
+    call_token: Token
 
     @property
     def arity(self) -> int:
@@ -116,10 +115,10 @@ class _Reverse(LoxCallable):
         return
 
 
-@attr.s
+@dataclass
 class _Slice(LoxCallable):
-    parent: LoxArray = attr.ib()
-    call_token: Token = attr.ib()
+    parent: LoxArray
+    call_token: Token
 
     @property
     def arity(self) -> int:

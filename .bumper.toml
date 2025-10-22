@@ -1,0 +1,11 @@
+[tool.bumper]
+current_version = "0.5.2"
+versioning_type = "semver"
+
+[[tool.bumper.files]]
+file = "./pyproject.toml"
+search = 'version = "{current_version}"'
+
+[[tool.bumper.files]]
+file = "./README.md"
+search = "sco1-pylox/{current_version}"

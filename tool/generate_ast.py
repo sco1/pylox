@@ -16,8 +16,7 @@ GRAMMAR_IMPORT_BLOCK = dedent(
 
     import typing as t
     from abc import ABC, abstractmethod
-
-    import attr
+    from dataclasses import dataclass
 
     from pylox.protocols.visitor import VisitorProtocol
     from pylox.tokens import LITERAL_T, Token"""
@@ -97,7 +96,7 @@ def _gen_classdef(
         # fmt: off
         components.append(
             (
-                f"@attr.s(slots={slotted}, eq={eq})\n"
+                f"@dataclass(slots={slotted}, eq={eq})\n"
                 f"class {class_name}({inherits_from}):"
             )
         )
@@ -108,7 +107,7 @@ def _gen_classdef(
     if class_attributes:
         components.extend(
             [
-                f"{INDENT}{attribute}: {attribute_type} = attr.ib()"
+                f"{INDENT}{attribute}: {attribute_type}"
                 for attribute, attribute_type in class_attributes.items()
             ]
         )

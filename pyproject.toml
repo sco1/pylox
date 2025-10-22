@@ -1,6 +1,6 @@
 [project]
 name = "sco1-pylox"
-version = "0.5.1"
+version = "0.5.2"
 description = "A Python interpreter for the Lox programming language."
 license = "MIT"
 license-files = ["LICENSE"]
@@ -15,17 +15,15 @@ classifiers = [
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Software Development :: Interpreters",
     "Typing :: Typed",
 ]
 
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 dependencies = [
-    "attrs~=25.2",
     "rich~=14.0",
     "typer~=0.12",
 ]
@@ -42,23 +40,24 @@ pylox = "pylox.lox:pylox_cli"
 astgen = "tool.generate_ast:astgen_cli"
 testgen = "tool.generate_tests:testgen_cli"
 
-[tool.uv]
-dev-dependencies = [
+[dependency-groups]
+dev = [
     "black~=25.0",
-    "bump2version~=1.0",
     "flake8~=7.1",
     "flake8-annotations~=3.1",
-    "isort~=6.0",
-    "mypy~=1.11",
+    "flake8-define-class-attributes~=0.2",
+    "isort~=7.0",
+    "mypy~=1.14",
     "pre-commit~=4.0",
     "pytest~=8.3",
-    "pytest-cov~=6.0",
     "pytest-check~=2.4",
-    "pytest-randomly~=3.15",
-    "ruff~=0.6",
+    "pytest-cov~=7.0",
+    "pytest-randomly~=4.0",
+    "ruff~=0.9",
+    "sco1-bumper~=2.0",
     "time-machine~=2.15",
-    "tox~=4.18",
-    "tox-uv~=1.11",
+    "tox~=4.23",
+    "tox-uv~=1.17",
 ]
 
 [tool.black]
@@ -76,6 +75,7 @@ disallow_incomplete_defs = true
 disallow_untyped_calls = true
 disallow_untyped_decorators = true
 disallow_untyped_defs = true
+enable_error_code = "exhaustive-match"
 ignore_missing_imports = true
 no_implicit_optional = true
 show_error_codes = true
@@ -84,9 +84,10 @@ warn_return_any = true
 warn_unused_configs = true
 warn_unused_ignores = true
 
-[tool.hatch.build.targets.wheel]
-packages = ["pylox/"]
+[tool.uv.build-backend]
+module-name = "pylox"
+module-root = ""
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["uv_build"]
+build-backend = "uv_build"

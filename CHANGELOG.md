@@ -1,6 +1,11 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [0.5.2]
+### Changed
+* Python 3.12 is now the minimum supported version
+* (Internal) Remove `attrs` as a dependency
+
 ## [0.5.1]
 ### Fixed
 * Fix incorrect output type for `<split_on>`; the main loop contained a `str2num` call but the function should only return a `LoxArray` of strings.

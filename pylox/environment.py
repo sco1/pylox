@@ -1,19 +1,18 @@
 from __future__ import annotations
 
 import typing as t
-
-import attr
+from dataclasses import dataclass, field
 
 from pylox.error import LoxRuntimeError
 from pylox.tokens import Token
 
 
-@attr.s(slots=True)
+@dataclass(slots=True)
 class Environment:
     """The pylox variable environment!"""
 
-    enclosing: t.Optional[Environment] = attr.ib(default=None)
-    values: dict[str, t.Any] = attr.ib(factory=dict)
+    enclosing: t.Optional[Environment] = None
+    values: dict[str, t.Any] = field(default_factory=dict)
 
     def _ancestor(self, distance: int) -> Environment:
         """
